@@ -1,0 +1,52 @@
+﻿@page "/fetchdata"
+@using SharedLib
+@inject HttpClient Http
+
+<PageTitle>Weather forecast</PageTitle>
+
+<PageTitle>Käyttäjät</PageTitle>
+
+<h1>Käyttäjät</h1>
+
+
+@if (kayttajat == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nimi</th>
+                <th>Käyttäjätunnus</th>
+                <th>Luotu</th>
+                <th>Viimeisin kirjautuminen</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in kayttajat)
+            {
+                <tr>
+                    <td>@item.Idkayttaja</td>
+                    <td>@item.Nimi</td>
+                    <td>@item.Kayttajatunnus</td>
+                    <td>@item.Luotu</td>
+                    <td>@item.ViimeisinKirjautuminen</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private KayttajaDTO[]? kayttajat;
+
+    protected override async Task OnInitializedAsync()
+    {
+        kayttajat = await Http.GetFromJsonAsync<KayttajaDTO[]>("/api/all");
+    }
+
+}
+
