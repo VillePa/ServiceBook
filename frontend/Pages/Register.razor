@@ -1,6 +1,35 @@
 ﻿@page "/register"
+@using SharedLib
+@inject HttpClient Http
+
 <h3>Register</h3>
 
+<EditForm Model="kayttaja" OnValidSubmit="Registeration">
+	<div class="mb-3">
+		<label for="nimi">Nimi</label>
+		<InputText id="nimi" @bind-Value="kayttaja.Nimi" class="form-control"/>
+	</div>
+
+	<div class="mb-3">
+		<label for="kayttajatunnus">Käyttäjätunnus</label>
+		<InputText id="kayttajatunnus" @bind-Value="kayttaja.Kayttajatunnus" class="form-control" />
+	</div>
+
+	<div class="mb-3">
+		<label for="salasana">Salasana</label>
+		<InputText id="salasana" @bind-Value="kayttaja.Salasana" class="form-control" type="password" />
+	</div>
+
+		<button type="submit" class="btn btn-primary">Rekisteröidy</button>
+</EditForm>
+
 @code {
+	KayttajaDTO kayttaja = new();
+
+	async Task Registeration(){
+
+		await Http.PostAsJsonAsync("auth/register", kayttaja);
+
+	}
 
 }
