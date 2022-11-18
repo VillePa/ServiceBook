@@ -17,7 +17,5 @@ public partial class Auditointi
 
     public int Idkayttaja { get; set; }
 
-    public virtual Kayttaja IdkayttajaNavigation { get; set; } = null!;
-
     public virtual Kohde IdkohdeNavigation { get; set; } = null!;
 }

@@ -29,8 +29,6 @@ public partial class Kohde
 
     public virtual ICollection<Auditointi> Auditointis { get; } = new List<Auditointi>();
 
-    public virtual Kayttaja IdkayttajaNavigation { get; set; } = null!;
-
     public virtual Kohderyhma IdkohderyhmaNavigation { get; set; } = null!;
 
     public virtual ICollection<Tarkastu> Tarkastus { get; } = new List<Tarkastu>();

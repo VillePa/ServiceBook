@@ -62,11 +62,6 @@ public partial class DbHuoltokirjaContext : DbContext
                 .HasMaxLength(45)
                 .HasColumnName("selite");
 
-            entity.HasOne(d => d.IdkayttajaNavigation).WithMany(p => p.Auditointis)
-                .HasForeignKey(d => d.Idkayttaja)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("auditointi$fk_auditointi_kayttaja1");
-
             entity.HasOne(d => d.IdkohdeNavigation).WithMany(p => p.Auditointis)
                 .HasPrincipalKey(p => p.Idkohde)
                 .HasForeignKey(d => d.Idkohde)
@@ -95,11 +90,6 @@ public partial class DbHuoltokirjaContext : DbContext
             entity.Property(e => e.Selite)
                 .HasMaxLength(45)
                 .HasColumnName("selite");
-
-            entity.HasOne(d => d.IdkayttajaNavigation).WithMany(p => p.Auditointipohjas)
-                .HasForeignKey(d => d.Idkayttaja)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("auditointipohja$fk_auditointipohja_kayttaja1");
 
             entity.HasOne(d => d.IdkohderyhmaNavigation).WithMany(p => p.Auditointipohjas)
                 .HasForeignKey(d => d.Idkohderyhma)
@@ -134,10 +124,10 @@ public partial class DbHuoltokirjaContext : DbContext
                 .HasMaxLength(10)
                 .HasColumnName("rooli");
             entity.Property(e => e.Salasana)
-                .HasMaxLength(45)
+                .HasMaxLength(200)
                 .HasColumnName("salasana");
             entity.Property(e => e.SalasanaSalt)
-                .HasMaxLength(100)
+                .HasMaxLength(200)
                 .HasColumnName("salasanaSalt");
             entity.Property(e => e.ViimeisinKirjautuminen)
                 .HasPrecision(0)
@@ -185,11 +175,6 @@ public partial class DbHuoltokirjaContext : DbContext
             entity.Property(e => e.Tyyppi)
                 .HasMaxLength(45)
                 .HasColumnName("tyyppi");
-
-            entity.HasOne(d => d.IdkayttajaNavigation).WithMany(p => p.Kohdes)
-                .HasForeignKey(d => d.Idkayttaja)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("kohde$fk_kohde_kayttaja");
 
             entity.HasOne(d => d.IdkohderyhmaNavigation).WithMany(p => p.Kohdes)
                 .HasForeignKey(d => d.Idkohderyhma)
@@ -251,11 +236,6 @@ public partial class DbHuoltokirjaContext : DbContext
                 .HasMaxLength(45)
                 .HasColumnName("syy");
             entity.Property(e => e.TilanMuutos).HasColumnName("tilan_muutos");
-
-            entity.HasOne(d => d.IdkayttajaNavigation).WithMany(p => p.Tarkastus)
-                .HasForeignKey(d => d.Idkayttaja)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("tarkastus$fk_tarkastus_kayttaja1");
 
             entity.HasOne(d => d.IdkohdeNavigation).WithMany(p => p.Tarkastus)
                 .HasPrincipalKey(p => p.Idkohde)

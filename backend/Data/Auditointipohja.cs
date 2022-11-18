@@ -15,7 +15,5 @@ public partial class Auditointipohja
 
     public int Idkohderyhma { get; set; }
 
-    public virtual Kayttaja IdkayttajaNavigation { get; set; } = null!;
-
     public virtual Kohderyhma IdkohderyhmaNavigation { get; set; } = null!;
 }
