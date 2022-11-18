@@ -3,15 +3,13 @@ using System.Collections.Generic;
 
 namespace backend.Data;
 
-public partial class Vaatimu
+public partial class Vaatimuspohja
 {
-    public int Idvaatimus { get; set; }
+    public int Idvaatimuspohja { get; set; }
 
     public string? Kuvaus { get; set; }
 
     public string? Pakollisuus { get; set; }
 
-    public int? Taytetty { get; set; }
-
-    public int Idauditointi { get; set; }
+    public int Idauditointipohja { get; set; }
 }

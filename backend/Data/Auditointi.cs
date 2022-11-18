@@ -13,13 +13,11 @@ public partial class Auditointi
 
     public int? Lopputulos { get; set; }
 
-    public int KohdeId { get; set; }
+    public int Idkohde { get; set; }
 
-    public int AuditointipohjaId { get; set; }
+    public int Idkayttaja { get; set; }
 
-    public int KayttajaId { get; set; }
+    public virtual Kayttaja IdkayttajaNavigation { get; set; } = null!;
 
-    public virtual Auditointipohja Auditointipohja { get; set; } = null!;
-
-    public virtual Kohde Kohde { get; set; } = null!;
+    public virtual Kohde IdkohdeNavigation { get; set; } = null!;
 }

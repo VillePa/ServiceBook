@@ -15,13 +15,11 @@ public partial class Tarkastu
 
     public int TilanMuutos { get; set; }
 
-    public int TekijaKayttajaid { get; set; }
+    public int Idkayttaja { get; set; }
 
-    public int KohdeId { get; set; }
+    public int Idkohde { get; set; }
 
-    public byte[]? Liite { get; set; }
+    public virtual Kayttaja IdkayttajaNavigation { get; set; } = null!;
 
-    public virtual Kohde Kohde { get; set; } = null!;
-
-    public virtual Kayttaja TekijaKayttaja { get; set; } = null!;
+    public virtual Kohde IdkohdeNavigation { get; set; } = null!;
 }

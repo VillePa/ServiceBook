@@ -9,7 +9,7 @@ public partial class Kohderyhma
 
     public string Nimi { get; set; } = null!;
 
-    public int KohdeId { get; set; }
+    public virtual ICollection<Auditointipohja> Auditointipohjas { get; } = new List<Auditointipohja>();
 
-    public virtual Kohde Kohde { get; set; } = null!;
+    public virtual ICollection<Kohde> Kohdes { get; } = new List<Kohde>();
 }

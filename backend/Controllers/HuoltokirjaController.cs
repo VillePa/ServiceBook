@@ -9,10 +9,10 @@ namespace backend.Controllers
     [Route("[controller]")]
     public class HuoltokirjaController : ControllerBase
     {
-        private readonly ILogger<SqldbContext> _logger;
-        private readonly SqldbContext _db;
+        private readonly ILogger<DbHuoltokirjaContext> _logger;
+        private readonly DbHuoltokirjaContext _db;
 
-        public HuoltokirjaController(ILogger<SqldbContext> logger, SqldbContext db)
+        public HuoltokirjaController(ILogger<DbHuoltokirjaContext> logger, DbHuoltokirjaContext db)
         {
             _logger = logger;   
             _db = db;   

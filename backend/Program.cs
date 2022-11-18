@@ -18,8 +18,8 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
     policy.AllowAnyOrigin();
 }));
 
-builder.Services.AddDbContext<SqldbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("SqldbContext")));
+builder.Services.AddDbContext<DbHuoltokirjaContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DbHuoltokirjaContext")));
 
 var app = builder.Build();
 

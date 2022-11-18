@@ -11,8 +11,6 @@ public partial class Kohde
 
     public string Kuvaus { get; set; } = null!;
 
-    public string Kohderyhma { get; set; } = null!;
-
     public string Sijainti { get; set; } = null!;
 
     public string Tyyppi { get; set; } = null!;
@@ -25,13 +23,15 @@ public partial class Kohde
 
     public DateTime Luotu { get; set; }
 
-    public int LuojaIdkayttaja { get; set; }
+    public int Idkayttaja { get; set; }
+
+    public int Idkohderyhma { get; set; }
 
     public virtual ICollection<Auditointi> Auditointis { get; } = new List<Auditointi>();
 
-    public virtual ICollection<Kohderyhma> Kohderyhmas { get; } = new List<Kohderyhma>();
+    public virtual Kayttaja IdkayttajaNavigation { get; set; } = null!;
 
-    public virtual Kayttaja LuojaIdkayttajaNavigation { get; set; } = null!;
+    public virtual Kohderyhma IdkohderyhmaNavigation { get; set; } = null!;
 
     public virtual ICollection<Tarkastu> Tarkastus { get; } = new List<Tarkastu>();
 }

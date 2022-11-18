@@ -11,9 +11,11 @@ public partial class Auditointipohja
 
     public DateTime? Luontiaika { get; set; }
 
-    public int KayttajaId { get; set; }
+    public int Idkayttaja { get; set; }
 
-    public virtual ICollection<Auditointi> Auditointis { get; } = new List<Auditointi>();
+    public int Idkohderyhma { get; set; }
 
-    public virtual Kayttaja Kayttaja { get; set; } = null!;
+    public virtual Kayttaja IdkayttajaNavigation { get; set; } = null!;
+
+    public virtual Kohderyhma IdkohderyhmaNavigation { get; set; } = null!;
 }
