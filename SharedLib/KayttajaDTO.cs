@@ -16,10 +16,13 @@ namespace SharedLib
         public string Kayttajatunnus { get; set; }
         [Required]
         public string Salasana { get; set; }
+        [Required]  
+        public string Rooli { get; set; }
+
         [Required]
         public DateTime Luotu { get; set; }
 
-        public DateTime ViimeisinKirjautuminen { get; set; }
+        //public DateTime ViimeisinKirjautuminen { get; set; }
     }
 }
 

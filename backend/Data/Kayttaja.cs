@@ -17,7 +17,7 @@ public partial class Kayttaja
 
     public DateTime? ViimeisinKirjautuminen { get; set; }
 
-    public string Rooli { get; set; } = null!;
+    public string Rooli { get; set; }
 
     public string? SalasanaSalt { get; set; }
 
