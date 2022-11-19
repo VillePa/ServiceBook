@@ -22,4 +22,6 @@ public partial class Kayttaja
     public string? SalasanaSalt { get; set; }
 
     public int Poistettu { get; set; }
+
+    public virtual ICollection<Tarkastu> Tarkastus { get; } = new List<Tarkastu>();
 }

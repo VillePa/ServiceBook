@@ -19,8 +19,10 @@ namespace SharedLib
         public int TilanMuutos { get; set; }
 
         public int Idkayttaja { get; set; }
+        public string? KayttajanNimi { get; set; }
 
         public int Idkohde { get; set; }
+        public string? KohteenNimi { get; set; }
 
     }
 }

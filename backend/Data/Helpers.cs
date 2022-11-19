@@ -31,6 +31,8 @@ namespace backend.Data
                 TilanMuutos = t.TilanMuutos,
                 Idkohde = t.Idkohde,
                 Idkayttaja = t.Idkayttaja,
+                KayttajanNimi = t.Kayttaja.Nimi,
+                //KohteenNimi = t.Kohde.Nimi
             };
         }
 

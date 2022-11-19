@@ -19,21 +19,26 @@ namespace backend.Controllers
             _db = db;
         }
 
+        
         // Kaikki tarkastukset
         [HttpGet("/tarkastus/kaikki")]
         public async Task<ActionResult<IEnumerable<TarkastusDTO>>> HaeKaikki()
         {
 
-            return await _db.Tarkastus.OrderByDescending(t => t.Aikaleima).Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
+            return await _db.Tarkastus
+                .Include(t => t.Kayttaja)
+                .OrderByDescending(t => t.Aikaleima).Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
 
         }
-
+ 
         // Kaikki tarkastukset nouosevassa järjestyksessä
         [HttpGet("/tarkastus/kaikki/nouseva")]
         public async Task<ActionResult<IEnumerable<TarkastusDTO>>> HaeKaikkiNousevaAika()
         {
 
-            return await _db.Tarkastus.OrderBy(t => t.Aikaleima).Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
+            return await _db.Tarkastus
+                .Include(t => t.Kayttaja)
+                .OrderBy(t => t.Aikaleima).Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
 
         }
 
@@ -42,7 +47,9 @@ namespace backend.Controllers
         public async Task<ActionResult<IEnumerable<TarkastusDTO>>> HaeKaikkiKohteenTarkastukset(int id)
         {
 
-            return await _db.Tarkastus.Where(t => t.Idkohde == id).OrderByDescending(t => t.Aikaleima).Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
+            return await _db.Tarkastus
+                .Include(t => t.Kayttaja)
+                .Where(t => t.Idkohde == id).OrderByDescending(t => t.Aikaleima).Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
 
         }
 
@@ -52,7 +59,9 @@ namespace backend.Controllers
         public async Task<IActionResult> HaeYksiTarkastus(int id)
         {
 
-            var t = await _db.Tarkastus.Where(t => t.Idtarkastus == id).FirstOrDefaultAsync();
+            var t = await _db.Tarkastus
+                .Include(t => t.Kayttaja)
+                .Where(t => t.Idtarkastus == id).FirstOrDefaultAsync();
 
             if (t == null)
             {
@@ -77,6 +86,6 @@ namespace backend.Controllers
             return Ok();
         }
 
-
+        
     }
 }

@@ -1,0 +1,70 @@
+﻿@page "/tarkastus"
+@using SharedLib
+@inject HttpClient Http
+
+<PageTitle>Tarkastus</PageTitle>
+
+
+<h1>Tarkastukset</h1>
+
+<button class="btn btn-primary">Uusi tarkastus</button>
+
+@if (tarkastukset != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Kohde</th>
+                <th>Syy</th>
+                <th>Havainnot</th>
+                <th>Tila</th>
+                <th @onclick="sortDate">@sort</th>
+                <th>Tekijä</th>
+                <th></th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in tarkastukset)
+            {
+            <tr>
+                <td>@item.Idtarkastus</td>
+                <td>Kohteen nimi</td>
+                <td>@item.Syy</td>
+                <td>@item.Havainnot</td>
+                <td>Tilan muutos</td>
+                <td>@item.Aikaleima.ToString("dd.MM.yyyy HH:mm")</td>
+                <td>@item.KayttajanNimi</td>
+                <td><button class="btn btn-secondary">Nappi</button></td>
+            </tr>
+                
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private TarkastusDTO[]? tarkastukset;
+    private string sort = "Luotu, laskeva";
+
+    protected override async Task OnInitializedAsync()
+    {
+        tarkastukset = await Http.GetFromJsonAsync<TarkastusDTO[]>("/tarkastus/kaikki");
+    }
+
+    private async Task sortDate()
+    {
+        if (sort.Equals("Luotu, laskeva"))
+        {
+            sort = "Luotu, nouseva";
+            tarkastukset = await Http.GetFromJsonAsync<TarkastusDTO[]>("/tarkastus/kaikki/nouseva");
+        }
+        else
+        {
+            sort = "Luotu, laskeva";
+            tarkastukset = await Http.GetFromJsonAsync<TarkastusDTO[]>("/tarkastus/kaikki");
+        }
+    }
+}
+
