@@ -7,17 +7,16 @@ using System.Threading.Tasks;
 
 namespace SharedLib
 {
-    public class KayttajaDTO
+    public class RegisterDTO
     {
-        
         public string Nimi { get; set; }
         [Required]
         public string Kayttajatunnus { get; set; }
         [Required]
+        public string Salasana { get; set; }
+        [Required]
+        public string Rooli { get; set; }
+        [Required]
         public DateTime Luotu { get; set; }
-
-       
     }
 }
-
-
