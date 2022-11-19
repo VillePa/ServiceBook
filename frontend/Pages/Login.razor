@@ -1,9 +1,40 @@
 ﻿@page "/login"
 @using SharedLib
 @inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject ILogger<Index> Logger
 
-<h3>Login</h3>
+<h3>Kirjaudu sisään</h3>
+
+<EditForm Model="kayttaja" OnValidSubmit="HandleLogin">
+	
+	<div class="mb-3">
+		<label for="kayttajatunnus">Käyttäjätunnus</label>
+		<InputText id="kayttajatunnus" @bind-Value="kayttaja.Kayttajatunnus" class="form-control" />
+	</div>
+	<div class="mb-3">
+		<label for="salasana">Salasana</label>
+		<InputText id="salasana" @bind-Value="kayttaja.Salasana" class="form-control" type="password" />
+	</div>
+	<button type="submit" class="btn btn-primary">Lisää</button>
+</EditForm>
 
 @code {
+	LoginDTO kayttaja = new();
 
-}
+	async Task HandleLogin()
+	{
+		var result = await Http.PostAsJsonAsync("/auth/login", kayttaja);
+
+		if (result.IsSuccessStatusCode)
+		{
+			NavigationManager.NavigateTo("/");
+			Logger.LogInformation($"Käyttäjä {kayttaja.Kayttajatunnus} kirjautui onnistuneesti.");
+		}
+		else
+		{
+			Console.WriteLine("tähän joku ilmotus käyttäjälle");
+		}
+
+	}
+		}
