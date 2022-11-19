@@ -1,0 +1,65 @@
+﻿@page "/huoltokohteet"
+@using SharedLib
+@inject HttpClient Http
+
+<h3>Huoltokohteet</h3>
+
+<p>huoltokohteet table ja yms</p>
+
+<button @onclick="@(() => Modal.Show<SurveyPrompt>("survey"))">Lisää uusi kohde</button>
+
+@if (kohteet == null)
+{
+    <p><em>ladataan...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nimi</th>
+                <th>Kuvaus</th>
+                <th>Sijainti</th>
+                <th>Tyyppi</th>
+                <th>Malli</th>
+                <th>Tunnus</th>
+                <th>Tila</th>
+                <th>Luotu</th>
+                <th>Luoja</th>
+                <th>Kohderyhmä</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in kohteet)
+            {
+                <tr>
+                    <td>@a.Idkohde</td>
+                    <td>@a.Nimi</td>
+                    <td>@a.Kuvaus</td>
+                    <td>@a.Sijainti</td>
+                    <td>@a.Tyyppi</td>
+                    <td>@a.Malli</td>
+                    <td>@a.Tunnus</td>
+                    <td>@a.Tila</td>
+                    <td>@a.Luotu</td>
+                    <td>@a.Idkayttaja</td>
+                    <td>@a.Idkohderyhma</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+    private HuoltokohdeDTO[]? kohteet;
+
+    protected override async Task OnInitializedAsync()
+    {
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+    }
+}
+

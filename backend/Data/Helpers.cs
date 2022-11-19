@@ -49,5 +49,26 @@ namespace backend.Data
             };
         }
 
+        // Huoltokohde helpperi
+
+        public static HuoltokohdeDTO KohdeToDTO(this Kohde a)
+        {
+            return new HuoltokohdeDTO
+            {
+                Idkohde = a.Idkohde,
+                Nimi = a.Nimi,
+                Kuvaus = a.Kuvaus,
+                Sijainti = a.Sijainti,
+                Tyyppi = a.Tyyppi,
+                Malli = a.Malli,
+                Tunnus = a.Tunnus,
+                Tila = a.Tila,
+                Luotu = a.Luotu,
+                Idkayttaja = a.Idkayttaja,
+                Idkohderyhma = a.Idkohderyhma
+
+            };
+        }
+
     }
 }
