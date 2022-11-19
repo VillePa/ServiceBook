@@ -1,10 +1,12 @@
 ﻿@page "/register"
 @using SharedLib
+@inject NavigationManager NavigationManager
+@inject ILogger<Index> Logger
 @inject HttpClient Http
 
-<h3>Register</h3>
+<h3>Lisää uusi käyttäjä</h3>
 
-<EditForm Model="kayttaja" OnValidSubmit="Registeration">
+<EditForm Model="kayttaja" OnValidSubmit="AddUser">
 	<div class="mb-3">
 		<label for="nimi">Nimi</label>
 		<InputText id="nimi" @bind-Value="kayttaja.Nimi" class="form-control"/>
@@ -20,15 +22,30 @@
 		<InputText id="salasana" @bind-Value="kayttaja.Salasana" class="form-control" type="password" />
 	</div>
 
-		<button type="submit" class="btn btn-primary">Rekisteröidy</button>
+	<div class="mb-3">
+		<label for="rooli">Rooli</label>
+		@*<InputText id="rooli" @bind-Value="kayttaja.Rooli" class="form-control"/>*@
+		<InputSelect id="rooli" @bind-Value="kayttaja.Rooli" class="form-control">
+			<option>---</option>
+				<option value="@kayttaja.Rooli">user</option>
+			<option value="@kayttaja.Rooli">admin</option>
+		</InputSelect>
+	</div>
+
+		<button type="submit" class="btn btn-primary">Lisää</button>
 </EditForm>
 
 @code {
 	RegisterDTO kayttaja = new();
 
-	async Task Registeration(){
+	async Task AddUser(){
 
-		await Http.PostAsJsonAsync("auth/register", kayttaja);
+		var result = await Http.PostAsJsonAsync("/auth/register", kayttaja);
+		if (result.IsSuccessStatusCode)
+		{
+			Logger.LogInformation($"Lisätään uusi käyttäjä: {kayttaja.Nimi}: {kayttaja.Kayttajatunnus}: {kayttaja.Luotu}");
+
+		}
 
 	}
 

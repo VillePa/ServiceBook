@@ -35,6 +35,9 @@ namespace backend.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<Kayttaja>> Register(RegisterDTO req)
         {
+            var rooli = req.Rooli;
+            if (rooli != "admin") rooli = "user";
+
             var k = await _db.Kayttajas.AnyAsync(n => n.Kayttajatunnus == req.Kayttajatunnus);
 
             if (k) return BadRequest("Käyttäjätunnus on jo käytössä");
@@ -46,14 +49,14 @@ namespace backend.Controllers
                     Nimi = req.Nimi,
                     Kayttajatunnus = req.Kayttajatunnus,
                     Salasana = HashPassword(req.Salasana),
-                    Rooli = "user",
+                    Rooli = rooli,
                     Luotu = DateTime.Now
                 };
 
                 _db.Kayttajas.Add(kayttaja);
                 await _db.SaveChangesAsync();
 
-                return Ok("Uusi käyttäjä "+kayttaja.Kayttajatunnus+"rekisteröitiin onnistuneesti!");
+                return Ok("Uusi käyttäjä "+kayttaja.Kayttajatunnus+" rekisteröitiin onnistuneesti!");
             }
         }
 
