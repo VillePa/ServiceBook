@@ -7,7 +7,7 @@
 
 <h1>Tarkastukset</h1>
 
-<button class="btn btn-primary" @onclick="@ShowModal">Uusi tarkastus</button>
+<button style="margin: 2em 0 2em 0" class="btn btn-primary" @onclick="@ShowUusiTarkastus">Uusi tarkastus</button>
 
 @if (tarkastukset != null)
 {
@@ -36,7 +36,7 @@
                 <td>@tilat[item.TilanMuutos]</td>
                 <td>@item.Aikaleima.ToString("dd.MM.yyyy HH:mm")</td>
                 <td>@item.KayttajanNimi</td>
-                <td><button class="btn btn-secondary">...</button></td>
+                <td><button class="btn btn-secondary" >...</button></td>
             </tr>
                 
             }
@@ -56,13 +56,6 @@
         tarkastukset = await Http.GetFromJsonAsync<TarkastusDTO[]>("/tarkastus/kaikki");
     }
 
-    private async Task ShowModal()
-    {
-        var uusiModal = Modal.Show<UusiTarkastus>("Uusi tarkastus");
-        var result = await uusiModal.Result;
-
-    }
-
     private async Task sortDate()
     {
         if (sort.Equals("Luotu, laskeva"))
@@ -75,6 +68,22 @@
             sort = "Luotu, laskeva";
             tarkastukset = await Http.GetFromJsonAsync<TarkastusDTO[]>("/tarkastus/kaikki");
         }
+    }
+
+    private async Task ShowUusiTarkastus()
+    {
+        var uusiModal = Modal.Show<UusiTarkastus>("Uusi tarkastus");
+        var result = await uusiModal.Result;
+
+    }
+
+    private async Task ShowTarkastus(int Id)
+    {
+        var parameters = new ModalParameters()
+        .Add(nameof(TarkastusDetail.Id), Id);
+
+        var uusiModal = Modal.Show<TarkastusDetail>("Tarkastus", parameters);
+        var result = await uusiModal.Result;
     }
 }
 
