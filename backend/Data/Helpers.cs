@@ -36,17 +36,16 @@ namespace backend.Data
         }
 
         // tarkastusDTO to Tarkastus class
-        public static Tarkastu DTOtoTarkastu(this TarkastusDTO t)
+        public static Tarkastu DTOtoTarkastu(TarkastusDTO t)
         {
             return new Tarkastu
             {
-                Idtarkastus = t.Idtarkastus,
                 Aikaleima = t.Aikaleima,
                 Syy = t.Syy,
                 Havainnot = t.Havainnot,
                 TilanMuutos = t.TilanMuutos,
                 Idkohde = t.Idkohde,
-                Idkayttaja = t.Idkayttaja,
+                Idkayttaja = t.Idkayttaja
             };
         }
 

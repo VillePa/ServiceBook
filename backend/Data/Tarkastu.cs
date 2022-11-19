@@ -18,9 +18,10 @@ public partial class Tarkastu
 
     public int Idkayttaja { get; set; }
 
+    
     [ForeignKey("IdKayttaja")]
-    public Kayttaja Kayttaja { get; set; }
-
+    public virtual Kayttaja Kayttaja { get; set; }
+    
     public int Idkohde { get; set; }
 
     /*

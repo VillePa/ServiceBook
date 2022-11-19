@@ -7,7 +7,7 @@
 
 <h1>Tarkastukset</h1>
 
-<button class="btn btn-primary">Uusi tarkastus</button>
+<button class="btn btn-primary" @onclick="@ShowModal">Uusi tarkastus</button>
 
 @if (tarkastukset != null)
 {
@@ -33,10 +33,10 @@
                 <td>Kohteen nimi</td>
                 <td>@item.Syy</td>
                 <td>@item.Havainnot</td>
-                <td>Tilan muutos</td>
+                <td>@tilat[item.TilanMuutos]</td>
                 <td>@item.Aikaleima.ToString("dd.MM.yyyy HH:mm")</td>
                 <td>@item.KayttajanNimi</td>
-                <td><button class="btn btn-secondary">Nappi</button></td>
+                <td><button class="btn btn-secondary">...</button></td>
             </tr>
                 
             }
@@ -45,12 +45,22 @@
 }
 
 @code {
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    private string[] tilat = { "Ei muutosta", "Käyttökunnossa", "Epäkunnossa", "Poistettu käytöstä" };
+
     private TarkastusDTO[]? tarkastukset;
     private string sort = "Luotu, laskeva";
 
     protected override async Task OnInitializedAsync()
     {
         tarkastukset = await Http.GetFromJsonAsync<TarkastusDTO[]>("/tarkastus/kaikki");
+    }
+
+    private async Task ShowModal()
+    {
+        var uusiModal = Modal.Show<UusiTarkastus>("Uusi tarkastus");
+        var result = await uusiModal.Result;
+
     }
 
     private async Task sortDate()
