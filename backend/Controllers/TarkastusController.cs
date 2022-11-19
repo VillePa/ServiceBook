@@ -24,16 +24,7 @@ namespace backend.Controllers
         public async Task<ActionResult<IEnumerable<TarkastusDTO>>> HaeKaikki()
         {
 
-            return await _db.Tarkastus.OrderByDescending(t => t.Aikaleima).Select(t => new TarkastusDTO
-            {
-                Idtarkastus = t.Idtarkastus,
-                Aikaleima = t.Aikaleima,
-                Syy = t.Syy,
-                Havainnot = t.Havainnot,
-                TilanMuutos = t.TilanMuutos,
-                Idkohde = t.Idkohde,
-                Idkayttaja = t.Idkayttaja,
-            }).ToListAsync();
+            return await _db.Tarkastus.OrderByDescending(t => t.Aikaleima).Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
 
         }
 
@@ -42,16 +33,7 @@ namespace backend.Controllers
         public async Task<ActionResult<IEnumerable<TarkastusDTO>>> HaeKaikkiNousevaAika()
         {
 
-            return await _db.Tarkastus.OrderBy(t => t.Aikaleima).Select(t => new TarkastusDTO
-            {
-                Idtarkastus = t.Idtarkastus,
-                Aikaleima = t.Aikaleima,
-                Syy = t.Syy,
-                Havainnot = t.Havainnot,
-                TilanMuutos = t.TilanMuutos,
-                Idkohde = t.Idkohde,
-                Idkayttaja = t.Idkayttaja,
-            }).ToListAsync();
+            return await _db.Tarkastus.OrderBy(t => t.Aikaleima).Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
 
         }
 
@@ -60,16 +42,7 @@ namespace backend.Controllers
         public async Task<ActionResult<IEnumerable<TarkastusDTO>>> HaeKaikkiKohteenTarkastukset(int id)
         {
 
-            return await _db.Tarkastus.Where(t => t.Idkohde == id).OrderByDescending(t => t.Aikaleima).Select(t => new TarkastusDTO
-            {
-                Idtarkastus = t.Idtarkastus,
-                Aikaleima = t.Aikaleima,
-                Syy = t.Syy,
-                Havainnot = t.Havainnot,
-                TilanMuutos = t.TilanMuutos,
-                Idkohde = t.Idkohde,
-                Idkayttaja = t.Idkayttaja,
-            }).ToListAsync();
+            return await _db.Tarkastus.Where(t => t.Idkohde == id).OrderByDescending(t => t.Aikaleima).Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
 
         }
 
@@ -85,16 +58,7 @@ namespace backend.Controllers
             {
                 return NotFound();
             }
-            else return Ok(new TarkastusDTO
-            {
-                Idtarkastus = t.Idtarkastus,
-                Aikaleima = t.Aikaleima,
-                Syy = t.Syy,
-                Havainnot = t.Havainnot,
-                TilanMuutos = t.TilanMuutos,
-                Idkohde = t.Idkohde,
-                Idkayttaja = t.Idkayttaja,
-            });
+            else return Ok(Helpers.TarkastusToDTO(t));
         }
 
         // Luodaan uusi tarkastus
@@ -106,16 +70,7 @@ namespace backend.Controllers
                 return BadRequest();
             }
 
-            Tarkastu newTarkastus = new Tarkastu
-            {
-                Idtarkastus = t.Idtarkastus,
-                Aikaleima = t.Aikaleima,
-                Syy = t.Syy,
-                Havainnot = t.Havainnot,
-                TilanMuutos = t.TilanMuutos,
-                Idkohde = t.Idkohde,
-                Idkayttaja = t.Idkayttaja,
-            };
+            Tarkastu newTarkastus = Helpers.DTOtoTarkastu(t);
 
             _db.Tarkastus.Add(newTarkastus);
             await _db.SaveChangesAsync();
