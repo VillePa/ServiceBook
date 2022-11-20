@@ -25,6 +25,7 @@ namespace backend.Controllers
         [HttpGet("/tarkastus/kaikki/{sortOrder?}")]
         public async Task<ActionResult<IEnumerable<TarkastusDTO>>> HaeKaikki(string? sortOrder)
         {
+
             if (sortOrder == null)
             {
                 return await _db.Tarkastus
@@ -35,13 +36,15 @@ namespace backend.Controllers
             {
                 return await _db.Tarkastus
                 .Include(t => t.Kayttaja)
-                .OrderBy(t => t.Aikaleima).Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
+                .OrderBy(t => t.Aikaleima)
+                .Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
             }
             else if (sortOrder.Equals("desc"))
             {
                 return await _db.Tarkastus
                 .Include(t => t.Kayttaja)
-                .OrderByDescending(t => t.Aikaleima).Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
+                .OrderByDescending(t => t.Aikaleima)
+                .Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
             }
             else return BadRequest();
 
@@ -49,13 +52,36 @@ namespace backend.Controllers
 
         // Kaikki kohteen tarkastukset
         [HttpGet("/tarkastus/kohde/{id}")]
-        public async Task<ActionResult<IEnumerable<TarkastusDTO>>> HaeKaikkiKohteenTarkastukset(int id)
+        [HttpGet("/tarkastus/kohde/{id}/{sortOrder?}")]
+        public async Task<ActionResult<IEnumerable<TarkastusDTO>>> HaeKaikkiKohteenTarkastukset(int id, string? sortOrder)
         {
-
-            return await _db.Tarkastus
+            if (sortOrder == null)
+            {
+                return await _db.Tarkastus
                 .Include(t => t.Kayttaja)
-                .Where(t => t.Idkohde == id).OrderByDescending(t => t.Aikaleima).Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
-
+                .Where(t => t.Idkohde == id)
+                .Select(t => Helpers.TarkastusToDTO(t))
+                .ToListAsync();
+            }
+            else if (sortOrder.Equals("asc"))
+            {
+                return await _db.Tarkastus
+                .Include(t => t.Kayttaja)
+                .Where(t => t.Idkohde == id)
+                .OrderBy(t => t.Aikaleima)
+                .Select(t => Helpers.TarkastusToDTO(t))
+                .ToListAsync();
+            }
+            else if (sortOrder.Equals("desc"))
+            {
+                return await _db.Tarkastus
+                .Include(t => t.Kayttaja)
+                .Where(t => t.Idkohde == id)
+                .OrderByDescending(t => t.Aikaleima)
+                .Select(t => Helpers.TarkastusToDTO(t))
+                .ToListAsync();
+            }
+            else return BadRequest();
         }
 
         // Haetaan yksittäinen tarkastus

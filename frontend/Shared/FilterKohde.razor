@@ -33,12 +33,15 @@
         public bool IsSelected;
     }
     private List<ValittavaKohde> valittavatKohteet = new List<ValittavaKohde>();
-    private int[]? valitutId;
+
+    [Parameter]
+    public int[]? valitutId { get; set; }
 
 
     protected override async Task OnInitializedAsync()
     {
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+
         PopulateList();
 
     }
@@ -48,17 +51,13 @@
     {
         valitutId = valittavatKohteet.FindAll(x => x.IsSelected == true).Select(x => (int) x.Id).ToArray();
 
-        foreach (var item in valitutId)
-        {
-            Console.WriteLine(item);
-        }
-
-        await Modal.CloseAsync(ModalResult.Ok(valitutId));
+        await Modal.CloseAsync(ModalResult.Ok((int[]) valitutId));
     }
 
     private void Tyhjenna()
     {
         valittavatKohteet = new List<ValittavaKohde>();
+        valitutId = null;
         PopulateList();
     }
 
@@ -68,12 +67,25 @@
         {
             foreach (var item in kohteet)
             {
-                valittavatKohteet.Add(new ValittavaKohde
+                if (valitutId != null && valitutId.Contains(item.Idkohde))
                 {
-                    Name = $"{item.Nimi}, {item.Sijainti}",
-                    Id = item.Idkohde,
-                    IsSelected = false
-                });
+                    valittavatKohteet.Add(new ValittavaKohde
+                    {
+                        Name = $"{item.Nimi}, {item.Sijainti}",
+                        Id = item.Idkohde,
+                        IsSelected = true
+                    });
+                }
+                else
+                {
+                    valittavatKohteet.Add(new ValittavaKohde
+                    {
+                        Name = $"{item.Nimi}, {item.Sijainti}",
+                        Id = item.Idkohde,
+                        IsSelected = false
+                    });
+                }
+
             }
         }
     }
