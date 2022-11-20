@@ -1,7 +1,14 @@
-﻿<CascadingBlazoredModal>
+﻿<CascadingAuthenticationState>
+<CascadingBlazoredModal>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
-            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    <h3>Voi hitsi! Sinulla ei ole pääsyä tälle sivulle :(</h3>
+                    <h5>Ole hyvä ja kirjaudu sisään <a href="/login">tästä</a></h5>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
         <NotFound>
@@ -12,5 +19,6 @@
         </NotFound>
     </Router>
 </CascadingBlazoredModal>
+</CascadingAuthenticationState>
 
 
