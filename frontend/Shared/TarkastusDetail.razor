@@ -1,40 +1,33 @@
 ﻿@using SharedLib
 @inject HttpClient Http
 
-<EditForm Model="tarkastus" OnValidSubmit="Sulje">
+@if (tarkastus != null)
+{
+    <EditForm Model="tarkastus" OnValidSubmit="Sulje">
 
-    <div class="mb-3">
-        <label for="id">Tarkastuksen Id</label>
-        <InputNumber id="id" @bind-Value="tarkastus.Idtarkastus" class="form-control" Disabled />
-    </div>
+        <div class="mb-3">
+            <label for="id">Tarkastuksen Id</label>
+            <InputNumber id="id" @bind-Value="tarkastus.Idtarkastus" class="form-control" Disabled />
+        </div>
 
-    <div class="mb-3">
-        <label for="kohde">Kohde</label>
-        <InputText id="kohde" @bind-Value="tarkastus.KohteenNimi" class="form-control" Disabled />
-    </div>
+        <div class="mb-3">
+            <label for="kohde">Kohde</label>
+            <InputText id="kohde" @bind-Value="tarkastus.KohteenNimi" class="form-control" Disabled />
+        </div>
 
-    <div class="mb-3">
-        <label for="syy">Tarkastuksen syy</label>
-        <InputText id="syy" @bind-Value="tarkastus.Syy" class="form-control" Disabled />
-    </div>
+        <div class="mb-3">
+            <label for="syy">Tarkastuksen syy</label>
+            <InputText id="syy" @bind-Value="tarkastus.Syy" class="form-control" Disabled />
+        </div>
 
-    <div class="mb-3">
-        <label for="havainnot">Havainnot</label>
-        <InputText id="havainnot" @bind-Value="tarkastus.Havainnot" class="form-control" Disabled />
-    </div>
+        <div class="mb-3">
+            <label for="havainnot">Havainnot</label>
+            <InputText id="havainnot" @bind-Value="tarkastus.Havainnot" class="form-control" Disabled />
+        </div>
 
-    <div class="mb-3">
-        <label for="tilanmuunnos">Kohteen tila</label>
-        <InputText id="tilanmuunnos" @bind-Value"="tila" class="form-control" Disabled />
-    </div>
-
-    <div class="mb-3">
-        <label for="tekija">Tarkastuksen tekijä</label>
-        <InputText id="tekija" @bind-Value"="tarkastus.KayttajanNimi" class="form-control" Disabled />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Sulje</button>
-</EditForm>
+        <button type="submit" class="btn btn-primary">Sulje</button>
+    </EditForm>
+}
 
 
 
@@ -42,9 +35,9 @@
 @code {
     [CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
 
-    private TarkastusDTO tarkastus = new TarkastusDTO();
+    private TarkastusDTO? tarkastus = new TarkastusDTO();
     private string[] tilat = { "Ei muutosta", "Käyttökunnossa", "Epäkunnossa", "Poistettu käytöstä" };
-    private string tila = "";
+    private string tila = "Tilaa ei löytynyt";
 
     [Parameter]
     public int Id { get; set; }
@@ -54,7 +47,7 @@
 
         tarkastus = await Http.GetFromJsonAsync<TarkastusDTO>($"/tarkastus/{Id}");
 
-        tila = tilat[tarkastus.TilanMuutos];
+        if (tarkastus != null) tila = tilat[tarkastus.TilanMuutos];
     }
 
 

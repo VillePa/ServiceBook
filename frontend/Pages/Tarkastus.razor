@@ -28,6 +28,7 @@
         <tbody>
             @foreach (var item in tarkastukset)
             {
+            int Id = item.Idtarkastus;
             <tr>
                 <td>@item.Idtarkastus</td>
                 <td>Kohteen nimi</td>
@@ -36,7 +37,7 @@
                 <td>@tilat[item.TilanMuutos]</td>
                 <td>@item.Aikaleima.ToString("dd.MM.yyyy HH:mm")</td>
                 <td>@item.KayttajanNimi</td>
-                <td><button class="btn btn-secondary" >...</button></td>
+                <td><button class="btn btn-secondary" @onclick="@(e => ShowTarkastus(Id))">...</button></td>
             </tr>
                 
             }

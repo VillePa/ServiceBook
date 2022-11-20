@@ -1,46 +1,50 @@
 ﻿@using SharedLib
 @inject HttpClient Http
 
-<EditForm Model="tarkastus" OnValidSubmit="Tallenna">
-    <DataAnnotationsValidator />
-    <div class="mb-3">
-        <label for="kohde">Kohde</label>
-        <InputSelect id="kohde" @bind-Value="tarkastus.Idkohde" class="form-control">
-            @for (int i = 0; i < 5; i++)
-            {
-                <option value="@i">"Option @i"</option>
-            }
-        </InputSelect>
-        <ValidationMessage For="()=>tarkastus.Idkohde" />
-    </div>
+@if (kohteet != null)
+{
+    <EditForm Model="tarkastus" OnValidSubmit="Tallenna">
+        <DataAnnotationsValidator />
+        <div class="mb-3">
+            <label for="kohde">Kohde</label>
+            <InputSelect id="kohde" @bind-Value="tarkastus.Idkohde" class="form-control">
+                @foreach (var item in kohteet)
+                {
+                    <option value="@item.Idkohde">@item.Nimi, @item.Sijainti</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="()=>tarkastus.Idkohde" />
+        </div>
 
-    <div class="mb-3">
-        <label for="syy">Tarkastuksen syy</label>
-        <InputText id="syy" @bind-Value="tarkastus.Syy" class="form-control" />
-        <ValidationMessage For="()=>tarkastus.Syy" />
-    </div>
+        <div class="mb-3">
+            <label for="syy">Tarkastuksen syy</label>
+            <InputText id="syy" @bind-Value="tarkastus.Syy" class="form-control" />
+            <ValidationMessage For="()=>tarkastus.Syy" />
+        </div>
 
-    <div class="mb-3">
-        <label for="havainnot">Havainnot</label>
-        <InputText id="havainnot" @bind-Value="tarkastus.Havainnot" class="form-control" />
-        <ValidationMessage For="()=>tarkastus.Havainnot" />
-    </div>
+        <div class="mb-3">
+            <label for="havainnot">Havainnot</label>
+            <InputText id="havainnot" @bind-Value="tarkastus.Havainnot" class="form-control" />
+            <ValidationMessage For="()=>tarkastus.Havainnot" />
+        </div>
 
-    <div class="mb-3">
-        <label for="tilanmuunnos">Kohteen tila:</label> <br />
-        <InputRadioGroup id="tilanmuunnos" @bind-Value="tarkastus.TilanMuutos" class="form-control">
-            @for (int i = 0; i < 4; i++)
-            {
-                <label for="radio">@tilat[i]</label>
-                <InputRadio id="radio" Value="@i" /> <br />
-            }
-        </InputRadioGroup>
-        <ValidationMessage For="()=>tarkastus.TilanMuutos" />
-    </div>
+        <div class="mb-3">
+            <label for="tilanmuunnos">Kohteen tila:</label> <br />
+            <InputRadioGroup id="tilanmuunnos" @bind-Value="tarkastus.TilanMuutos" class="form-control">
+                @for (int i = 0; i < 4; i++)
+                {
+                    <label for="radio">@tilat[i]</label>
+                    <InputRadio id="radio" Value="@i" /> <br />
+                }
+            </InputRadioGroup>
+            <ValidationMessage For="()=>tarkastus.TilanMuutos" />
+        </div>
 
-    <button type="submit" class="btn btn-primary">Tallenna</button>
-    <button type="reset" @onclick="Tyhjenna" class="btn btn-secondary">Tyhjenna</button>
-</EditForm>
+        <button type="submit" class="btn btn-primary">Tallenna</button>
+        <button type="reset" @onclick="Tyhjenna" class="btn btn-secondary">Tyhjenna</button>
+    </EditForm>
+}
+
 
 
 
@@ -48,13 +52,15 @@
     [CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
 
     private TarkastusDTO tarkastus = new TarkastusDTO();
+    private HuoltokohdeDTO[]? kohteet;
+
     private string[] tilat = { "Ei muutosta", "Käyttökunnossa", "Epäkunnossa", "Poistettu käytöstä" };
-    /*
+
     protected override async Task OnInitializedAsync()
     {
-
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
     }
-    */
+
 
     private async Task Tallenna()
     {

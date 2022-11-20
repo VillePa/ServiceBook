@@ -31,7 +31,7 @@ namespace backend.Data
                 Idkohde = t.Idkohde,
                 Idkayttaja = t.Idkayttaja,
                 KayttajanNimi = t.Kayttaja.Nimi,
-                //KohteenNimi = t.Kohde.Nimi
+                KohteenNimi = "Kohteen nimi"
             };
         }
 
