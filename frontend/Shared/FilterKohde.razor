@@ -1,0 +1,81 @@
+﻿@using SharedLib
+@inject HttpClient Http
+
+@if (valittavatKohteet != null)
+{
+
+        <div class="mb-3">
+            @foreach (var item in valittavatKohteet)
+                {
+            <InputCheckbox @bind-Value="@item.IsSelected" style="margin-right: 0.5em"/>
+            @item.Name
+            <br />
+                }
+        </div>
+
+        <button type="submit" @onclick="Tallenna" class="btn btn-primary">Tallenna</button>
+        <button type="reset" @onclick="Tyhjenna" class="btn btn-secondary">Tyhjenna</button>
+
+}
+
+
+
+
+@code {
+    [CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
+
+
+    private HuoltokohdeDTO[]? kohteet;
+    class ValittavaKohde
+    {
+        public string? Name;
+        public int Id;
+        public bool IsSelected;
+    }
+    private List<ValittavaKohde> valittavatKohteet = new List<ValittavaKohde>();
+    private int[]? valitutId;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+        PopulateList();
+
+    }
+
+
+    private async Task Tallenna()
+    {
+        valitutId = valittavatKohteet.FindAll(x => x.IsSelected == true).Select(x => (int) x.Id).ToArray();
+
+        foreach (var item in valitutId)
+        {
+            Console.WriteLine(item);
+        }
+
+        await Modal.CloseAsync(ModalResult.Ok(valitutId));
+    }
+
+    private void Tyhjenna()
+    {
+        valittavatKohteet = new List<ValittavaKohde>();
+        PopulateList();
+    }
+
+    private void PopulateList()
+    {
+        if (kohteet != null)
+        {
+            foreach (var item in kohteet)
+            {
+                valittavatKohteet.Add(new ValittavaKohde
+                {
+                    Name = $"{item.Nimi}, {item.Sijainti}",
+                    Id = item.Idkohde,
+                    IsSelected = false
+                });
+            }
+        }
+    }
+    }
+

@@ -19,26 +19,31 @@ namespace backend.Controllers
             _db = db;
         }
 
-        
+
         // Kaikki tarkastukset
         [HttpGet("/tarkastus/kaikki")]
-        public async Task<ActionResult<IEnumerable<TarkastusDTO>>> HaeKaikki()
+        [HttpGet("/tarkastus/kaikki/{sortOrder?}")]
+        public async Task<ActionResult<IEnumerable<TarkastusDTO>>> HaeKaikki(string? sortOrder)
         {
-
-            return await _db.Tarkastus
+            if (sortOrder == null)
+            {
+                return await _db.Tarkastus
                 .Include(t => t.Kayttaja)
-                .OrderByDescending(t => t.Aikaleima).Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
-
-        }
- 
-        // Kaikki tarkastukset nouosevassa järjestyksessä
-        [HttpGet("/tarkastus/kaikki/nouseva")]
-        public async Task<ActionResult<IEnumerable<TarkastusDTO>>> HaeKaikkiNousevaAika()
-        {
-
-            return await _db.Tarkastus
+                .Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
+            }
+            else if (sortOrder.Equals("asc"))
+            {
+                return await _db.Tarkastus
                 .Include(t => t.Kayttaja)
                 .OrderBy(t => t.Aikaleima).Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
+            }
+            else if (sortOrder.Equals("desc"))
+            {
+                return await _db.Tarkastus
+                .Include(t => t.Kayttaja)
+                .OrderByDescending(t => t.Aikaleima).Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
+            }
+            else return BadRequest();
 
         }
 

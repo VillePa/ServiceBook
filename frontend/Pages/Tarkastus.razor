@@ -15,7 +15,7 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Kohde</th>
+                <th @onclick="filterKohde">Kohde</th>
                 <th>Syy</th>
                 <th>Havainnot</th>
                 <th>Tila</th>
@@ -50,7 +50,8 @@
     private string[] tilat = { "Ei muutosta", "Käyttökunnossa", "Epäkunnossa", "Poistettu käytöstä" };
 
     private TarkastusDTO[]? tarkastukset;
-    private string sort = "Luotu, laskeva";
+    private string sort = "Luotu";
+    private int[]? kohteet;
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,16 +60,27 @@
 
     private async Task sortDate()
     {
-        if (sort.Equals("Luotu, laskeva"))
+        if (sort.Equals("Luotu"))
+        {
+            sort = "Luotu, laskeva";
+            tarkastukset = await Http.GetFromJsonAsync<TarkastusDTO[]>("/tarkastus/kaikki/desc");
+        }
+        else if (sort.Equals("Luotu, laskeva"))
         {
             sort = "Luotu, nouseva";
-            tarkastukset = await Http.GetFromJsonAsync<TarkastusDTO[]>("/tarkastus/kaikki/nouseva");
+            tarkastukset = await Http.GetFromJsonAsync<TarkastusDTO[]>("/tarkastus/kaikki/asc");
         }
         else
         {
-            sort = "Luotu, laskeva";
+            sort = "Luotu";
             tarkastukset = await Http.GetFromJsonAsync<TarkastusDTO[]>("/tarkastus/kaikki");
         }
+    }
+
+    private async Task filterKohde()
+    {
+        var filterModal = Modal.Show<FilterKohde>("Valitse kohteet");
+        var result = await filterModal.Result;
     }
 
     private async Task ShowUusiTarkastus()
@@ -76,6 +88,9 @@
         var uusiModal = Modal.Show<UusiTarkastus>("Uusi tarkastus");
         var result = await uusiModal.Result;
 
+        if (sort.Equals("Luotu, laskeva")) tarkastukset = await Http.GetFromJsonAsync<TarkastusDTO[]>("/tarkastus/kaikki/desc");
+        if (sort.Equals("Luotu, nouseva")) tarkastukset = await Http.GetFromJsonAsync<TarkastusDTO[]>("/tarkastus/kaikki/asc");
+        else tarkastukset = await Http.GetFromJsonAsync<TarkastusDTO[]>("/tarkastus/kaikki");
     }
 
     private async Task ShowTarkastus(int Id)
