@@ -9,10 +9,11 @@ namespace SharedLib
 {
     public class RegisterDTO
     {
-        public string Nimi { get; set; }
+		[Required]
+		public string Nimi { get; set; }
         [Required]
         public string Kayttajatunnus { get; set; }
-        [Required]
+        [Required, StringLength(20, MinimumLength = 5)]
         public string Salasana { get; set; }
         [Required]
         public string Rooli { get; set; }

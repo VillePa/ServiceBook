@@ -7,19 +7,23 @@
 <h3>Lisää uusi käyttäjä</h3>
 
 <EditForm Model="kayttaja" OnValidSubmit="AddUser">
+	<DataAnnotationsValidator/>
 	<div class="mb-3">
 		<label for="nimi">Nimi</label>
 		<InputText id="nimi" @bind-Value="kayttaja.Nimi" class="form-control"/>
+		<ValidationMessage For="@(()=> kayttaja.Nimi)" />
 	</div>
 
 	<div class="mb-3">
 		<label for="kayttajatunnus">Käyttäjätunnus</label>
 		<InputText id="kayttajatunnus" @bind-Value="kayttaja.Kayttajatunnus" class="form-control" />
+		<ValidationMessage For="@(()=> kayttaja.Kayttajatunnus)" />
 	</div>
 
 	<div class="mb-3">
 		<label for="salasana">Salasana</label>
 		<InputText id="salasana" @bind-Value="kayttaja.Salasana" class="form-control" type="password" />
+		<ValidationMessage For="@(()=> kayttaja.Salasana)" />
 	</div>
 
 	<div class="mb-3">
@@ -30,23 +34,42 @@
 				<option value="@kayttaja.Rooli">user</option>
 			<option value="@kayttaja.Rooli">admin</option>
 		</InputSelect>
+		<ValidationMessage For="@(()=> kayttaja.Rooli)" />
 	</div>
 
 		<button type="submit" class="btn btn-primary">Lisää</button>
+		<br /> <br />
+	<div><span style="color: red">@errorMsg</span></div>
+	<div><span style="color: green">@successMsg</span></div>
 </EditForm>
 
 @code {
 	RegisterDTO kayttaja = new();
+	string errorMsg = string.Empty;
+	string successMsg = string.Empty;
 
 	async Task AddUser(){
 
 		var result = await Http.PostAsJsonAsync("/auth/register", kayttaja);
+
 		if (result.IsSuccessStatusCode)
 		{
 			Logger.LogInformation($"Lisätään uusi käyttäjä: {kayttaja.Nimi}: {kayttaja.Kayttajatunnus}: {kayttaja.Luotu}");
+			successMsg = "Uuden käyttäjän lisääminen onnistui.";
+			errorMsg = string.Empty;
+
+			kayttaja = new RegisterDTO();
+
 
 		}
-
+		else
+		{
+			successMsg = string.Empty;
+			errorMsg = "Käyttäjätunnus on jo käytössä";
+		}
 	}
 
-}
+	
+	}
+
+

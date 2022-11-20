@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SharedLib;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -16,6 +19,7 @@ namespace backend.Controllers
     {
         private readonly ILogger<DbHuoltokirjaContext> _logger;
         private readonly DbHuoltokirjaContext _db;
+        private readonly IConfiguration _conf;
 
         #region Pbkdf2 salasanan cryptaukseen liittyvää 
         const int SaltByteSize = 24;
@@ -26,10 +30,11 @@ namespace backend.Controllers
         const int Pbkdf2Index = 2;
         #endregion
 
-        public AuthController(ILogger<DbHuoltokirjaContext> logger, DbHuoltokirjaContext db)
+        public AuthController(ILogger<DbHuoltokirjaContext> logger, DbHuoltokirjaContext db, IConfiguration conf)
         {
             _logger = logger;
             _db = db;
+            _conf = conf;
         }
 
         [HttpPost("register")]
@@ -72,13 +77,15 @@ namespace backend.Controllers
 
             else if (ValidatePassword(req.Salasana, kayttaja.Salasana))
             {
-                return Ok("Kirjautuminen onnistui!");
+				string token = CreateToken(kayttaja);
+				return Ok(token);
             }
 
             else return BadRequest("Salasana väärin");
         }
 
-        //Salttauksen luonti
+
+        //Salasanan suolaus
         private static string GetRandomSalt()
         {
             return BCrypt.Net.BCrypt.GenerateSalt(12);
@@ -94,6 +101,31 @@ namespace backend.Controllers
         public static bool ValidatePassword(string password, string correctHash)
         {
             return BCrypt.Net.BCrypt.Verify(password, correctHash);
+        }
+
+        //luodaan jasonwebtoken
+        private string CreateToken(Kayttaja kayttaja)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, kayttaja.Idkayttaja.ToString()),
+                new Claim(ClaimTypes.Name, kayttaja.Kayttajatunnus)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes
+                (_conf.GetSection("AppSettings:Token").Value));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds
+                );
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwt;
         }
 
         #region Pbkdf2

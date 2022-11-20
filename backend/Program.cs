@@ -21,6 +21,8 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 builder.Services.AddDbContext<DbHuoltokirjaContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DbHuoltokirjaContext")));
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

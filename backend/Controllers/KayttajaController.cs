@@ -19,7 +19,7 @@ namespace backend.Controllers
             _db = db;   
         }
 
-        [HttpGet("/api/all")]
+        [HttpGet("/all")]
         public async Task<IEnumerable<Kayttaja>> Get()
         {
 
@@ -27,7 +27,7 @@ namespace backend.Controllers
 
         }
 
-        [HttpGet("/api/kayttajatunnukset")]
+        [HttpGet("/kayttajatunnukset")]
         public async Task<IEnumerable<KayttajaDTO>> GetUsernames()
         {
 
