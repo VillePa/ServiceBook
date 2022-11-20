@@ -23,5 +23,5 @@ public partial class Kayttaja
 
     public int Poistettu { get; set; }
 
-    public virtual ICollection<Tarkastu> Tarkastus { get; } = new List<Tarkastu>();
+    public  List<Tarkastu>? Tarkastus { get; }
 }

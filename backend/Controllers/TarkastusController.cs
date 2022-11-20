@@ -69,7 +69,7 @@ namespace backend.Controllers
             }
             else return Ok(Helpers.TarkastusToDTO(t));
         }
-
+        
         // Luodaan uusi tarkastus
         [HttpPost("/tarkastus")]
         public async Task<IActionResult> LisaaTarkastus([FromBody] TarkastusDTO t)
