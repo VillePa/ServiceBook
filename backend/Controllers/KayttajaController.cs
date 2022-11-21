@@ -51,11 +51,6 @@ namespace backend.Controllers
 				return BadRequest("käyttäjää ei löydy");
 
 			}
-
-
-
-
-
 		}
 
 		[HttpGet("/kayttaja/kayttajatunnukset")]
@@ -66,6 +61,7 @@ namespace backend.Controllers
 
         }
 
+        //KESKEN
         [HttpPost("/kayttaja/poistaKaytosta"), Authorize]
         public async Task<ActionResult<bool>> SoftDelete(int value)
         {
@@ -81,9 +77,5 @@ namespace backend.Controllers
             return true;
 
         }
-
-       
-
-
     }
 }
