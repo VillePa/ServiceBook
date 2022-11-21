@@ -1,0 +1,56 @@
+﻿@page "/kayttajaprofiili"
+@using SharedLib
+@inject NavigationManager NavigationManager
+@inject ILogger<Index> Logger
+@inject HttpClient Http
+@attribute [Authorize]
+
+<AuthorizeView>
+	<h3>Terve <i>@context.User.Identity.Name</i>.</h3>
+</AuthorizeView>
+
+
+<EditForm Model="uusi" OnValidSubmit="ChangePassword">
+	<DataAnnotationsValidator />
+
+	<div class="mb-3">
+		<label for="uusiSalasana">Uusi salasana</label>
+		<InputText id="salasana" @bind-Value="uusi.UusiSalasana" class="form-control" type="password" />
+		<ValidationMessage For="@(()=> uusi.UusiSalasana)" />
+	</div>
+
+
+	<div class="mb-3">
+		<label for="vahvistaSalasana">Vahvista salasana</label>
+		<InputText id="vahvistaSalasana" @bind-Value="uusi.VahvistaSalasana" class="form-control" type="password" />
+		<ValidationMessage For="@(()=> uusi.VahvistaSalasana)" />
+	</div>
+
+	
+
+	<button type="submit" class="btn btn-primary">Tallenna</button>
+	<br /> <br />
+	@*<div><span style="color: red">@errorMsg</span></div>
+	<div><span style="color: green">@successMsg</span></div>*@
+</EditForm>
+
+
+@code {
+	VaihdaSalasana uusi = new();
+	string message = string.Empty;
+
+	private async Task ChangePassword()
+	{
+		var result = await Http.PostAsJsonAsync("/auth/vaihdaSalasana", uusi);
+
+		if (result.IsSuccessStatusCode)
+		{
+			message = "Salasanan vaihto onnistui.";
+		}
+		else
+		{
+			message = "Jotain meni vikaan.";
+		}
+	}
+
+}

@@ -2,15 +2,14 @@
 @using SharedLib
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@attribute [Authorize]
+@attribute [Authorize(Roles = "admin")]
 
 <PageTitle>Käyttäjät</PageTitle>
 
 <h1>Käyttäjät</h1>
 
 
-<AuthorizeView Roles="admin"> @*Roolit ei toimi. Pitää tutkia.*@
-    <Authorized>
+
 @if (kayttajat == null)
 {
     <p><em>Ladataan käyttäjälistaa</em></p>
@@ -40,20 +39,13 @@ else
         </tbody>
     </table>
 }
-</Authorized>
-
-    <NotAuthorized>
-        <span>You are not authorized</span>
-    </NotAuthorized>
-
-</AuthorizeView>
 
 @code {
     private KayttajaDTO[]? kayttajat;
 
     protected override async Task OnInitializedAsync()
     {
-        kayttajat = await Http.GetFromJsonAsync<KayttajaDTO[]>("all");
+        kayttajat = await Http.GetFromJsonAsync<KayttajaDTO[]>("kayttaja/kayttajatunnukset");
     }
 
 }

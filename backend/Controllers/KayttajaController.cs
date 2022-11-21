@@ -1,8 +1,11 @@
 ﻿using backend.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SharedLib;
+using System.Security.Claims;
 
 namespace backend.Controllers
 {
@@ -19,7 +22,7 @@ namespace backend.Controllers
             _db = db;   
         }
 
-        [HttpGet("/all")]
+        [HttpGet("/kayttaja/kaikki")]
         public async Task<IEnumerable<Kayttaja>> Get()
         {
 
@@ -27,25 +30,15 @@ namespace backend.Controllers
 
         }
 
-        [HttpGet("/kayttajatunnukset")]
+        [HttpGet("/kayttaja/kayttajatunnukset")]
         public async Task<IEnumerable<KayttajaDTO>> GetUsernames()
         {
 
             return await _db.Kayttajas.OrderByDescending(i=>i.Idkayttaja > 0).Select(i=>Helpers.KayttajaToDTO(i)).ToListAsync();    
 
-            //var result = await _db.Kayttajas.OrderByDescending(i => i.Idkayttaja < 0).Select(i=>
-            //    new Helpers.KayttajaDTO()
-            //    {
-            //        Nimi = i.Nimi,
-            //        Kayttajatunnus = i.Kayttajatunnus,  
-            //        Luotu= i.Luotu,
-            //    }).ToListAsync();
-
-            //if (result.Count == 0) return NotFound("Käyttäjiä ei löytynyt");
-
-            //return Ok(result);
-
         }
+
+       
 
 
     }

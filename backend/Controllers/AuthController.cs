@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using backend.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -84,9 +85,31 @@ namespace backend.Controllers
             else return BadRequest("Salasana väärin");
         }
 
+		[HttpPost("vaihdaSalasana"), Authorize]
+		public async Task<ActionResult<bool>> ChangePassword(VaihdaSalasana request)
+		{
+			var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (id == null)
+			{
+				return BadRequest();
+			}
 
-        //Salasanan suolaus
-        private static string GetRandomSalt()
+            var uusiHashed = HashPassword(request.UusiSalasana);
+
+			var kayttaja = await _db.Kayttajas.Where(i => i.Idkayttaja == int.Parse(id)).FirstOrDefaultAsync();
+
+			kayttaja.Salasana = uusiHashed;
+
+			_db.Kayttajas.Update(kayttaja);
+			await _db.SaveChangesAsync();
+
+			return true;
+
+		}
+
+
+		//Salasanan suolaus
+		private static string GetRandomSalt()
         {
             return BCrypt.Net.BCrypt.GenerateSalt(12);
         }
@@ -109,7 +132,8 @@ namespace backend.Controllers
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, kayttaja.Idkayttaja.ToString()),
-                new Claim(ClaimTypes.Name, kayttaja.Kayttajatunnus)
+                new Claim(ClaimTypes.Name, kayttaja.Kayttajatunnus),
+                new Claim(ClaimTypes.Role, kayttaja.Rooli)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes

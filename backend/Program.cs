@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Routing;
 using backend.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +23,19 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 builder.Services.AddDbContext<DbHuoltokirjaContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DbHuoltokirjaContext")));
 
-
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+	.AddJwtBearer(options =>
+	{
+		options.TokenValidationParameters = new TokenValidationParameters
+		{
+			ValidateIssuerSigningKey = true,
+			IssuerSigningKey =
+				new SymmetricSecurityKey(System.Text.Encoding.UTF8
+				.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+			ValidateIssuer = false,
+			ValidateAudience = false
+		};
+	});
 
 var app = builder.Build();
 
@@ -36,6 +50,7 @@ app.UseHttpsRedirection();
 
 app.UseCors();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

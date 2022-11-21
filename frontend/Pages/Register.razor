@@ -3,6 +3,7 @@
 @inject NavigationManager NavigationManager
 @inject ILogger<Index> Logger
 @inject HttpClient Http
+@attribute [Authorize(Roles="admin")]
 
 <h3>Lisää uusi käyttäjä</h3>
 
