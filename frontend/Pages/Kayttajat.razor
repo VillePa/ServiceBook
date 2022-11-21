@@ -2,6 +2,7 @@
 @using SharedLib
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IModalService ModalService
 @attribute [Authorize(Roles = "admin")]
 
 <PageTitle>Käyttäjät</PageTitle>
@@ -22,7 +23,7 @@ else
                 <th>Nimi</th>
                 <th>Käyttäjätunnus</th>
                 <th>Luotu</th>
-                <th></th>
+                <th>Poista käytöstä</th>
             </tr>
         </thead>
         <tbody>
@@ -31,14 +32,16 @@ else
                 <tr>
                     <td>@item.Nimi</td>
                     <td>@item.Kayttajatunnus</td>
-                    <td>@item.Luotu</td>
-                    <td><button style="font-size: 85%" class="btn btn-success">edit</button></td>
-                    <td><button style="font-size: 85%" class="btn btn-danger">delete</button></td>
+                    <td>@item.Luotu.ToString("dd-MM-yyyy HH:mm")</td>
+                    <td><button style="font-size: 85%" class="btn btn-success" @onclick="@(e=> Muokkaa(item.Idkayttaja))">Muokkaa</button></td>
                 </tr>
             }
         </tbody>
     </table>
 }
+
+
+
 
 @code {
     private KayttajaDTO[]? kayttajat;
@@ -48,5 +51,13 @@ else
         kayttajat = await Http.GetFromJsonAsync<KayttajaDTO[]>("kayttaja/kayttajatunnukset");
     }
 
+    private async Task Muokkaa(int Id)
+    {
+        var parameters = new ModalParameters()
+        .Add(nameof(EditKayttaja.Id), Id);
+
+        var uusiModal = ModalService.Show<EditKayttaja>("Tarkastus", parameters);
+        var result = await uusiModal.Result;
+    }
 }
 

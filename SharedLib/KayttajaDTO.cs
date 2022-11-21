@@ -9,15 +9,20 @@ namespace SharedLib
 {
     public class KayttajaDTO
     {
-        
+        public int Idkayttaja { get; set; }
+
         public string Nimi { get; set; }
         [Required]
         public string Kayttajatunnus { get; set; }
         [Required]
         public DateTime Luotu { get; set; }
 
-       
-    }
+		public string Rooli { get; set; }
+
+		public int Poistettu { get; set; }
+
+
+	}
 }
 
 

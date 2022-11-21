@@ -8,10 +8,12 @@ namespace backend.Data
         {
             return new KayttajaDTO
             {
-                //Idkayttaja = item.Idkayttaja,
+                Idkayttaja = item.Idkayttaja,
                 Nimi = item.Nimi,
                 Kayttajatunnus = item.Kayttajatunnus,
                 Luotu = item.Luotu,
+                Rooli = item.Rooli, 
+                Poistettu= item.Poistettu,  
                 //ViimeisinKirjautuminen = item.ViimeisinKirjautuminen
             };
         }

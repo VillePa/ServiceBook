@@ -1,0 +1,63 @@
+﻿@using SharedLib
+@inject HttpClient Http
+@inject IModalService ModalService
+
+<EditForm Model="kayttaja" OnValidSubmit="SaveChanges">
+	@*<DataAnnotationsValidator/>*@
+
+	<div class="mb-3">
+		<label for="id">Id</label>
+		<InputNumber id="id" @bind-Value="kayttaja.Idkayttaja" class="form-control" Disabled />
+	</div>
+
+	<div class="mb-3">
+		<label for="nimi">Nimi</label>
+		<InputText id="nimi" @bind-Value="kayttaja.Nimi" class="form-control" Disabled />
+	</div>
+
+	<div class="mb-3">
+		<label for="kayttajatunnus">Käyttäjätunnus</label>
+		<InputText id="kayttajatunnus" @bind-Value="kayttaja.Kayttajatunnus" class="form-control" Disabled />
+
+	</div>
+
+	<div class="mb-3">
+		<label for="rooli">Rooli</label>
+		<InputSelect id="rooli" @bind-Value="kayttaja.Rooli" class="form-control">
+				<option value="@kayttaja.Rooli">user</option>
+			<option value="@kayttaja.Rooli">admin</option>
+		</InputSelect>
+</div>
+	<div class="mb-3">
+		<label for="poistettu">Id</label>
+		<InputNumber id="poistettu" @bind-Value="kayttaja.Poistettu" class="form-control" />
+	</div>
+		
+		<button type="submit" class="btn btn-primary">Tallenna</button>
+	<button type="submit" class="btn btn-primary" @onclick="Close">Sulje</button>
+	
+</EditForm>
+
+@code {
+	[CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
+	KayttajaDTO kayttaja = new();
+	[Parameter]
+	public int Id { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		kayttaja = await Http.GetFromJsonAsync<KayttajaDTO>($"/kayttaja/{Id}");
+
+	}
+
+	async Task Close()
+	{
+		await Modal.CloseAsync();
+	}
+
+	async Task SaveChanges()
+	{
+		
+	}
+
+}

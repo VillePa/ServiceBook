@@ -30,11 +30,55 @@ namespace backend.Controllers
 
         }
 
-        [HttpGet("/kayttaja/kayttajatunnukset")]
+		[HttpGet("/kayttaja/{id}")]
+		public async Task<IActionResult> GetSingle(int id)
+		{
+			if(id != null)
+            {
+				var kayttaja = await _db.Kayttajas.Where(i => i.Idkayttaja == id).FirstOrDefaultAsync();
+                if(kayttaja != null)
+                {
+					return Ok(Helpers.KayttajaToDTO(kayttaja));
+                }
+                else
+                {
+                    return BadRequest("käyttäjää ei löydy");
+                }
+			}
+
+			else
+            {
+				return BadRequest("käyttäjää ei löydy");
+
+			}
+
+
+
+
+
+		}
+
+		[HttpGet("/kayttaja/kayttajatunnukset")]
         public async Task<IEnumerable<KayttajaDTO>> GetUsernames()
         {
 
             return await _db.Kayttajas.OrderByDescending(i=>i.Idkayttaja > 0).Select(i=>Helpers.KayttajaToDTO(i)).ToListAsync();    
+
+        }
+
+        [HttpPost("/kayttaja/poistaKaytosta"), Authorize]
+        public async Task<ActionResult<bool>> SoftDelete(int value)
+        {
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var kayttaja = await _db.Kayttajas.Where(i => i.Idkayttaja == int.Parse(id)).FirstOrDefaultAsync();
+
+            kayttaja.Poistettu = value;
+
+            _db.Kayttajas.Update(kayttaja);
+            await _db.SaveChangesAsync();
+
+            return true;
 
         }
 

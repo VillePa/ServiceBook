@@ -91,7 +91,7 @@ namespace backend.Controllers
 			var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
 			if (id == null)
 			{
-				return BadRequest();
+				return BadRequest("Käyttäjää ei löydy");
 			}
 
             var uusiHashed = HashPassword(request.UusiSalasana);
