@@ -18,8 +18,11 @@ namespace SharedLib
         public DateTime Luotu { get; set; }
 
 		public string Rooli { get; set; }
+
         [Range(0, 1)]
 		public int Poistettu { get; set; }
+
+		public DateTime ViimeisinKirjautuminen { get; set; }
 
 
 	}

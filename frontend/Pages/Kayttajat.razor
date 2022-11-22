@@ -4,6 +4,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IModalService ModalService
 @attribute [Authorize(Roles = "admin")]
+@inject NavigationManager NavigationManager
 
 <PageTitle>Käyttäjät</PageTitle>
 
@@ -23,6 +24,7 @@ else
                 <th>Nimi</th>
                 <th>Käyttäjätunnus</th>
                 <th>Luotu</th>
+                <th>Rooli</th>
                 <th></th>
             </tr>
         </thead>
@@ -33,6 +35,7 @@ else
                     <td>@item.Nimi</td>
                     <td>@item.Kayttajatunnus</td>
                     <td>@item.Luotu.ToString("dd-MM-yyyy HH:mm")</td>
+                    <td>@item.Rooli</td>
                     <td>
                         <button style="font-size: 85%" class="btn btn-success" @onclick="@(e=> Muokkaa(item.Idkayttaja))">
                             <span class ="oi oi-pencil"></span>
@@ -59,8 +62,12 @@ else
         var parameters = new ModalParameters()
         .Add(nameof(EditKayttaja.Id), Id);
 
-        var uusiModal = ModalService.Show<EditKayttaja>("Tarkastus", parameters);
+        var uusiModal = ModalService.Show<EditKayttaja>("EditKayttaja", parameters);
         var result = await uusiModal.Result;
+
+        //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+              
+        
     }
 }
 

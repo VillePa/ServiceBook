@@ -1,8 +1,10 @@
 ﻿@using SharedLib
 @inject HttpClient Http
 @inject IModalService ModalService
+@inject NavigationManager NavigationManager
 
-<EditForm Model="kayttaja" OnValidSubmit="SaveChanges">
+
+<EditForm Model="kayttaja" >
 	@*<DataAnnotationsValidator/>*@
 
 	<div class="mb-3">
@@ -29,16 +31,17 @@
 		</InputSelect>
 </div>
 	<div class="mb-3">
-		<label for="poistettu">poistettu</label>
+		<label for="poistettu">Aktiivinen</label>
 		<InputSelect id="poistettu" @bind-Value="kayttaja.Poistettu" class="form-control">
 			<option value="@("0")">aktiivinen</option>
 			<option value="@("1")">ei aktiivinen</option>
 		</InputSelect>
-		@*<InputNumber id="poistettu" @bind-Value="kayttaja.Poistettu" class="form-control" />*@
 	</div>
+
 		<div class="mb-3"><span style="color: red">@message</span></div>
-		<button type="submit" class="btn btn-primary">Tallenna</button>
-	<button type="submit" class="btn btn-primary" @onclick="Close">Sulje</button>
+
+	<button class="btn btn-primary" @onclick="SaveChanges">Tallenna</button>
+	<button class="btn btn-secondary" @onclick="Close">Sulje</button>
 	
 </EditForm>
 
@@ -64,9 +67,11 @@
 	async Task SaveChanges()
 	{
 		var result = await Http.PutAsJsonAsync<KayttajaDTO>("/kayttaja/muokkaa/{Id}", kayttaja);
+
 		if (result.IsSuccessStatusCode)
 		{
 			await Modal.CloseAsync();
+			NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
 
 		}
 		else

@@ -76,10 +76,12 @@ namespace backend.Controllers
                 return BadRequest("Käyttäjätunnusta ei löytynyt");
             }
 
-            //TÄHÄN VIIMEISIMMÄN KIRJAUTUMISEN PÄIVITYS KANTAAN!
             else if (ValidatePassword(req.Salasana, kayttaja.Salasana))
             {
 				string token = CreateToken(kayttaja);
+                kayttaja.ViimeisinKirjautuminen = DateTime.Now;
+                _db.Kayttajas.Update(kayttaja);
+                _db.SaveChangesAsync();
 				return Ok(token);
             }
 

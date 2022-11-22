@@ -12,21 +12,22 @@
 @if (@data != null)
 {
 	<h4 class="mb-3">Omat tiedot</h4>
+	<div>
 	<ul>
 		<li>@data.Nimi</li>
 		<li>@data.Kayttajatunnus</li>
+		<li>@data.ViimeisinKirjautuminen</li>
 		<li>@data.Luotu</li>
 		<li>@data.Rooli</li>
 		<li>@data.Poistettu</li>
 	</ul>
+	</div>
 }
 else
 {
 	<h4 class="mb-3">Ei tietoja saatavilla</h4>
 }
-
-
-
+<hr />
 <h4 class="mb-3">Vaihda salasana</h4>
 
 <EditForm Model="uusi" OnValidSubmit="ChangePassword">
@@ -69,7 +70,6 @@ else
 		{
 			message = "Salasanan vaihto onnistui.";
 			uusi = new VaihdaSalasana();
-
 		}
 		else
 		{

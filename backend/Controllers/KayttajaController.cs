@@ -77,10 +77,8 @@ namespace backend.Controllers
 		}
 
 		[HttpPut("/kayttaja/muokkaa/{id}"), Authorize]
-		public async Task<IActionResult> SoftDelete(KayttajaDTO item)
+		public async Task<IActionResult> EditUser(KayttajaDTO item)
 		{
-			//var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
 			var k = await _db.Kayttajas.Where(i => i.Idkayttaja == item.Idkayttaja).FirstOrDefaultAsync();
 
 			if (k == null)
