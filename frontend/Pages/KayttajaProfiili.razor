@@ -12,15 +12,26 @@
 @if (@data != null)
 {
 	<h4 class="mb-3">Omat tiedot</h4>
-	<div>
-	<ul>
-		<li>@data.Nimi</li>
-		<li>@data.Kayttajatunnus</li>
-		<li>@data.ViimeisinKirjautuminen</li>
-		<li>@data.Luotu</li>
-		<li>@data.Rooli</li>
-		<li>@data.Poistettu</li>
-	</ul>
+
+	<div class="card">
+		<img src="https://cdn-icons-png.flaticon.com/512/1038/1038726.png" alt="Avatar" style="width:100%">
+		<div class="container">
+			<span>Käyttäjätunnus: @data.Kayttajatunnus</span><br>
+			<span>Viimeisin kirjautuminen: @data.ViimeisinKirjautuminen</span><br>
+			<span>Käyttäjä luotu: @data.Luotu</span><br>
+			<span>Rooli: @data.Rooli</span><br>
+			<span>Aktiivinen:
+
+				@if(@data.Poistettu == 0)
+				{
+					<span>kyllä</span>
+				}
+				else
+				{
+					<span>ei</span>
+				}
+			</span>
+		</div>
 	</div>
 }
 else
