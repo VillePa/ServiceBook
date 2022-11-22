@@ -6,9 +6,28 @@
 @attribute [Authorize]
 
 <AuthorizeView>
-	<h3>Terve <i>@context.User.Identity.Name</i>.</h3>
+	<h3 class="mb-4">Terve <i>@context.User.Identity.Name</i>.</h3>
 </AuthorizeView>
 
+@if (@data != null)
+{
+	<h4 class="mb-3">Omat tiedot</h4>
+	<ul>
+		<li>@data.Nimi</li>
+		<li>@data.Kayttajatunnus</li>
+		<li>@data.Luotu</li>
+		<li>@data.Rooli</li>
+		<li>@data.Poistettu</li>
+	</ul>
+}
+else
+{
+	<h4 class="mb-3">Ei tietoja saatavilla</h4>
+}
+
+
+
+<h4 class="mb-3">Vaihda salasana</h4>
 
 <EditForm Model="uusi" OnValidSubmit="ChangePassword">
 	<DataAnnotationsValidator />
@@ -19,25 +38,28 @@
 		<ValidationMessage For="@(()=> uusi.UusiSalasana)" />
 	</div>
 
-
 	<div class="mb-3">
 		<label for="vahvistaSalasana">Vahvista salasana</label>
 		<InputText id="vahvistaSalasana" @bind-Value="uusi.VahvistaSalasana" class="form-control" type="password" />
 		<ValidationMessage For="@(()=> uusi.VahvistaSalasana)" />
 	</div>
 
-	
-
 	<button type="submit" class="btn btn-primary">Tallenna</button>
 	<br /> <br />
-	@*<div><span style="color: red">@errorMsg</span></div>
-	<div><span style="color: green">@successMsg</span></div>*@
+	<div class="mb-3"><span style="color: blue">@message</span></div>
+
 </EditForm>
 
 
 @code {
 	VaihdaSalasana uusi = new();
 	string message = string.Empty;
+	private KayttajaDTO? data;
+
+	protected override async Task OnInitializedAsync()
+	{
+		data = await Http.GetFromJsonAsync<KayttajaDTO>("kayttaja/omatTiedot");
+	}
 
 	private async Task ChangePassword()
 	{
@@ -46,11 +68,15 @@
 		if (result.IsSuccessStatusCode)
 		{
 			message = "Salasanan vaihto onnistui.";
+			uusi = new VaihdaSalasana();
+
 		}
 		else
 		{
 			message = "Jotain meni vikaan.";
 		}
+
 	}
+
 
 }

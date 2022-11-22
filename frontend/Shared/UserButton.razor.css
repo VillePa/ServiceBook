@@ -3,7 +3,9 @@
 }
 
 .user-button {
+    width: 65px;
     margin-left: .5em;
+    margin-right: 70px;
 }
 
 .top-row a {

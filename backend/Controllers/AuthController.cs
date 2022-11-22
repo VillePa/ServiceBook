@@ -76,6 +76,7 @@ namespace backend.Controllers
                 return BadRequest("Käyttäjätunnusta ei löytynyt");
             }
 
+            //TÄHÄN VIIMEISIMMÄN KIRJAUTUMISEN PÄIVITYS KANTAAN!
             else if (ValidatePassword(req.Salasana, kayttaja.Salasana))
             {
 				string token = CreateToken(kayttaja);
@@ -106,7 +107,6 @@ namespace backend.Controllers
 			return true;
 
 		}
-
 
 		//Salasanan suolaus
 		private static string GetRandomSalt()

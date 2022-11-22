@@ -23,7 +23,7 @@ else
                 <th>Nimi</th>
                 <th>Käyttäjätunnus</th>
                 <th>Luotu</th>
-                <th>Poista käytöstä</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -33,7 +33,10 @@ else
                     <td>@item.Nimi</td>
                     <td>@item.Kayttajatunnus</td>
                     <td>@item.Luotu.ToString("dd-MM-yyyy HH:mm")</td>
-                    <td><button style="font-size: 85%" class="btn btn-success" @onclick="@(e=> Muokkaa(item.Idkayttaja))">Muokkaa</button></td>
+                    <td>
+                        <button style="font-size: 85%" class="btn btn-success" @onclick="@(e=> Muokkaa(item.Idkayttaja))">
+                            <span class ="oi oi-pencil"></span>
+                        </button></td>
                 </tr>
             }
         </tbody>
