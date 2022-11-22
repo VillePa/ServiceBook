@@ -28,6 +28,40 @@ namespace backend.Controllers
             return await _db.Kohdes.OrderBy(a => a.Idkohde).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
 
         }
+
+        // Luodaan uusi kohde
+        [HttpPost("/kohde")]
+        public async Task<IActionResult> LisaaKohde([FromBody] HuoltokohdeDTO t)
+        {
+            if (false == ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            Kohde newKohde = Helpers.DTOtoKohde(t);
+
+            _db.Kohdes.Add(newKohde);
+            await _db.SaveChangesAsync();
+            return Ok();
+        }
+
+        // haetaan yksi kohde
+        [HttpGet("/kohde/{id}")]
+        public async Task<IActionResult> GetOne(int id)
+        {
+
+            var a = await _db.Kohdes.Where(a => a.Idkohde == id).FirstOrDefaultAsync();
+
+            if (a == null)
+            {
+                return NotFound();
+            }
+
+            else
+            {
+                return Ok(Helpers.KohdeToDTO(a));
+            }
+        }
     }
 }
 

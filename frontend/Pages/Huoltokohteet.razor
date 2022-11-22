@@ -6,7 +6,7 @@
 
 <p>huoltokohteet table ja yms</p>
 
-<button @onclick="@(() => Modal.Show<SurveyPrompt>("survey"))">Lisää uusi kohde</button>
+<button @onclick="@(() => Modal.Show<UusiKohde>("Uusi Huoltokohde"))">Lisää uusi huoltokohde</button>
 
 @if (kohteet == null)
 {
@@ -28,6 +28,7 @@ else
                 <th>Luotu</th>
                 <th>Luoja</th>
                 <th>Kohderyhmä</th>
+                <th>Muokkaa</th>
             </tr>
         </thead>
         <tbody>
@@ -45,6 +46,8 @@ else
                     <td>@a.Luotu</td>
                     <td>@a.Idkayttaja</td>
                     <td>@a.Idkohderyhma</td>
+                    <td><button style="font-size: 85%" class="btn btn-success" @onclick="@(e => Edit(a.Idkohde))"><span class="oi oi-pencil"></span></button></td>
+
                 </tr>
             }
         </tbody>
@@ -61,5 +64,22 @@ else
     {
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
     }
-}
 
+    private async Task Edit(int Id)
+    {
+        var parameters = new ModalParameters()
+        .Add(nameof(EditKohde.Id), Id);
+
+        var uusiModal = Modal.Show<EditKohde>("Kohde", parameters);
+        var result = await uusiModal.Result;
+    }
+
+    private async Task Delete(int Id)
+    {
+        var parameters = new ModalParameters()
+        .Add(nameof(EditKohde.Id), Id);
+
+        var uusiModal = Modal.Show<EditKohde>("Kohde", parameters);
+        var result = await uusiModal.Result;
+    }
+}

@@ -72,5 +72,37 @@ namespace backend.Data
             };
         }
 
+        // huoltokohdeDTO to huoltokohde
+        public static Kohde DTOtoKohde(this HuoltokohdeDTO a)
+        {
+            return new Kohde
+            {
+                Idkohde = a.Idkohde,
+                Nimi = a.Nimi,
+                Kuvaus = a.Kuvaus,
+                Sijainti = a.Sijainti,
+                Tyyppi = a.Tyyppi,
+                Malli = a.Malli,
+                Tunnus = a.Tunnus,
+                Tila = a.Tila,
+                Luotu = a.Luotu,
+                Idkayttaja = a.Idkayttaja,
+                Idkohderyhma = a.Idkohderyhma
+            };
+        }
+
+        // Kohderyhmä helpperi
+
+        public static KohderyhmaDTO KohderyhmaToDTO(this Kohderyhma a)
+        {
+            return new KohderyhmaDTO
+            {
+                Idkohderyhma = a.Idkohderyhma,
+                Nimi = a.Nimi,
+
+
+            };
+        }
+
     }
 }

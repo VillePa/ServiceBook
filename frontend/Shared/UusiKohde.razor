@@ -1,0 +1,101 @@
+﻿@using SharedLib
+@inject HttpClient Http
+
+@if (ryhmat != null)
+{
+    <EditForm Model="kohde" OnValidSubmit="Tallenna">
+        <DataAnnotationsValidator />
+        <div class="mb-3">
+            <label for="nimi">Huoltokohteen nimi</label>
+            <InputText id="nimi" @bind-Value="kohde.Nimi" class="form-control" />
+            <ValidationMessage For="()=>kohde.Nimi" />
+        </div>
+
+        <div class="mb-3">
+            <label for="kuvaus">Kuvaus</label>
+            <InputText id="kuvaus" @bind-Value="kohde.Kuvaus" class="form-control" />
+            <ValidationMessage For="()=>kohde.Kuvaus" />
+        </div>
+        <div class="mb-3">
+            <label for="sijainti">Sijainti</label>
+            <InputText id="sijainti" @bind-Value="kohde.Sijainti" class="form-control" />
+            <ValidationMessage For="()=>kohde.Sijainti" />
+        </div>
+        <div class="mb-3">
+            <label for="tyyppi">Tyyppi</label>
+            <InputText id="tyyppi" @bind-Value="kohde.Tyyppi" class="form-control" />
+            <ValidationMessage For="()=>kohde.Tyyppi" />
+        </div>
+        <div class="mb-3">
+            <label for="malli">Malli</label>
+            <InputText id="malli" @bind-Value="kohde.Malli" class="form-control" />
+            <ValidationMessage For="()=>kohde.Malli" />
+        </div>
+        <div class="mb-3">
+            <label for="tunnus">Tunnus</label>
+            <InputText id="tunnus" @bind-Value="kohde.Tunnus" class="form-control" />
+            <ValidationMessage For="()=>kohde.Tunnus" />
+            <div class="mb-3">
+                <label for="tila">Kohteen tila:</label> <br />
+                <InputRadioGroup id="tila" @bind-Value="kohde.Tila" class="form-control">
+                    @for (int i = 0; i < 3; i++)
+                    {
+                        <label for="radio">@tilat[i]</label>
+                        <InputRadio id="radio" Value="@i" /> <br />
+                    }
+                </InputRadioGroup>
+                <ValidationMessage For="()=>kohde.Tila" />
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="kohderyhma">Kohderyhmä</label>
+            <InputSelect id="kohderyhma" @bind-Value="kohde.Idkohderyhma" class="form-control">
+                @foreach (var item in ryhmat)
+                {
+                    <option value="@item.Idkohderyhma">@item.Nimi</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="()=>kohde.Idkohderyhma" />
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Tallenna</button>
+        <button type="reset" @onclick="Tyhjenna" class="btn btn-secondary">Tyhjenna</button>
+    </EditForm>
+}
+
+
+
+
+@code {
+    [CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
+
+    private HuoltokohdeDTO kohde = new HuoltokohdeDTO();
+    private KohderyhmaDTO[]? ryhmat;
+
+    private string[] tilat = { "Käyttökunnossa", "Epäkunnossa", "Poistettu käytöstä" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        ryhmat = await Http.GetFromJsonAsync<KohderyhmaDTO[]>("/kohderyhma/all");
+    }
+
+
+    private async Task Tallenna()
+    {
+        kohde.Luotu = DateTime.Now;
+        kohde.Idkayttaja = 8;
+
+
+        await Http.PostAsJsonAsync<HuoltokohdeDTO>("/kohde", kohde);
+
+        await Modal.CloseAsync();
+    }
+
+    private void Tyhjenna()
+    {
+        kohde = new HuoltokohdeDTO();
+    }
+
+}
+

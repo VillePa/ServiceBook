@@ -1,0 +1,86 @@
+﻿@using SharedLib
+@inject HttpClient Http
+
+@if (kohde != null)
+{
+    // tänne lisättävä muokkaus+tallenna nappi ja muokkauksen tallennus muutoshistoriaan!
+    <EditForm Model="kohde" OnValidSubmit="Sulje">
+
+        <div class="mb-3">
+            <label for="id">Kohteen Id</label>
+            <InputNumber id="id" @bind-Value="kohde.Idkohde" class="form-control" Disabled />
+        </div>
+
+        <div class="mb-3">
+            <label for="nimi">Nimi</label>
+            <InputText id="nimi" @bind-Value="kohde.Nimi" class="form-control" Disabled />
+        </div>
+
+        <div class="mb-3">
+            <label for="kuvaus">Kuvaus</label>
+            <InputText id="kuvaus" @bind-Value="kohde.Kuvaus" class="form-control" Disabled />
+        </div>
+        <div class="mb-3">
+            <label for="sijainti">Sijainti</label>
+            <InputText id="sijainti" @bind-Value="kohde.Sijainti" class="form-control" Disabled />
+        </div>
+        <div class="mb-3">
+            <label for="tyyppi">Tyyppi</label>
+            <InputText id="tyyppi" @bind-Value="kohde.Tyyppi" class="form-control" Disabled />
+        </div>
+        <div class="mb-3">
+            <label for="malli">Malli</label>
+            <InputText id="malli" @bind-Value="kohde.Malli" class="form-control" Disabled />
+        </div>
+        <div class="mb-3">
+            <label for="´tunnus">Tunnus</label>
+            <InputText id="tunnus" @bind-Value="kohde.Tunnus" class="form-control" Disabled />
+        </div>
+        <div class="mb-3">
+            <label for="tila">Tila</label>
+            <InputText id="tila" @bind-Value="kohde.Tila" class="form-control" Disabled />
+        </div>
+        <div class="mb-3">
+            <label for="kohderyhma">Kohderyhmä</label>
+            <InputNumber id="kohderyhma" @bind-Value="kohde.Idkohderyhma" class="form-control" Disabled />
+        </div>
+        <div class="mb-3">
+            <label for="luotu">Luotu</label>
+            <InputDate id="luotu" @bind-Value="kohde.Luotu" class="form-control" Disabled />
+        </div>
+        <div class="mb-3">
+            <label for="luoja">Luoja</label>
+            <InputNumber id="luoja" @bind-Value="kohde.Idkayttaja" class="form-control" Disabled />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Sulje</button>
+    </EditForm>
+}
+
+
+
+
+@code {
+    [CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
+
+    private HuoltokohdeDTO? kohde = new HuoltokohdeDTO();
+    private string[] tilat = { "Ei muutosta", "Käyttökunnossa", "Epäkunnossa", "Poistettu käytöstä" };
+
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        kohde = await Http.GetFromJsonAsync<HuoltokohdeDTO>($"/kohde/{Id}");
+
+    }
+
+
+    private async Task Sulje()
+    {
+        await Modal.CloseAsync();
+    }
+
+}
