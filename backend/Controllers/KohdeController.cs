@@ -20,7 +20,7 @@ namespace backend.Controllers
             _db = db;
         }
 
-        // Kaikki tarkastukset
+        // Kaikki kohteet
         [HttpGet("/kohde/all")]
         public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> GetAll()
         {
@@ -62,6 +62,8 @@ namespace backend.Controllers
                 return Ok(Helpers.KohdeToDTO(a));
             }
         }
+
+        // tänne sorttausta ja filtteröintiä to be continued
     }
 }
 
