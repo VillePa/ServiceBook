@@ -25,6 +25,7 @@ else
                 <th>Käyttäjätunnus</th>
                 <th>Luotu</th>
                 <th>Rooli</th>
+                <th>Aktiivinen</th>
                 <th></th>
             </tr>
         </thead>
@@ -37,9 +38,26 @@ else
                     <td>@item.Luotu.ToString("dd-MM-yyyy HH:mm")</td>
                     <td>@item.Rooli</td>
                     <td>
-                        <button style="font-size: 85%" class="btn btn-success" @onclick="@(e=> Muokkaa(item.Idkayttaja))">
+                        @if (@item.Poistettu == 1)
+                        {
+                            <span>poistettu</span>
+                        }
+                        else
+                        {
+                            <span>aktiivinen</span>
+                        }
+                    </td>
+                    <td>
+                        @if (@item.Rooli == "user")
+                        {
+                               <button style="font-size: 85%" class="btn btn-success" @onclick="@(e=> Muokkaa(item.Idkayttaja))">
                             <span class ="oi oi-pencil"></span>
-                        </button></td>
+                            </button>
+                        }else{
+                                <span>[tietoja ei voi muokata]</span>
+                            }
+                            </td>
+                     
                 </tr>
             }
         </tbody>

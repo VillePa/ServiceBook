@@ -9,7 +9,7 @@
 	<h3 class="mb-4">Terve <i>@context.User.Identity.Name</i>.</h3>
 </AuthorizeView>
 
-@if (@data != null)
+@if (data != null)
 {
 	<h4 class="mb-3">Omat tiedot</h4>
 
@@ -17,12 +17,12 @@
 		<img src="https://cdn-icons-png.flaticon.com/512/1038/1038726.png" alt="Avatar" style="width:100%">
 		<div class="container">
 			<span>Käyttäjätunnus: @data.Kayttajatunnus</span><br>
-			<span>Viimeisin kirjautuminen: @data.ViimeisinKirjautuminen.ToString("dd-MM-yyyy hh:mm")</span><br>
-			<span>Käyttäjä luotu: @data.Luotu.ToString("dd-MM-yyyy hh:mm")</span><br>
+			<span>Viimeisin kirjautuminen: @data.ViimeisinKirjautuminen.ToString("dd-MM-yyyy HH:mm")</span><br>
+			<span>Käyttäjä luotu: @data.Luotu.ToString("dd-MM-yyyy HH:mm")</span><br>
 			<span>Rooli: @data.Rooli</span><br>
 			<span>Aktiivinen:
 
-				@if(@data.Poistettu == 0)
+				@if(data.Poistettu == 0)
 				{
 					<span>kyllä</span>
 				}
