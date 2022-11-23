@@ -5,9 +5,11 @@ namespace backend.Data;
 
 public partial class Liite
 {
-    public int Idliite { get; set; }
+	public int Idliite { get; set; }
 
-    public string? Sijainti { get; set; }
+	public string? Sijainti { get; set; }
 
-    public int Idtarkastus { get; set; }
+	public int Idtarkastus { get; set; }
+
+	public virtual Tarkastu IdtarkastusNavigation { get; set; } = null!;
 }

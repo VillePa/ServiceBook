@@ -6,7 +6,7 @@ using SharedLib;
 
 namespace backend.Controllers
 {
-    [ApiController]
+	[ApiController]
     [Route("[controller]")]
     public class KohderyhmaController : ControllerBase
     {
