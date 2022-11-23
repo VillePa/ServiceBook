@@ -104,5 +104,18 @@ namespace backend.Data
 			};
 		}
 
-	}
+        // Tila helpperi
+
+        public static TilaDTO TilaToDTO(this KohteenTila a)
+        {
+            return new TilaDTO
+            {
+                IdkohteenTila = a.IdkohteenTila,
+                Kuvaus = a.Kuvaus,
+
+
+            };
+        }
+
+    }
 }
