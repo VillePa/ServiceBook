@@ -1,7 +1,7 @@
 ﻿@using SharedLib
 @inject HttpClient Http
 
-@if (ryhmat != null)
+@if (ryhmat != null && tilat != null)
 {
     <EditForm Model="kohde" OnValidSubmit="Tallenna">
         <DataAnnotationsValidator />
@@ -35,18 +35,18 @@
             <label for="tunnus">Tunnus</label>
             <InputText id="tunnus" @bind-Value="kohde.Tunnus" class="form-control" />
             <ValidationMessage For="()=>kohde.Tunnus" />
-            <div class="mb-3">
-                <label for="tila">Kohteen tila:</label> <br />
-                <InputRadioGroup id="tila" @bind-Value="kohde.Tila" class="form-control">
-                    @for (int i = 0; i < 3; i++)
-                    {
-                        <label for="radio">@tilat[i]</label>
-                        <InputRadio id="radio" Value="@i" /> <br />
-                    }
-                </InputRadioGroup>
-                <ValidationMessage For="()=>kohde.Tila" />
-            </div>
+                </div>
+        <div class="mb-3">
+            <label for="tila">Kohteen tila</label>
+            <InputSelect id="tila" @bind-Value="kohde.IdkohteenTila" class="form-control">
+                @foreach (var item in tilat)
+                {
+                    <option value="@item.IdkohteenTila">@item.Kuvaus</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="()=>kohde.IdkohteenTila" />
         </div>
+        
         <div class="mb-3">
             <label for="kohderyhma">Kohderyhmä</label>
             <InputSelect id="kohderyhma" @bind-Value="kohde.Idkohderyhma" class="form-control">
@@ -72,12 +72,14 @@
 
     private HuoltokohdeDTO kohde = new HuoltokohdeDTO();
     private KohderyhmaDTO[]? ryhmat;
+    private TilaDTO[]? tilat;
 
-    private string[] tilat = { "Käyttökunnossa", "Epäkunnossa", "Poistettu käytöstä" };
+   
 
     protected override async Task OnInitializedAsync()
     {
         ryhmat = await Http.GetFromJsonAsync<KohderyhmaDTO[]>("/kohderyhma/all");
+        tilat = await Http.GetFromJsonAsync<TilaDTO[]>("/tila/all");
     }
 
 

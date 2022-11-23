@@ -22,7 +22,7 @@ namespace SharedLib
 
         public string Tunnus { get; set; } = null!;
 
-        public string Tila { get; set; } = null!;
+        public int IdkohteenTila { get; set; }
 
         public DateTime Luotu { get; set; }
 

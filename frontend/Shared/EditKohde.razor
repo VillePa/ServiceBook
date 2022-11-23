@@ -39,7 +39,7 @@
         </div>
         <div class="mb-3">
             <label for="tila">Tila</label>
-            <InputText id="tila" @bind-Value="kohde.Tila" class="form-control" Disabled />
+            <InputNumber id="tila" @bind-Value="kohde.IdkohteenTila" class="form-control" Disabled />
         </div>
         <div class="mb-3">
             <label for="kohderyhma">Kohderyhmä</label>
@@ -65,7 +65,7 @@
     [CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
 
     private HuoltokohdeDTO? kohde = new HuoltokohdeDTO();
-    private string[] tilat = { "Ei muutosta", "Käyttökunnossa", "Epäkunnossa", "Poistettu käytöstä" };
+    
 
 
     [Parameter]
