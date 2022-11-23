@@ -86,7 +86,7 @@
     private async Task Tallenna()
     {
         kohde.Luotu = DateTime.Now;
-        kohde.Idkayttaja = 8;
+        kohde.Idkayttaja = 18;
 
 
         await Http.PostAsJsonAsync<HuoltokohdeDTO>("/kohde", kohde);

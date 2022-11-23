@@ -64,8 +64,8 @@ namespace backend.Data
 				Tyyppi = a.Tyyppi,
 				Malli = a.Malli,
 				Tunnus = a.Tunnus,
-				//Tila = a.Tila,
-				Luotu = a.Luotu,
+                IdkohteenTila = a.IdkohteenTila,
+                Luotu = a.Luotu,
 				Idkayttaja = a.Idkayttaja,
 				Idkohderyhma = a.Idkohderyhma
 
@@ -84,7 +84,7 @@ namespace backend.Data
 				Tyyppi = a.Tyyppi,
 				Malli = a.Malli,
 				Tunnus = a.Tunnus,
-				//Tila = a.Tila,
+				IdkohteenTila = a.IdkohteenTila,
 				Luotu = a.Luotu,
 				Idkayttaja = a.Idkayttaja,
 				Idkohderyhma = a.Idkohderyhma
