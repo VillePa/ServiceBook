@@ -40,11 +40,11 @@ else
                     <td>
                         @if (@item.Poistettu == 1)
                         {
-                            <span>poistettu</span>
+                            <span class="oi oi-x" style="color:red"></span>
                         }
                         else
                         {
-                            <span>aktiivinen</span>
+                            <span class="oi oi-check" style="color: green"></span>
                         }
                     </td>
                     <td>
@@ -54,7 +54,9 @@ else
                             <span class ="oi oi-pencil"></span>
                             </button>
                         }else{
-                                <span>[tietoja ei voi muokata]</span>
+                           <button style="font-size: 85%" class="btn btn-secondary" disabled>
+                            <span class ="oi oi-pencil"></span>
+                            </button>
                             }
                             </td>
                      
