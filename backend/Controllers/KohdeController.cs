@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using SharedLib;
+using System;
 
 namespace backend.Controllers
 {
@@ -63,7 +64,82 @@ namespace backend.Controllers
             }
         }
 
-        // tänne sorttausta ja filtteröintiä to be continued
+        // muokataan kohteen tietoja
+        [HttpPut("/kohde/{id}")]
+        public async Task<IActionResult> Update(int id, HuoltokohdeDTO model)
+        {
+            var kohde = await _db.Kohdes.FindAsync(id);
+            if (null == kohde)
+            {
+                return NotFound();
+            }
+            kohde.Idkohde = id;
+            kohde.Nimi = model.Nimi;
+            kohde.Kuvaus = model.Kuvaus;
+            kohde.Sijainti = model.Sijainti;
+            kohde.Tyyppi= model.Tyyppi;
+            kohde.Malli = model.Malli;
+            kohde.Tunnus = model.Tunnus;
+            kohde.IdkohteenTila = model.IdkohteenTila;
+            kohde.Luotu = model.Luotu;
+            kohde.Idkayttaja = model.Idkayttaja;
+            kohde.Idkohderyhma = model.Idkohderyhma;
+
+            await _db.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        // tänne sorttausta ja filtteröintiä
+        [HttpGet("/kohde/sortbysijainti")]
+        public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> SortBySijainti()
+        {
+
+            return await _db.Kohdes.OrderBy(a => a.Sijainti).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+
+        }
+
+        [HttpGet("/kohde/sortbytyyppi")]
+        public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> SortByTyyppi()
+        {
+
+            return await _db.Kohdes.OrderBy(a => a.Tyyppi).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+
+        }
+
+        [HttpGet("/kohde/sortbytila")]
+        public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> SortByTila()
+        {
+
+            return await _db.Kohdes.OrderBy(a => a.IdkohteenTila).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+
+        }
+
+        [HttpGet("/kohde/sortbyluotu")]
+        public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> SortByLuotu()
+        {
+
+            return await _db.Kohdes.OrderBy(a => a.Luotu).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+
+        }
+
+        [HttpGet("/kohde/sortbyluoja")]
+        public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> SortByLuoja()
+        {
+
+            return await _db.Kohdes.OrderBy(a => a.Idkayttaja).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+
+        }
+
+        [HttpGet("/kohde/sortbykohderyhma")]
+        public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> SortByKohderyhma()
+        {
+
+            return await _db.Kohdes.OrderBy(a => a.Idkohderyhma).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+
+        }
+
+
     }
 }
 

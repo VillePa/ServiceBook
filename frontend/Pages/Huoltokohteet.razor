@@ -8,6 +8,7 @@
 
 <button @onclick="@(() => Modal.Show<UusiKohde>("Lisää uusi Huoltokohde"))">Lisää uusi huoltokohde</button>
 
+
 @if (kohteet == null)
 {
     <p><em>ladataan...</em></p>
@@ -17,17 +18,17 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
+                <th><button @onclick="SortById">ID</button></th>
                 <th>Nimi</th>
                 <th>Kuvaus</th>
-                <th>Sijainti</th>
-                <th>Tyyppi</th>
+                <th><button @onclick="SortBySijainti">Sijainti</button></th>
+                <th><button @onclick="SortByTyyppi">Tyyppi</button></th>
                 <th>Malli</th>
                 <th>Tunnus</th>
-                <th>Tila</th>
-                <th>Luotu</th>
-                <th>Luoja</th>
-                <th>Kohderyhmä</th>
+                <th><button @onclick="SortByTila">Tila</button></th>
+                <th><button @onclick="SortByLuotu">Luotu</button></th>
+                <th><button @onclick="SortByLuoja">Luoja</button></th>
+                <th><button @onclick="SortByKohderyhma">Kohderyhmä</button></th>
                 <th>Muokkaa</th>
             </tr>
         </thead>
@@ -81,5 +82,47 @@ else
 
         var uusiModal = Modal.Show<EditKohde>("Kohde", parameters);
         var result = await uusiModal.Result;
+    }
+
+    private async Task SortBySijainti()
+    {
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbysijainti");
+
+    }
+
+    private async Task SortById()
+    {
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+
+    }
+
+    private async Task SortByTyyppi()
+    {
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbytyyppi");
+
+    }
+
+    private async Task SortByTila()
+    {
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbytila");
+
+    }
+
+    private async Task SortByLuotu()
+    {
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbyluotu");
+
+    }
+
+    private async Task SortByLuoja()
+    {
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbyluoja");
+
+    }
+
+    private async Task SortByKohderyhma()
+    {
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbykohderyhma");
+
     }
 }

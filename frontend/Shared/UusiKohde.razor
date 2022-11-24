@@ -1,4 +1,5 @@
 ﻿@using SharedLib
+@inject NavigationManager NavigationManager
 @inject HttpClient Http
 
 @if (ryhmat != null && tilat != null)
@@ -92,6 +93,8 @@
         await Http.PostAsJsonAsync<HuoltokohdeDTO>("/kohde", kohde);
 
         await Modal.CloseAsync();
+
+        NavigationManager.NavigateTo("/huoltokohteet");
     }
 
     private void Tyhjenna()
