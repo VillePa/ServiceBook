@@ -27,7 +27,7 @@ namespace backend.Controllers
 		public async Task<IEnumerable<Kayttaja>> Get()
 		{
 
-			return await _db.Kayttajas.OrderByDescending(i => i.Idkayttaja < 0).ToListAsync();
+			return await _db.Kayttajas.OrderByDescending(i => i.Idkayttaja > 0).ToListAsync();
 
 		}
 
@@ -72,35 +72,54 @@ namespace backend.Controllers
 		public async Task<IEnumerable<KayttajaDTO>> GetUsernames()
 		{
 
-			return await _db.Kayttajas.OrderByDescending(i => i.Idkayttaja > 0).Select(i => Helpers.KayttajaToDTO(i)).ToListAsync();
+			return await _db.Kayttajas.OrderBy(i => i.Nimi).Select(i => Helpers.KayttajaToDTO(i)).ToListAsync();
 
 		}
+	
 
-		[HttpPut("/kayttaja/muokkaa/{id}"), Authorize]
-		public async Task<IActionResult> EditUser(KayttajaDTO item)
-		{
-			var k = await _db.Kayttajas.Where(i => i.Idkayttaja == item.Idkayttaja).FirstOrDefaultAsync();
+        [HttpGet("/kayttaja/sortByName")]
+        public async Task<IEnumerable<KayttajaDTO>> SortByName()
+        {
+            return await _db.Kayttajas.OrderByDescending(i => i.Nimi).Select(i => Helpers.KayttajaToDTO(i)).ToListAsync();
 
-			if (k == null)
-			{
-				return NotFound("käyttäjää ei löydy");
-			}
+        }
 
-			else if (k.Rooli == "admin")
-			{
-				return BadRequest("käyttäjän tietoja ei voi muokata");
-			}
+        [HttpGet("/kayttaja/sortByState/{value}")]
+        public async Task<IEnumerable<KayttajaDTO>> SortByState(bool value)
+        {
+			if(value == true)
+            return await _db.Kayttajas.OrderByDescending(i => i.Poistettu).Select(i => Helpers.KayttajaToDTO(i)).ToListAsync();
 
-			k.Rooli = item.Rooli;
-			k.Poistettu = item.Poistettu;
+			else
+            return await _db.Kayttajas.OrderBy(i => i.Poistettu).Select(i => Helpers.KayttajaToDTO(i)).ToListAsync();
+            
+        }
 
-			_db.Kayttajas.Update(k);
-			await _db.SaveChangesAsync();
+        [HttpPut("/kayttaja/muokkaa/{id}"), Authorize]
+        public async Task<IActionResult> EditUser(KayttajaDTO item)
+        {
+            var k = await _db.Kayttajas.Where(i => i.Idkayttaja == item.Idkayttaja).FirstOrDefaultAsync();
 
-			return Ok(k);
-		}
+            if (k == null)
+            {
+                return NotFound("käyttäjää ei löydy");
+            }
 
-		[HttpDelete("/kayttaja/poista/{id}")]
+            else if (k.Rooli == "admin")
+            {
+                return BadRequest("käyttäjän tietoja ei voi muokata");
+            }
+
+            k.Rooli = item.Rooli;
+            k.Poistettu = item.Poistettu;
+
+            _db.Kayttajas.Update(k);
+            await _db.SaveChangesAsync();
+
+            return Ok(k);
+        }
+
+        [HttpDelete("/kayttaja/poista/{id}")]
 		public async Task<IActionResult> Delete(int? id)
 		{
 
@@ -114,7 +133,7 @@ namespace backend.Controllers
 			}
 			return NotFound("käyttäjää ei löydy");
 
-
 		}
+
 	}
 }

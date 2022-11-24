@@ -8,7 +8,7 @@
 
 <PageTitle>Käyttäjät</PageTitle>
 
-<h1>Käyttäjät</h1>
+<h1 class="mb-3">Käyttäjät</h1>
 
 
 
@@ -21,11 +21,32 @@ else
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Nimi</th>
+                <th>Nimi
+                    @if(sortNameDesc == false)
+                    {
+                        <button class="oi oi-sort-ascending" style="font-size: 80%" @onclick="SortByName" />
+                    }
+                    else
+                    {
+                        <button class="oi oi-sort-descending" style="font-size: 80%" @onclick="SortByName"/> 
+                        
+                    }
+                </th>
                 <th>Käyttäjätunnus</th>
-                <th>Luotu</th>
                 <th>Rooli</th>
-                <th>Aktiivinen</th>
+                <th>Luotu</th>
+                <th>Aktiivinen
+                    @if(sortStateDesc == false)
+                    {
+                        <button class="oi oi-sort-ascending" style="font-size: 80%" @onclick="SortByState"/>
+
+                    }
+                    else
+                    {
+                        <button class="oi oi-sort-descending" style="font-size: 80%" @onclick="SortByState" />
+
+                    }
+                </th>
                 <th></th>
             </tr>
         </thead>
@@ -33,10 +54,13 @@ else
             @foreach (var item in kayttajat)
             {
                 <tr>
+                  @*  <td>@(
+                    item.Rooli == "admin" ? $"<span class='oi oi - x' style='color: red'></span>" : "user"
+                    )</td>*@
                     <td>@item.Nimi</td>
                     <td>@item.Kayttajatunnus</td>
-                    <td>@item.Luotu.ToString("dd-MM-yyyy HH:mm")</td>
                     <td>@item.Rooli</td>
+                    <td>@item.Luotu.ToString("dd-MM-yyyy HH:mm")</td>
                     <td>
                         @if (@item.Poistettu == 1)
                         {
@@ -66,10 +90,11 @@ else
 }
 
 
-
-
 @code {
     private KayttajaDTO[]? kayttajat;
+    private bool sortNameDesc = false;
+    private bool sortStateDesc = false;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -85,8 +110,43 @@ else
         var result = await uusiModal.Result;
 
         //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
-              
+
+
+    }
+
+    private async Task SortByName()
+    {
+        if(sortNameDesc == false)
+        {
+            kayttajat = await Http.GetFromJsonAsync<KayttajaDTO[]>("/kayttaja/sortByName");
+            sortNameDesc = true;
+        }
+        else
+        {
+            kayttajat = await Http.GetFromJsonAsync<KayttajaDTO[]>("kayttaja/kayttajatunnukset");
+            sortNameDesc = false;
+            //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+        }
+
+    }
+
+
+    private async Task SortByState()
+    {
+        //EI TOIMI OIKEIN, VOIS KORJAILLA KUN JAKSAA
+        if(sortStateDesc == false)
+        {
+            kayttajat = await Http.GetFromJsonAsync<KayttajaDTO[]>($"/kayttaja/sortByState/{sortStateDesc}");
+            sortNameDesc = true;
+        }
+        else
+        {
+            kayttajat = await Http.GetFromJsonAsync<KayttajaDTO[]>($"/kayttaja/sortByState/{sortStateDesc}");
+            sortNameDesc = false;
+        }
+
         
     }
 }
+
 
