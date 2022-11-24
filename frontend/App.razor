@@ -4,8 +4,9 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    <h3>Voi hitsi! Sinulla ei ole pääsyä tälle sivulle :(</h3>
-                    <h5>Ole hyvä ja kirjaudu sisään <a href="/login">tästä</a></h5>
+                        @*<h2 class="mb-5">UNAUTHORIZED</h2>*@
+                        <img src="https://img.freepik.com/premium-vector/red-rubber-stamp-with-word-stop-grunge-style-road-signs-vector-illustration_615910-652.jpg?w=740"
+                        alt="unauthorized"/>
                 </NotAuthorized>
             </AuthorizeRouteView>
 
