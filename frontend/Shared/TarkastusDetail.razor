@@ -1,13 +1,23 @@
 ﻿@using SharedLib
 @inject HttpClient Http
 
-@if (tarkastus != null && tilat != null)
+@if (tarkastus != null && tila != null && aikaleima != null)
 {
     <EditForm Model="tarkastus" OnValidSubmit="Sulje">
 
         <div class="mb-3">
             <label for="id">Tarkastuksen Id</label>
             <InputNumber id="id" @bind-Value="tarkastus.Idtarkastus" class="form-control" Disabled />
+        </div>
+
+        <div class="mb-3">
+            <label for="aikaleima">Tarkastus suoritettu</label>
+            <InputText id="aikaleima" @bind-Value="aikaleima" class="form-control" Disabled />
+        </div>
+
+        <div class="mb-3">
+            <label for="kayttajaNimi">Tarkastuksen tekijä</label>
+            <InputText id="kayttajaNimi" @bind-Value="tarkastus.KayttajanNimi" class="form-control" Disabled />
         </div>
 
         <div class="mb-3">
@@ -25,6 +35,13 @@
             <InputText id="havainnot" @bind-Value="tarkastus.Havainnot" class="form-control" Disabled />
         </div>
 
+        <div class="mb-3">
+            <label for="tilanMuunnos">Tilan muutos</label>
+            <InputText id="tilanMuunnos" @bind-Value="tila" class="form-control" Disabled />
+        </div>
+
+
+
         <button type="submit" class="btn btn-primary">Sulje</button>
     </EditForm>
 }
@@ -37,6 +54,8 @@
 
     private TarkastusDTO? tarkastus = new TarkastusDTO();
     private List<TilaDTO>? tilat;
+    private string? tila;
+    private string? aikaleima;
 
     [Parameter]
     public int Id { get; set; }
@@ -46,6 +65,13 @@
         tilat = await Http.GetFromJsonAsync<List<TilaDTO>>("/tila/all");
         tilat.Add(new TilaDTO { IdkohteenTila = 0, Kuvaus = "ei muutosta" });
         tarkastus = await Http.GetFromJsonAsync<TarkastusDTO>($"/tarkastus/{Id}");
+
+        if (tarkastus != null)
+        {
+            tila = tilat.Find(x => x.IdkohteenTila == tarkastus.TilanMuutos).Kuvaus;
+            aikaleima = tarkastus.Aikaleima.ToString("dd.MM.yyyy HH:mm");
+        }
+
     }
 
 

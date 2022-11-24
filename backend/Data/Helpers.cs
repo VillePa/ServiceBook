@@ -33,7 +33,7 @@ namespace backend.Data
 				Idkohde = t.Idkohde,
 				Idkayttaja = t.Idkayttaja,
 				KayttajanNimi = t.IdkayttajaNavigation.Nimi,
-				KohteenNimi = t.IdkohdeNavigation.Nimi
+				KohteenNimi = $"{t.IdkohdeNavigation.Nimi}, {t.IdkohdeNavigation.Sijainti}"
 			};
 		}
 
