@@ -1,7 +1,7 @@
 ﻿@using SharedLib
 @inject HttpClient Http
 
-@if (kohteet != null)
+@if (kohteet != null && tilat != null)
 {
     <EditForm Model="tarkastus" OnValidSubmit="Tallenna">
         <DataAnnotationsValidator />
@@ -33,7 +33,7 @@
             <InputRadioGroup id="tilanmuunnos" @bind-Value="tarkastus.TilanMuutos" class="form-control">
                 @for (int i = 0; i < 4; i++)
                 {
-                    <label for="radio">@tilat[i]</label>
+                    <label for="radio">@tilat.Find(x => x.IdkohteenTila == i).Kuvaus</label>
                     <InputRadio id="radio" Value="@i" /> <br />
                 }
             </InputRadioGroup>
@@ -54,10 +54,12 @@
     private TarkastusDTO tarkastus = new TarkastusDTO();
     private HuoltokohdeDTO[]? kohteet;
 
-    private string[] tilat = { "Ei muutosta", "Käyttökunnossa", "Epäkunnossa", "Poistettu käytöstä" };
+    private List<TilaDTO>? tilat;
 
     protected override async Task OnInitializedAsync()
     {
+        tilat = await Http.GetFromJsonAsync<List<TilaDTO>>("/tila/all");
+        tilat.Add(new TilaDTO { IdkohteenTila = 0, Kuvaus = "ei muutosta" });
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
     }
 
@@ -65,7 +67,6 @@
     private async Task Tallenna()
     {
         tarkastus.Aikaleima = DateTime.Now;
-        tarkastus.Idkayttaja = 8;
 
         await Http.PostAsJsonAsync<TarkastusDTO>("/tarkastus", tarkastus);
 

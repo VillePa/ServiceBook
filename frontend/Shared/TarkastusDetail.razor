@@ -1,7 +1,7 @@
 ﻿@using SharedLib
 @inject HttpClient Http
 
-@if (tarkastus != null)
+@if (tarkastus != null && tilat != null)
 {
     <EditForm Model="tarkastus" OnValidSubmit="Sulje">
 
@@ -36,18 +36,16 @@
     [CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
 
     private TarkastusDTO? tarkastus = new TarkastusDTO();
-    private string[] tilat = { "Ei muutosta", "Käyttökunnossa", "Epäkunnossa", "Poistettu käytöstä" };
-    private string tila = "Tilaa ei löytynyt";
+    private List<TilaDTO>? tilat;
 
     [Parameter]
     public int Id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-
+        tilat = await Http.GetFromJsonAsync<List<TilaDTO>>("/tila/all");
+        tilat.Add(new TilaDTO { IdkohteenTila = 0, Kuvaus = "ei muutosta" });
         tarkastus = await Http.GetFromJsonAsync<TarkastusDTO>($"/tarkastus/{Id}");
-
-        if (tarkastus != null) tila = tilat[tarkastus.TilanMuutos];
     }
 
 

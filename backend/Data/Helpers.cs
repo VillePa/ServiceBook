@@ -32,8 +32,8 @@ namespace backend.Data
 				TilanMuutos = t.TilanMuutos,
 				Idkohde = t.Idkohde,
 				Idkayttaja = t.Idkayttaja,
-				KayttajanNimi = t.Kayttaja.Nimi,
-				KohteenNimi = "Kohteen nimi"
+				KayttajanNimi = t.IdkayttajaNavigation.Nimi,
+				KohteenNimi = t.IdkohdeNavigation.Nimi
 			};
 		}
 

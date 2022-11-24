@@ -24,7 +24,6 @@ namespace SharedLib
         [Required]
         public int Idkohde { get; set; }
         public string? KohteenNimi { get; set; }
-
     }
 }
 

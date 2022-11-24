@@ -17,8 +17,6 @@ public partial class Tarkastu
 
 	public int Idkayttaja { get; set; }
 
-	public Kayttaja Kayttaja { get; set; }
-
 	public int Idkohde { get; set; }
 
 	public virtual Kayttaja IdkayttajaNavigation { get; set; } = null!;
