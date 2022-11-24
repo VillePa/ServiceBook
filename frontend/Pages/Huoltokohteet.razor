@@ -6,7 +6,23 @@
 
 
 
-<button @onclick="@(() => Modal.Show<UusiKohde>("Lisää uusi Huoltokohde"))">Lisää uusi huoltokohde</button>
+<button style="margin: 2em 0 2em 0" class="btn btn-primary" @onclick="@ShowUusiKohde">Lisää uusi huoltokohde</button>
+    <br />
+
+@if (tilat == null)
+{
+    
+}
+else
+{
+    <div style="margin: 1em 0 1em 0">
+    <label>Filter By Tila:</label>
+    <button @onclick="Filter1">Käytössä</button>
+    <button @onclick="Filter2">Epäkunnossa</button>
+    <button @onclick="Filter3">Poistettu</button>
+    </div>
+    
+}
 
 
 @if (kohteet == null)
@@ -60,9 +76,20 @@ else
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
     private HuoltokohdeDTO[]? kohteet;
+    private List<TilaDTO>? tilat;
+
+    int tila;
 
     protected override async Task OnInitializedAsync()
     {
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+        tilat = await Http.GetFromJsonAsync<List<TilaDTO>>("/tila/all");
+    }
+
+    private async Task ShowUusiKohde()
+    {
+        var uusiModal = Modal.Show<UusiKohde>("Uusi huoltokohde");
+        var result = await uusiModal.Result;
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
     }
 
@@ -71,18 +98,13 @@ else
         var parameters = new ModalParameters()
         .Add(nameof(EditKohde.Id), Id);
 
-        var uusiModal = Modal.Show<EditKohde>("Kohde", parameters);
-        var result = await uusiModal.Result;
+        var editModal = Modal.Show<EditKohde>("Kohde", parameters);
+        var result = await editModal.Result;
+
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
     }
 
-    private async Task Delete(int Id)
-    {
-        var parameters = new ModalParameters()
-        .Add(nameof(EditKohde.Id), Id);
-
-        var uusiModal = Modal.Show<EditKohde>("Kohde", parameters);
-        var result = await uusiModal.Result;
-    }
+    
 
     private async Task SortBySijainti()
     {
@@ -123,6 +145,23 @@ else
     private async Task SortByKohderyhma()
     {
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbykohderyhma");
+
+    }
+
+    private async Task Filter1()
+    {
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/filterbykaytossa");
+
+    }
+
+    private async Task Filter2()
+    {
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/filterbyepakunnossa");
+
+    }
+    private async Task Filter3()
+    {
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/filterbypoistettu");
 
     }
 }

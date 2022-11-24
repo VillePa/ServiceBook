@@ -139,6 +139,32 @@ namespace backend.Controllers
 
         }
 
+        [HttpGet("/kohde/filterbykaytossa")]
+        public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> Filter1()
+        {
+
+            return await _db.Kohdes.Where(a => a.IdkohteenTila == 1).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+ 
+
+        }
+
+        [HttpGet("/kohde/filterbyepakunnossa")]
+        public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> Filter2()
+        {
+
+            return await _db.Kohdes.Where(a => a.IdkohteenTila == 2).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+
+
+        }
+        [HttpGet("/kohde/filterbypoistettu")]
+        public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> Filter3()
+        {
+
+            return await _db.Kohdes.Where(a => a.IdkohteenTila == 3).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+
+
+        }
+
 
     }
 }
