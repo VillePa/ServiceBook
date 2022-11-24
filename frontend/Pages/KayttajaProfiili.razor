@@ -14,11 +14,15 @@
 	<h4 class="mb-3">Omat tiedot</h4>
 
 	<div class="card">
-		<img src="https://cataas.com/cat" alt="Avatar" style="width:100%">
+		<img src="https://img.freepik.com/free-vector/faceless-portrait-clown-isolated-vector-illustration_7504-678.jpg?w=740&t=st=1669293252~exp=1669293852~hmac=45e1d5b6163ece77b3f6991d71179469dc30fc80f6c3471134c3bd3093a9fc62"
+		 class="img">
 		<div class="container">
 			<span>Käyttäjätunnus: @data.Kayttajatunnus</span><br>
-			<span>Viimeisin kirjautuminen: @data.ViimeisinKirjautuminen.ToString("dd-MM-yyyy HH:mm")</span><br>
-			<span>Käyttäjä luotu: @data.Luotu.ToString("dd-MM-yyyy HH:mm")</span><br>
+			<span>Viimeisin kirjautuminen: @data.ViimeisinKirjautuminen.ToString("dd-MM-yyyy HH:mm")
+			</span>
+			<span>Käyttäjä luotu: @data.Luotu.ToString("dd-MM-yyyy HH:mm")
+			</span><br>
+				
 			<span>Rooli: @data.Rooli</span><br>
 			<span>Aktiivinen:
 
@@ -38,7 +42,7 @@ else
 {
 	<h4 class="mb-3">Ei tietoja saatavilla</h4>
 }
-<hr />
+<hr class="mb-3"/>
 <h4 class="mb-3">Vaihda salasana</h4>
 
 <EditForm Model="uusi" OnValidSubmit="ChangePassword">

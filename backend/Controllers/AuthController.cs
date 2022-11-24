@@ -78,8 +78,8 @@ namespace backend.Controllers
 
             else if (ValidatePassword(req.Salasana, kayttaja.Salasana))
             {
+				kayttaja.ViimeisinKirjautuminen = DateTime.Now;
 				string token = CreateToken(kayttaja);
-                kayttaja.ViimeisinKirjautuminen = DateTime.Now;
                 _db.Kayttajas.Update(kayttaja);
                 _db.SaveChangesAsync();
 				return Ok(token);
