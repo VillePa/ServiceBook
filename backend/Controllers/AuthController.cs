@@ -73,9 +73,12 @@ namespace backend.Controllers
 
             if (kayttaja == null)
             {
-                return BadRequest("Käyttäjätunnusta ei löytynyt");
+                return NotFound("Käyttäjätunnusta ei löytynyt");
             }
-
+            else if(kayttaja.Poistettu == 1)
+            {
+                return Forbid("Käyttäjätunnus poistettu.");
+            }
             else if (ValidatePassword(req.Salasana, kayttaja.Salasana))
             {
 				kayttaja.ViimeisinKirjautuminen = DateTime.Now;
