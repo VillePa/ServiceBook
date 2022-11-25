@@ -4,16 +4,50 @@
 @inject IModalService ModalService
 @inject NavigationManager NavigationManager
 
-<h3>Auditointi</h3>
+<h3 class="mb-4">Auditointi</h3>
+
+<h4 class="mb-3">Auditointipohjat</h4>
+
+@if (pohjat != null)
+{
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Selite</th>
+				<th>Luotu</th>
+				<th>Käyttäjä</th>
+				<th>Kohderyhmä</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in pohjat)
+			{
+				<tr>
+					<td>@item.Idauditointipohja</td>
+					<td>@item.Selite</td>
+					<td>@item.Luontiaika</td>
+					<td>@item.Idkayttaja</td>
+					<td>@item.Idkohderyhma</td>
+				</tr>
+			}
+
+		</tbody>
+	</table>
+}
+else
+{
+	<p>ladataan dataa..</p>
+}
 
 <button @onclick="AddAuditointipohja">Lisää auditointipohja</button>
 
 @code {
-
+	AuditointipohjaDTO[]? pohjat;
 
 	protected override async Task OnInitializedAsync()
 	{
-
+		pohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>("auditointipohja/all");
 	}
 
 	async Task AddAuditointipohja()
