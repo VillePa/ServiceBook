@@ -12,6 +12,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 // tähän kun vaihtaa osoitteen sen mukaan missä portissa lokaalisti ajetaan backendia / mikä on pilven osoite niin ei tarvii jokaisella pagella erikseen
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7106/") });
+//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://huoltokirjabackend20221113.azurewebsites.net/") });
 builder.Services.AddBlazoredModal();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddOptions();
