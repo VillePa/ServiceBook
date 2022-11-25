@@ -84,15 +84,25 @@ namespace backend.Controllers
 
         }
 
-        [HttpGet("/kayttaja/sortByState/{value}")]
-        public async Task<IEnumerable<KayttajaDTO>> SortByState(bool value)
+        [HttpGet("/kayttaja/sortByState/{sort}")]
+        public async Task<IEnumerable<KayttajaDTO>> SortByState(string sort)
         {
-			if(value == true)
+			if(sort == "desc")
             return await _db.Kayttajas.OrderByDescending(i => i.Poistettu).Select(i => Helpers.KayttajaToDTO(i)).ToListAsync();
 
 			else
             return await _db.Kayttajas.OrderBy(i => i.Poistettu).Select(i => Helpers.KayttajaToDTO(i)).ToListAsync();
             
+        }
+
+        [HttpGet("/kayttaja/sortByDate/{sort}")]
+        public async Task<IEnumerable<KayttajaDTO>> SortByDate(string sort)
+        {
+			if(sort == "asc")
+            return await _db.Kayttajas.OrderBy(i => i.Luotu).Select(i => Helpers.KayttajaToDTO(i)).ToListAsync();
+
+			else
+                return await _db.Kayttajas.OrderByDescending(i => i.Luotu).Select(i => Helpers.KayttajaToDTO(i)).ToListAsync();
         }
 
         [HttpPut("/kayttaja/muokkaa/{id}"), Authorize]
