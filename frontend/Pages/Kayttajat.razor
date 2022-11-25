@@ -24,11 +24,11 @@ else
                 <th>Nimi
                     @if(sortNameDesc == false)
                     {
-                        <button class="oi oi-sort-ascending" style="font-size: 80%; background-color:orange" @onclick="SortByName" />
+                        <button class="oi oi-sort-ascending" style="font-size: 80%; background-color:orange; border-radius: 30%" @onclick="SortByName" />
                     }
                     else
                     {
-                        <button class="oi oi-sort-descending" style="font-size: 80%; background-color:orange" @onclick="SortByName" />
+                        <button class="oi oi-sort-descending" style="font-size: 80%; background-color:orange; border-radius: 30%" @onclick="SortByName" />
 
                     }
                 </th>
@@ -37,17 +37,17 @@ else
                 <th>Luotu
                     @if(sortByLatest == false)
                     {
-                        <button class="oi oi-sort-ascending" style="font-size: 80%; background-color:orange" @onclick="@(e=> SortByDate("desc"))" />
+                        <button class="oi oi-sort-ascending" style="font-size: 80%; background-color:orange; border-radius: 30%" @onclick="@(e=> SortByDate("desc"))" />
                     }
                     else
                     {
-                        <button class="oi oi-sort-descending" style="font-size: 80%; background-color:orange" @onclick="@(e=> SortByDate("asc"))" />
+                        <button class="oi oi-sort-descending" style="font-size: 80%; background-color:orange; border-radius: 30%" @onclick="@(e=> SortByDate("asc"))" />
                     }
                 </th>
                 <th>Aktiivinen
                     @if(sortStateDesc == false)
                     {
-                        <button class="oi oi-sort-ascending" style="font-size: 80%; background-color:orange" @onclick="@(e=> SortByState("desc"))" />
+                        <button class="oi oi-sort-ascending" style="font-size: 80%; background-color:orange; border-radius: 30%" @onclick="@(e=> SortByState("desc"))" />
 
                     }
                     else
