@@ -2,10 +2,11 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 
+<div class="align-div">     
 <div class="dropdown">
     <button @onclick="ToggleUserMenu"
             @onfocusout="HideUserMenu"
-            class="btn btn-secondary dropdown-toggle user-button">
+            class="btn btn-primary dropdown-toggle user-button">
         <i class="oi oi-person"></i>
     </button>
     <div class="dropdown-menu dropdown-menu-right @UserMenuCssClass">
@@ -18,10 +19,10 @@
             </Authorized>
             <NotAuthorized>
                 <a href="login" class="dropdown-item">Login</a>
-                
             </NotAuthorized>
         </AuthorizeView>
     </div>
+</div>
 </div>
 
 @code {

@@ -5,7 +5,7 @@
 .user-button {
     width: 65px;
     margin-left: .5em;
-    margin-right: 70px;
+    /*margin-right: 70px;*/
 }
 
 .top-row a {
@@ -14,4 +14,9 @@
 
 .dropdown-item:hover {
     background-color: white;
+}
+
+.align-div{
+    float: left;
+
 }
