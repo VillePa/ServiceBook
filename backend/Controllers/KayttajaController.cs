@@ -27,7 +27,7 @@ namespace backend.Controllers
 		public async Task<IEnumerable<Kayttaja>> Get()
 		{
 
-			return await _db.Kayttajas.OrderByDescending(i => i.Idkayttaja > 0).ToListAsync();
+			return await _db.Kayttajas.OrderByDescending(i => i.Idkayttaja).ToListAsync();
 
 		}
 

@@ -1,0 +1,25 @@
+﻿@page "/auditointi"
+@using SharedLib
+@inject HttpClient Http
+@inject IModalService ModalService
+@inject NavigationManager NavigationManager
+
+<h3>Auditointi</h3>
+
+<button @onclick="AddAuditointipohja">Lisää auditointipohja</button>
+
+@code {
+
+
+	protected override async Task OnInitializedAsync()
+	{
+
+	}
+
+	async Task AddAuditointipohja()
+	{
+		var uusiModal = ModalService.Show<AddAuditointipohja>("AddAuditointipohja");
+		var result = await uusiModal.Result;
+	}
+
+}

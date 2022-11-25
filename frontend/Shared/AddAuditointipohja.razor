@@ -1,0 +1,52 @@
+﻿@using SharedLib
+@inject HttpClient Http
+@inject IModalService ModalService
+@inject NavigationManager NavigationManager
+
+<EditForm Model="a">
+	<div class="mb-3">
+		<label for="selite">Selite</label>
+		<InputText id="selite" @bind-Value="a.Selite" class="form-control" />
+	</div>
+
+	<div class="mb-3">
+		<label for="idkohderyhma">Selite</label>
+		<InputSelect id="idkohderyhma" @bind-Value="a.Idkohderyhma" class="form-control">
+			@if(kohderyhmat != null)
+			{
+				@foreach (var item in kohderyhmat)
+				{
+					<option value="@item.Idkohderyhma">@item.Nimi</option>
+				}
+			}
+			
+		</InputSelect>
+	</div>
+
+	<button class="btn btn-primary" @onclick="Save">Tallenna</button>
+	<button class="btn btn-secondary" @onclick="Close">Sulje</button>
+</EditForm>
+
+@code {
+	[CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
+	AuditointipohjaDTO a = new();
+	KohderyhmaDTO[] kohderyhmat;
+
+	protected override async Task OnInitializedAsync()
+	{
+		kohderyhmat = await Http.GetFromJsonAsync<KohderyhmaDTO[]>("/kohderyhma/all");
+
+	}
+
+	async Task Close()
+	{
+		await Modal.CloseAsync();
+	}
+
+	async Task Save()
+	{
+		var result = await Http.PostAsJsonAsync<AuditointipohjaDTO>("/auditointipohja/add", a);
+
+	}
+
+}
