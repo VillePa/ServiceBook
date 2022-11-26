@@ -7,7 +7,7 @@
         <DataAnnotationsValidator />
         <div class="mb-3">
             <label for="kohde">Kohde</label>
-            <InputSelect id="kohde" @bind-Value="tarkastus.Idkohde" class="form-control">
+            <InputSelect id="kohde" @bind-Value="tarkastus.Idkohde" class="form-select">
                 @foreach (var item in kohteet)
                 {
                     <option value="@item.Idkohde">@item.Nimi, @item.Sijainti</option>
@@ -44,7 +44,14 @@
         <button type="reset" @onclick="Tyhjenna" class="btn btn-secondary">Tyhjenna</button>
     </EditForm>
 }
-
+else
+{
+    <div class="text-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
 
 
 

@@ -1,11 +1,11 @@
 ﻿@using SharedLib
 @inject HttpClient Http
 
-@if (valittavatKohteet != null)
+@if (valittavatKayttajat != null)
 {
 
     <div class="mb-3">
-        @foreach (var item in valittavatKohteet)
+        @foreach (var item in valittavatKayttajat)
         {
             <InputCheckbox @bind-Value="@item.IsSelected" style="margin-right: 0.5em" />
             @item.Name
@@ -32,14 +32,14 @@ else
     [CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
 
 
-    private HuoltokohdeDTO[]? kohteet;
-    class ValittavaKohde
+    private KayttajaDTO[]? kayttajat;
+    class ValittavaKayttaja
     {
         public string? Name;
         public int Id;
         public bool IsSelected;
     }
-    private List<ValittavaKohde> valittavatKohteet = new List<ValittavaKohde>();
+    private List<ValittavaKayttaja> valittavatKayttajat = new List<ValittavaKayttaja>();
 
     [Parameter]
     public int[]? valitutId { get; set; }
@@ -47,7 +47,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+        kayttajat = await Http.GetFromJsonAsync<KayttajaDTO[]>("/kayttaja/kaikki");
 
         PopulateList();
 
@@ -56,39 +56,39 @@ else
 
     private async Task Tallenna()
     {
-        valitutId = valittavatKohteet.FindAll(x => x.IsSelected == true).Select(x => (int)x.Id).ToArray();
+        valitutId = valittavatKayttajat.FindAll(x => x.IsSelected == true).Select(x => (int)x.Id).ToArray();
 
         await Modal.CloseAsync(ModalResult.Ok((int[])valitutId));
     }
 
     private void Tyhjenna()
     {
-        valittavatKohteet = new List<ValittavaKohde>();
+        valittavatKayttajat = new List<ValittavaKayttaja>();
         valitutId = null;
         PopulateList();
     }
 
     private void PopulateList()
     {
-        if (kohteet != null)
+        if (kayttajat != null)
         {
-            foreach (var item in kohteet)
+            foreach (var item in kayttajat)
             {
-                if (valitutId != null && valitutId.Contains(item.Idkohde))
+                if (valitutId != null && valitutId.Contains(item.Idkayttaja))
                 {
-                    valittavatKohteet.Add(new ValittavaKohde
+                    valittavatKayttajat.Add(new ValittavaKayttaja
                     {
-                        Name = $"{item.Nimi}, {item.Sijainti}",
-                        Id = item.Idkohde,
+                        Name = $"{item.Nimi}",
+                        Id = item.Idkayttaja,
                         IsSelected = true
                     });
                 }
                 else
                 {
-                    valittavatKohteet.Add(new ValittavaKohde
+                    valittavatKayttajat.Add(new ValittavaKayttaja
                     {
-                        Name = $"{item.Nimi}, {item.Sijainti}",
-                        Id = item.Idkohde,
+                        Name = $"{item.Nimi}",
+                        Id = item.Idkayttaja,
                         IsSelected = false
                     });
                 }

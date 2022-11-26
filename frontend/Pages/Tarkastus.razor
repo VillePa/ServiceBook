@@ -19,7 +19,10 @@
                 <th>Syy</th>
                 <th>Havainnot</th>
                 <th>Tila</th>
-                <th @onclick="sortDate">@sort</th>
+                <th @onclick="sortDate">Luotu
+                @if (sort.Equals("laskeva")) {<i class="oi oi-caret-bottom"></i>}
+                else if (sort.Equals("nouseva")) {<i class="oi oi-caret-top"></i> }
+                </th>
                 <th>Tekijä</th>
                 <th></th>
 
@@ -28,21 +31,33 @@
         <tbody>
             @foreach (var item in tarkastukset)
             {
-            int Id = item.Idtarkastus;
-            <tr>
-                <td>@item.Idtarkastus</td>
-                <td>@item.KohteenNimi</td>
-                <td>@item.Syy</td>
-                <td>@item.Havainnot</td>
-                <td>@tilat.Find(x => x.IdkohteenTila == item.TilanMuutos).Kuvaus</td>
-                <td>@item.Aikaleima.ToString("dd.MM.yyyy HH:mm")</td>
-                <td>@item.KayttajanNimi</td>
-                <td><button class="btn btn-secondary" @onclick="@(e => ShowTarkastus(Id))">...</button></td>
-            </tr>
-                
+                int Id = item.Idtarkastus;
+                <tr>
+                    <td>@item.Idtarkastus</td>
+                    <td>@item.KohteenNimi</td>
+                    <td>@item.Syy</td>
+                    <td>@item.Havainnot</td>
+                    <td>@tilat.Find(x => x.IdkohteenTila == item.TilanMuutos).Kuvaus</td>
+                    <td>@item.Aikaleima.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@item.KayttajanNimi</td>
+                    <td>
+                        <button style="font-size: 75%" class="btn btn-primary" @onclick="@(e => ShowTarkastus(Id))">
+                            <span class="oi oi-list"></span>
+                        </button>
+                    </td>
+                </tr>
+
             }
         </tbody>
     </table>
+}
+else
+{
+<div class="text-center">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
 }
 
 @code {
@@ -51,7 +66,7 @@
 
     private List<TarkastusDTO>? tarkastukset;
     private List<TarkastusDTO>? filtteroimaton;
-    private string sort = "Luotu";
+    private string sort = "";
     private int[]? kohteet;
 
     protected override async Task OnInitializedAsync()
@@ -64,21 +79,21 @@
 
     private async Task sortDate()
     {
-        if (sort.Equals("Luotu"))
+        if (sort.Equals(""))
         {
-            sort = "Luotu, laskeva";
+            sort = "laskeva";
             tarkastukset = await Http.GetFromJsonAsync<List<TarkastusDTO>>("/tarkastus/kaikki/desc");
             filtteroimaton = tarkastukset;
         }
-        else if (sort.Equals("Luotu, laskeva"))
+        else if (sort.Equals("laskeva"))
         {
-            sort = "Luotu, nouseva";
+            sort = "nouseva";
             tarkastukset = await Http.GetFromJsonAsync<List<TarkastusDTO>>("/tarkastus/kaikki/asc");
             filtteroimaton = tarkastukset;
         }
         else
         {
-            sort = "Luotu";
+            sort = "";
             tarkastukset = await Http.GetFromJsonAsync<List<TarkastusDTO>>("/tarkastus/kaikki");
             filtteroimaton = tarkastukset;
         }
@@ -102,7 +117,7 @@
 
         if (result.Confirmed && result.Data != null)
         {
-            kohteet = (int[]) result.Data;
+            kohteet = (int[])result.Data;
         }
 
         if (kohteet != null && kohteet.Length != 0)
