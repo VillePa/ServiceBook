@@ -2,27 +2,24 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 
-<div class="align-div">     
 <div class="dropdown">
-    <button @onclick="ToggleUserMenu"
+    <button @onfocusin="ToggleUserMenu"
             @onfocusout="HideUserMenu"
-            class="btn btn-primary dropdown-toggle user-button">
+            class="btn btn-outline-primary dropdown-toggle user-button">
         <i class="oi oi-person"></i>
     </button>
     <div class="dropdown-menu dropdown-menu-right @UserMenuCssClass">
         <AuthorizeView>
             <Authorized>
-                <a href="kayttajaProfiili" class="dropdown-item">Profiili</a>
+                <a href="kayttajaProfiili" style="color: black" class="dropdown-item">Profiili</a>
                 <hr />
-                @*<AdminMenu />*@
                 <button class="dropdown-item" @onclick="Logout">Logout</button>
             </Authorized>
             <NotAuthorized>
-                <a href="login" class="dropdown-item">Login</a>
+                <a href="login" style="color: black" class="dropdown-item">Login</a>
             </NotAuthorized>
         </AuthorizeView>
     </div>
-</div>
 </div>
 
 @code {
@@ -47,5 +44,6 @@
         await AuthenticationStateProvider.GetAuthenticationStateAsync();
         NavigationManager.NavigateTo("/");
     }
+
 
 }

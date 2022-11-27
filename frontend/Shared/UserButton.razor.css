@@ -3,8 +3,8 @@
 }
 
 .user-button {
-    width: 65px;
-    margin-left: .5em;
+    width: 180px;
+    /*margin-left: 0;*/
     /*margin-right: 70px;*/
 }
 
@@ -14,9 +14,6 @@
 
 .dropdown-item:hover {
     background-color: white;
+    color: black;
 }
 
-.align-div{
-    float: left;
-
-}

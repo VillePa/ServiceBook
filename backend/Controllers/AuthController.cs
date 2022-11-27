@@ -84,7 +84,7 @@ namespace backend.Controllers
 				kayttaja.ViimeisinKirjautuminen = DateTime.Now;
 				string token = CreateToken(kayttaja);
                 _db.Kayttajas.Update(kayttaja);
-                _db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
 				return Ok(token);
             }
 

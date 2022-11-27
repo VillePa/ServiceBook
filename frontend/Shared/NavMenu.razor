@@ -1,63 +1,71 @@
 ﻿@attribute [Authorize]
 
 <div class="top-row ps-3 navbar navbar-dark">
-    
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Huoltokirja</a>  
-       
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
+
+	<div class="container-fluid">
+		<a class="navbar-brand" href="">Huoltokirja</a>
+
+		<button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+	</div>
 </div>
 
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Etusivu
-            </NavLink>
-        </div>
+	<nav class="flex-column">
+		<div class="nav-item px-3">
+			<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+				<span class="oi oi-home" aria-hidden="true"></span> Etusivu
+			</NavLink>
+		</div>
 
-        <AuthorizeView Roles="admin">
-            <div class="nav-item px-3">
-            <NavLink class="nav-link" href="kayttajat">
-        <span class="oi oi-list-rich" aria-hidden="true"></span> Käyttäjät
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="register">
-                <span class="oi oi-person" aria-hidden="true"></span> Uusi käyttäjä
-            </NavLink>
-        </div>
-        </AuthorizeView>
-        
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="huoltokohteet">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Huoltokohteet
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="tarkastus">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Tarkastus
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="auditointi">
-                <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Auditointi
-            </NavLink>
-        </div>
-    </nav>
+		<AuthorizeView Roles="admin">
+			<div class="nav-item px-3">
+				<NavLink class="nav-link" href="kayttajat">
+					<span class="oi oi-list-rich" aria-hidden="true"></span> Käyttäjät
+				</NavLink>
+			</div>
+			<div class="nav-item px-3">
+				<NavLink class="nav-link" href="register">
+					<span class="oi oi-person" aria-hidden="true"></span> Uusi käyttäjä
+				</NavLink>
+			</div>
+		</AuthorizeView>
+
+		<div class="nav-item px-3">
+			<NavLink class="nav-link" href="huoltokohteet">
+				<span class="oi oi-list-rich" aria-hidden="true"></span> Huoltokohteet
+			</NavLink>
+		</div>
+		<div class="nav-item px-3">
+			<NavLink class="nav-link" href="tarkastus">
+				<span class="oi oi-list-rich" aria-hidden="true"></span> Tarkastus
+			</NavLink>
+		</div>
+		<div class="nav-item px-3">
+			<NavLink class="nav-link" href="auditointi">
+				<span class="oi oi-magnifying-glass" aria-hidden="true"></span> Auditointi
+			</NavLink>
+		</div>
+
+		<div class="nav-item px-3">
+			<NavLink class="nav-link">
+				@*<span class="" aria-hidden="true"></span> *@<UserButton />
+			</NavLink>
+		</div>
+		</nav>
 </div>
 
 @code {
-    private bool collapseNavMenu = true;
+	private bool collapseNavMenu = true;
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+	private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
+	private void ToggleNavMenu()
+	{
+		collapseNavMenu = !collapseNavMenu;
+	}
+
+
 }
 

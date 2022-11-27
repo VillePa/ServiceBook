@@ -30,7 +30,7 @@
 @code {
 	[CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
 	AuditointipohjaDTO a = new();
-	KohderyhmaDTO[] kohderyhmat;
+	KohderyhmaDTO[]? kohderyhmat;
 
 	protected override async Task OnInitializedAsync()
 	{

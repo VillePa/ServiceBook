@@ -48,7 +48,7 @@
 @code {
 	[CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
 
-	KayttajaDTO kayttaja = new();
+	KayttajaDTO? kayttaja = new();
 	[Parameter]
 	public int Id { get; set; }
 	private string message = string.Empty;
