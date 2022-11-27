@@ -23,14 +23,20 @@ namespace backend.Controllers
 		}
 
 		[HttpGet("/vaatimus/all")]
-		public async Task<IEnumerable<Vaatimu>> Get()
+		public async Task<IEnumerable<Vaatimu>> GetVaatimus()
 		{
 			return await _db.Vaatimus.OrderBy(i => i.Idvaatimus).ToListAsync();
 		}
 
+		[HttpGet("/vaatimuspohja/all")]
+		public async Task<IEnumerable<Vaatimuspohja>> GetVaatimuspohjat()
+		{
+			return await _db.Vaatimuspohjas.OrderBy(i => i.Idvaatimuspohja).ToListAsync();
+		}
+
 
 		[HttpPost("/vaatimus/add")]
-		public async Task<ActionResult<Vaatimu>> Add(VaatimusDTO req)
+		public async Task<ActionResult<Vaatimu>> AddVaatimus(VaatimusDTO req)
 		{
 			//var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -52,6 +58,27 @@ namespace backend.Controllers
 
 				return Ok(v);
 
+			}
+		}
+
+		[HttpPost("/vaatimuspohja/add")]
+		public async Task<ActionResult<Vaatimuspohja>> AddVaatimusPohja(VaatimuspohjaDTO req)
+		{
+			if(req == null)
+			{
+				return BadRequest("ei tietoja");
+			}
+			else
+			{
+				Vaatimuspohja v = new()
+				{
+					Kuvaus= req.Kuvaus,	
+					Pakollisuus= req.Pakollisuus,
+					Idauditointipohja= req.Idauditointipohja,
+				};
+				_db.Vaatimuspohjas.Add(v);	
+				await _db.SaveChangesAsync();
+				return Ok(v);
 			}
 		}
 	}
