@@ -22,18 +22,12 @@ namespace backend.Controllers
 			_conf = conf;
 		}
 
+		#region VAATIMUS
 		[HttpGet("/vaatimus/all")]
 		public async Task<IEnumerable<Vaatimu>> GetVaatimus()
 		{
 			return await _db.Vaatimus.OrderBy(i => i.Idvaatimus).ToListAsync();
 		}
-
-		[HttpGet("/vaatimuspohja/all")]
-		public async Task<IEnumerable<Vaatimuspohja>> GetVaatimuspohjat()
-		{
-			return await _db.Vaatimuspohjas.OrderBy(i => i.Idvaatimuspohja).ToListAsync();
-		}
-
 
 		[HttpPost("/vaatimus/add")]
 		public async Task<ActionResult<Vaatimu>> AddVaatimus(VaatimusDTO req)
@@ -60,6 +54,14 @@ namespace backend.Controllers
 
 			}
 		}
+		#endregion
+
+		#region VAATIMUSPOHJA
+		[HttpGet("/vaatimuspohja/all")]
+		public async Task<IEnumerable<Vaatimuspohja>> GetVaatimuspohjat()
+		{
+			return await _db.Vaatimuspohjas.OrderBy(i => i.Idvaatimuspohja).ToListAsync();
+		}
 
 		[HttpPost("/vaatimuspohja/add")]
 		public async Task<ActionResult<Vaatimuspohja>> AddVaatimusPohja(VaatimuspohjaDTO req)
@@ -81,5 +83,7 @@ namespace backend.Controllers
 				return Ok(v);
 			}
 		}
+
+		#endregion
 	}
 }
