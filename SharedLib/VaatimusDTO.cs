@@ -17,5 +17,7 @@ namespace SharedLib
 		public int? Taytetty { get; set; }
 
 		public int Idauditointi { get; set; }
+
+		public string? AuditointiSelite { get; set; }	
 	}
 }

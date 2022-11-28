@@ -64,8 +64,8 @@ namespace backend.Data
 				Tyyppi = a.Tyyppi,
 				Malli = a.Malli,
 				Tunnus = a.Tunnus,
-                IdkohteenTila = a.IdkohteenTila,
-                Luotu = a.Luotu,
+				IdkohteenTila = a.IdkohteenTila,
+				Luotu = a.Luotu,
 				Idkayttaja = a.Idkayttaja,
 				Idkohderyhma = a.Idkohderyhma
 
@@ -104,18 +104,57 @@ namespace backend.Data
 			};
 		}
 
-        // Tila helpperi
+		// Tila helpperi
 
-        public static TilaDTO TilaToDTO(this KohteenTila a)
-        {
-            return new TilaDTO
-            {
-                IdkohteenTila = a.IdkohteenTila,
-                Kuvaus = a.Kuvaus,
+		public static TilaDTO TilaToDTO(this KohteenTila a)
+		{
+			return new TilaDTO
+			{
+				IdkohteenTila = a.IdkohteenTila,
+				Kuvaus = a.Kuvaus,
 
 
-            };
-        }
+			};
+		}
 
+		public static VaatimusDTO VaatimusToDTO(this Vaatimu v)
+		{
+			return new VaatimusDTO
+			{
+				Idvaatimus = v.Idvaatimus,
+				Kuvaus = v.Kuvaus,
+				Pakollisuus = v.Pakollisuus,
+				Taytetty = v.Taytetty,
+				Idauditointi = v.Idauditointi,
+				AuditointiSelite = v.IdauditointiNavigation.Selite
+			};
+		}
+
+		public static AuditointipohjaDTO AuditointipohjaToDTO(this Auditointipohja a)
+		{
+			return new AuditointipohjaDTO
+			{
+				Idauditointipohja = a.Idauditointipohja,
+				Selite = a.Selite,
+				Luontiaika = a.Luontiaika,
+				Idkayttaja = a.Idkayttaja,
+				KayttajaNimi = a.IdkayttajaNavigation.Nimi,
+				Idkohderyhma = a.Idkohderyhma,
+				KohderyhmaNimi = a.IdkohderyhmaNavigation.Nimi,
+				//Vaatimuspohjas = a.Vaatimuspohjas,
+			};
+		}
+
+		public static VaatimuspohjaDTO VaatimuspohjaToDTO(this Vaatimuspohja v)
+		{
+			return new VaatimuspohjaDTO
+			{
+				Idvaatimuspohja = v.Idvaatimuspohja,
+				Kuvaus = v.Kuvaus,
+				Pakollisuus= v.Pakollisuus,	
+				Idauditointipohja = v.Idauditointipohja,
+				AuditointipohjaSelite = v.IdauditointipohjaNavigation.Selite
+			};
+		}
     }
 }

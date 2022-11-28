@@ -16,5 +16,7 @@ namespace SharedLib
 
 		public int Idauditointipohja { get; set; }
 
+		public string? AuditointipohjaSelite { get; set; }
+
 	}
 }

@@ -16,6 +16,12 @@ namespace SharedLib
 
         public int Idkayttaja { get; set; }
 
+        public string KayttajaNimi { get; set; }
+
         public int Idkohderyhma { get; set; }
-    }
+
+        public string KohderyhmaNimi { get; set; }
+
+		public ICollection<VaatimuspohjaDTO> Vaatimuspohjas { get; } = new List<VaatimuspohjaDTO>();
+	}
 }

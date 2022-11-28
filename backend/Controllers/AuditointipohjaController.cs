@@ -21,14 +21,16 @@ namespace backend.Controllers
             _logger = logger;
             _db = db;
             _conf = conf;
-        }
+		}
 
-
-        [HttpGet("/auditointipohja/all")]
-        public async Task<IEnumerable<Auditointipohja>> Get()
+		[HttpGet("/auditointipohja/all")]
+        public async Task<IEnumerable<AuditointipohjaDTO>> Get()
         {
 
-            return await _db.Auditointipohjas.OrderByDescending(i => i.Idauditointipohja).ToListAsync();
+            return await _db.Auditointipohjas
+                .Include(k=>k.IdkayttajaNavigation)
+                .Include(k=>k.IdkohderyhmaNavigation)
+                .Select(k=> Helpers.AuditointipohjaToDTO(k)).ToListAsync();
 
         }
 

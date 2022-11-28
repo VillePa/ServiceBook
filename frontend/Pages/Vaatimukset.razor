@@ -1,0 +1,90 @@
+﻿@page "/vaatimukset"
+@using SharedLib
+@inject HttpClient Http
+@inject IModalService ModalService
+@inject NavigationManager NavigationManager
+
+<h3 class="mb-4">Vaatimukset</h3>
+
+@if(vaatimukset != null)
+{
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Kuvaus</th>
+				<th>Pakollisuus</th>
+				<th>Täytetty</th>
+				<th>Auditointi</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in vaatimukset)
+			{
+				<tr>
+					<td>@item.Idvaatimus</td>
+					<td>@item.Kuvaus</td>
+					<td>@item.Pakollisuus</td>
+					<td>@item.Taytetty</td>
+					<td>@item.AuditointiSelite</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+	<h4 class="mb-3">Vaatimuspohjat</h4>
+
+@if (vaatimuspohjat != null)
+{
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Kuvaus</th>
+						<th>Pakollisuus</th>
+						<th>Auditointipohja</th>
+					</tr>
+				</thead>
+				<tbody>
+			@foreach (var item in vaatimuspohjat)
+			{
+							<tr>
+								<td>@item.Idvaatimuspohja</td>
+								<td>@item.Kuvaus</td>
+								<td>@item.Pakollisuus</td>
+								<td>@item.AuditointipohjaSelite</td>
+							</tr>
+			}
+
+				</tbody>
+			</table>
+
+}
+else
+{
+	<p>ladataan dataa..</p>
+}
+
+<button class="btn btn-primary" @onclick="AddVaatimuspohja">Lisää vaatimuspohja</button>
+
+
+@code {
+	VaatimusDTO[]? vaatimukset;
+	VaatimuspohjaDTO[]? vaatimuspohjat;
+
+	protected override async Task OnInitializedAsync()
+	{
+		vaatimukset = await Http.GetFromJsonAsync<VaatimusDTO[]>("vaatimus/all");
+		vaatimuspohjat = await Http.GetFromJsonAsync<VaatimuspohjaDTO[]>("vaatimuspohja/all");
+	}
+
+
+	async Task AddVaatimuspohja()
+	{
+		var uusiModal = ModalService.Show<AddVaatimuspohja>("Vaatimuspohja");
+		var result = await uusiModal.Result;
+	}
+
+
+}
