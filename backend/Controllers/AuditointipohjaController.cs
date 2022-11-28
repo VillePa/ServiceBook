@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using SharedLib;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers
 {
@@ -58,6 +59,50 @@ namespace backend.Controllers
             }
         }
 
+		[HttpPut("/auditointipohja/edit"), Authorize]
+		public async Task<IActionResult> EditAuditointipohja(AuditointipohjaDTO req)
+		{
+			var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var v = await _db.Auditointipohjas.Where(i => i.Idauditointipohja == req.Idauditointipohja).FirstOrDefaultAsync();
 
-    }
+			if (req == null || v == null)
+			{
+				return BadRequest("ei tietoja");
+			}
+
+            v.Idauditointipohja = v.Idauditointipohja;
+			v.Selite = req.Selite;
+            v.Luontiaika = DateTime.Now;
+			v.Idkayttaja = int.Parse(id);
+            v.Idkohderyhma = req.Idkohderyhma;
+
+			_db.Auditointipohjas.Update(v);
+			await _db.SaveChangesAsync();
+
+			return Ok(v);
+
+		}
+
+		[HttpDelete("/auditointipohja/{id}")]
+		public async Task<IActionResult> Delete(int id)
+		{
+			if (id == null)
+			{
+				return BadRequest("id:tä ei annettu");
+			}
+
+			var a = await _db.Auditointipohjas.Where(i => i.Idauditointipohja == id).FirstOrDefaultAsync();
+
+			if (a == null)
+			{
+				return BadRequest("tietoja ei löydy");
+			}
+
+			_db.Auditointipohjas.Remove(a);
+			await _db.SaveChangesAsync();
+            return NoContent(); 
+		}
+
+
+	}
 }

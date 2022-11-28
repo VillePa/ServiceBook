@@ -84,6 +84,48 @@ namespace backend.Controllers
 			}
 		}
 
+		[HttpPut("/vaatimuspohja/edit")]
+		public async Task<IActionResult> EditVaatimuspohja(VaatimuspohjaDTO req)
+		{
+			var v = await _db.Vaatimuspohjas.Where(i => i.Idvaatimuspohja == req.Idvaatimuspohja).FirstOrDefaultAsync();
+			
+			if(req == null || v == null)
+			{
+				return BadRequest("ei tietoja");
+			}
+
+			v.Idvaatimuspohja = req.Idvaatimuspohja;
+			v.Kuvaus = req.Kuvaus;
+			v.Pakollisuus = req.Pakollisuus;
+			v.Idauditointipohja = v.Idauditointipohja;
+
+			_db.Vaatimuspohjas.Update(v);
+			await _db.SaveChangesAsync();
+
+			return Ok(v);
+
+		}
+
+		[HttpDelete("/vaatimuspohja/delete/{id}")]
+		public async Task<IActionResult> DeleteVaatimuspohja(int? id)
+		{
+			if(id != null)
+			{
+				var v = await _db.Vaatimuspohjas.Where(i => i.Idvaatimuspohja == id).FirstOrDefaultAsync();
+				if(v != null)
+				{
+					_db.Vaatimuspohjas.Remove(v);
+					await _db.SaveChangesAsync();
+					return NoContent();
+				}
+				return BadRequest();
+			}
+			
+				return BadRequest();
+			
+
+		}
+
 		#endregion
 	}
 }

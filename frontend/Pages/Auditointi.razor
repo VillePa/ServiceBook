@@ -8,7 +8,7 @@
 
 <h4 class="mb-3">Auditointipohjat</h4>
 
-@if (pohjat != null)
+@if (auditointipohjat != null)
 {
 	<table class="table table-striped">
 		<thead>
@@ -21,7 +21,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			@foreach (var item in pohjat)
+			@foreach (var item in auditointipohjat)
 			{
 				<tr>
 					<td>@item.Idauditointipohja</td>
@@ -34,6 +34,34 @@
 
 		</tbody>
 	</table>
+
+	<h4 class="mb-3">Vaatimuspohjat</h4>
+
+	@if(vaatimuspohjat != null)
+	{
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Kuvaus</th>
+					<th>Pakollisuus</th>
+					<th>Auditointipohja</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in vaatimuspohjat)
+				{
+					<tr>
+						<td>@item.Idvaatimuspohja</td>
+						<td>@item.Kuvaus</td>
+						<td>@item.Pakollisuus</td>
+						<td>@item.Idauditointipohja</td>
+					</tr>
+				}
+
+			</tbody>
+		</table>
+	}
 }
 else
 {
@@ -41,19 +69,30 @@ else
 }
 
 <button @onclick="AddAuditointipohja">Lisää auditointipohja</button>
+<button @onclick="AddVaatimuspohja">Lisää vaatimuspohja</button>
 
 @code {
-	AuditointipohjaDTO[]? pohjat;
+	AuditointipohjaDTO[]? auditointipohjat;
+	VaatimuspohjaDTO[]? vaatimuspohjat;
 
 	protected override async Task OnInitializedAsync()
 	{
-		pohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>("auditointipohja/all");
+		auditointipohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>("auditointipohja/all");
+		vaatimuspohjat = await Http.GetFromJsonAsync<VaatimuspohjaDTO[]>("vaatimuspohja/all");
 	}
 
 	async Task AddAuditointipohja()
 	{
-		var uusiModal = ModalService.Show<AddAuditointipohja>("AddAuditointipohja");
+		var uusiModal = ModalService.Show<AddAuditointipohja>("Auditointipohja");
 		var result = await uusiModal.Result;
 	}
+
+	async Task AddVaatimuspohja()
+	{
+		var uusiModal = ModalService.Show<AddVaatimuspohja>("Vaatimuspohja");
+		var result = await uusiModal.Result;
+	}
+
+
 
 }

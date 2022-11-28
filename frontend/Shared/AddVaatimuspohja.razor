@@ -1,0 +1,60 @@
+﻿@using SharedLib
+@inject HttpClient Http
+@inject IModalService ModalService
+@inject NavigationManager NavigationManager
+
+<EditForm Model="v">
+	<div class="mb-3">
+		<label for="kuvaus">Kuvaus</label>
+		<InputText id="kuvaus" @bind-Value="v.Kuvaus" class="form-control" />
+	</div>
+
+	<div class="mb-3">
+		<label for="selite">Selite</label>
+		<InputText id="selite" @bind-Value="v.Pakollisuus" class="form-control" />
+	</div>
+
+	<div class="mb-3">
+		<label for="auditointipohja">Auditointipohja</label>
+		<InputSelect id="auditointipohja" @bind-Value="v.Idauditointipohja" class="form-control">
+			@if (auditointipohjat != null)
+			{
+				@foreach (var item in auditointipohjat)
+				{
+					<option value="@item.Idauditointipohja">@item.Selite</option>
+				}
+			}
+
+		</InputSelect>
+	</div>
+
+	<button class="btn btn-primary" @onclick="Save">Tallenna</button>
+	<button class="btn btn-secondary" @onclick="Close">Peruuta</button>
+</EditForm>
+
+
+
+
+@code {
+	[CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
+	VaatimuspohjaDTO v = new();
+	AuditointipohjaDTO[]? auditointipohjat;
+
+	protected override async Task OnInitializedAsync()
+	{
+		auditointipohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>("/auditointipohja/all");
+
+	}
+
+	async Task Close()
+	{
+		await Modal.CloseAsync();
+	}
+
+	async Task Save()
+	{
+		var result = await Http.PostAsJsonAsync<VaatimuspohjaDTO>("/vaatimuspohja/add", v);
+
+	}
+
+}
