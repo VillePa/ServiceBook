@@ -1,4 +1,7 @@
-﻿@attribute [Authorize]
+﻿@inject ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
 
 <div class="top-row ps-3 navbar navbar-dark">
 
@@ -48,11 +51,35 @@
 			</NavLink>
 		</div>
 
-		<div class="nav-item px-3">
+		@*<div class="nav-item px-3">
 			<NavLink class="nav-link">
-				@*<span class="" aria-hidden="true"></span> *@<UserButton />
+				<UserButton />
 			</NavLink>
-		</div>
+		</div>*@
+
+		<AuthorizeView>
+			 <NotAuthorized>
+				<div class="nav-item px-3">
+					<NavLink class="nav-link">
+						<button class="btn btn-outline-primary" @onclick="Login">
+							<span class="oi oi-account-login" aria-hidden="true"></span> Kirjaudu sisään
+						</button>
+					</NavLink>
+				</div>
+            </NotAuthorized>
+
+			<Authorized>
+			<div class="nav-item px-3">
+					<NavLink class="nav-link">
+						<button @onclick="Logout" class="btn btn-outline-danger">
+							<span class="oi oi-account-logout" aria-hidden="true"></span> Kirjaudu ulos
+						</button>
+						</NavLink>
+			</div>
+			</Authorized>
+		</AuthorizeView>
+		
+
 		</nav>
 </div>
 
@@ -64,6 +91,18 @@
 	private void ToggleNavMenu()
 	{
 		collapseNavMenu = !collapseNavMenu;
+	}
+
+	private async Task Logout()
+	{
+		await LocalStorage.RemoveItemAsync("authToken");
+		await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		NavigationManager.NavigateTo("/");
+	}
+
+	private void Login()
+	{
+		NavigationManager.NavigateTo("/login");
 	}
 
 
