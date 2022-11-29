@@ -14,21 +14,21 @@ using SharedLib;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
-    public class FileController : ControllerBase
+    [Route("/[controller]")]
+    public class TiedostoController : ControllerBase
     {
 
         private readonly string _azureConnectionString;
         private readonly string _blobContainer;
 
-        public FileController(IConfiguration configuration)
+        public TiedostoController(IConfiguration configuration)
         {
             _azureConnectionString = configuration.GetConnectionString("AzureConnectionString") ?? "";
             _blobContainer = configuration.GetValue<string>("BlobContainerName") ?? "";
         }
 
         // Tallentaa monta tiedostoa
-        [HttpPost]
+        [HttpPost("/tiedosto")]
         public async Task<ActionResult<List<UploadResult>>> UploadFile(List<IFormFile> files)
         {
             List<UploadResult> uploadResults = new List<UploadResult>();
@@ -66,7 +66,7 @@ namespace backend.Controllers
         }
 
         // Lataa yhden tiedoston
-        [HttpGet("/api/[controller]/lataa/{fileName}")]
+        [HttpGet("/tiedosto/lataa/{fileName}")]
         public async Task<IActionResult> DownloadFile(string fileName)
         {
             CloudBlockBlob blockBlob;
@@ -83,7 +83,7 @@ namespace backend.Controllers
         }
 
         // Poistaa yhden tiedoston
-        [HttpDelete("{fileName}")]
+        [HttpDelete("/tiedosto/{fileName}")]
         public async Task<IActionResult> DeleteFile(string fileName)
         {
             var container = new BlobContainerClient(_azureConnectionString, _blobContainer);
