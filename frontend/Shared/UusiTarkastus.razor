@@ -50,7 +50,7 @@
                     @foreach (var file in uploadResults)
                     {
                         <li>
-                            <a href="@file.Location" target="_blank">@file.FileName</a>
+                            <a style="text-decoration:none" href="@file.Location" target="_blank">@file.FileName</a>
                             <button type="button" class="btn" @onclick="@(()=> DownloadFile(@file.FileName))" ><span class="oi oi-cloud-download"></span></button>
                             <button type="button" class="btn" @onclick="@(()=> RemoveFile(@file.FileName))" ><span class="oi oi-trash"></span></button>
                         </li>
@@ -127,7 +127,7 @@ else
             content.Add(
                 content: fileContent,
                 name: "\"files\"",
-                fileName: file.Name
+                fileName: DateTime.Now.ToString("dd-MM-yyyy-HHmmss_") + file.Name
                 );
 
 

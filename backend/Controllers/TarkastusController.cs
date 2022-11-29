@@ -33,6 +33,7 @@ namespace backend.Controllers
                 return await _db.Tarkastus
                 .Include(t => t.IdkayttajaNavigation)
                 .Include(t => t.IdkohdeNavigation)
+                .Include(t => t.Liites)
                 .Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
             }
             else if (sortOrder.Equals("asc"))
@@ -40,6 +41,7 @@ namespace backend.Controllers
                 return await _db.Tarkastus
                 .Include(t => t.IdkayttajaNavigation)
                 .Include(t => t.IdkohdeNavigation)
+                .Include(t => t.Liites)
                 .OrderBy(t => t.Aikaleima)
                 .Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
             }
@@ -48,6 +50,7 @@ namespace backend.Controllers
                 return await _db.Tarkastus
                 .Include(t => t.IdkayttajaNavigation)
                 .Include(t => t.IdkohdeNavigation)
+                .Include(t => t.Liites)
                 .OrderByDescending(t => t.Aikaleima)
                 .Select(t => Helpers.TarkastusToDTO(t)).ToListAsync();
             }
@@ -65,6 +68,7 @@ namespace backend.Controllers
                 return await _db.Tarkastus
                 .Include(t => t.IdkayttajaNavigation)
                 .Include(t => t.IdkohdeNavigation)
+                .Include(t => t.Liites)
                 .Where(t => t.Idkohde == id)
                 .Select(t => Helpers.TarkastusToDTO(t))
                 .ToListAsync();
@@ -74,6 +78,7 @@ namespace backend.Controllers
                 return await _db.Tarkastus
                 .Include(t => t.IdkayttajaNavigation)
                 .Include(t => t.IdkohdeNavigation)
+                .Include(t => t.Liites)
                 .Where(t => t.Idkohde == id)
                 .OrderBy(t => t.Aikaleima)
                 .Select(t => Helpers.TarkastusToDTO(t))
@@ -84,6 +89,7 @@ namespace backend.Controllers
                 return await _db.Tarkastus
                 .Include(t => t.IdkayttajaNavigation)
                 .Include(t => t.IdkohdeNavigation)
+                .Include(t => t.Liites)
                 .Where(t => t.Idkohde == id)
                 .OrderByDescending(t => t.Aikaleima)
                 .Select(t => Helpers.TarkastusToDTO(t))
@@ -101,6 +107,7 @@ namespace backend.Controllers
             var t = await _db.Tarkastus
                 .Include(t => t.IdkayttajaNavigation)
                 .Include(t => t.IdkohdeNavigation)
+                .Include(t => t.Liites)
                 .Where(t => t.Idtarkastus == id).FirstOrDefaultAsync();
 
             if (t == null)
@@ -138,7 +145,7 @@ namespace backend.Controllers
 
             Tarkastu newTarkastus = Helpers.DTOtoTarkastu(t);
 
-            _db.Tarkastus.Add(newTarkastus);
+            var response = _db.Tarkastus.Add(newTarkastus);
             await _db.SaveChangesAsync();
 
             // Muokataan kohteen tila
@@ -158,6 +165,22 @@ namespace backend.Controllers
                 }
             }
 
+            // Päivitetään liitteet oikeaan tauluun
+            if (t.Liitteet != null)
+            {
+                foreach (var item in t.Liitteet)
+                {
+                    Liite uusiLiite = new Liite
+                    {
+                        Sijainti = item.Location,
+                        Idtarkastus = response.Entity.Idtarkastus
+                    };
+
+                    _db.Liites.Add(uusiLiite);
+                }
+
+                await _db.SaveChangesAsync();
+            }
 
             return Ok();
         }

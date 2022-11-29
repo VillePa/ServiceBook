@@ -23,6 +23,7 @@ namespace backend.Data
 
 		public static TarkastusDTO TarkastusToDTO(this Tarkastu t)
 		{
+
 			return new TarkastusDTO
 			{
 				Idtarkastus = t.Idtarkastus,
@@ -33,7 +34,12 @@ namespace backend.Data
 				Idkohde = t.Idkohde,
 				Idkayttaja = t.Idkayttaja,
 				KayttajanNimi = t.IdkayttajaNavigation.Nimi,
-				KohteenNimi = $"{t.IdkohdeNavigation.Nimi}, {t.IdkohdeNavigation.Sijainti}"
+				KohteenNimi = $"{t.IdkohdeNavigation.Nimi}, {t.IdkohdeNavigation.Sijainti}",
+				Liitteet = t.Liites.Select(x => new UploadResult
+				{
+					Location = x.Sijainti,
+					FileName = x.Sijainti != null && x.Sijainti.Length > 68 ? x.Sijainti.Substring(68) : ""
+				}).ToList()
 			};
 		}
 
