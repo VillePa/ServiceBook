@@ -77,7 +77,7 @@ namespace backend.Controllers
             }
             else if(kayttaja.Poistettu.Equals(1))
             {
-                return Forbid();
+                return BadRequest("käyttäjä poistettu");
             }
             else if (ValidatePassword(req.Salasana, kayttaja.Salasana))
             {

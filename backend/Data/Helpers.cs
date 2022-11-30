@@ -38,7 +38,7 @@ namespace backend.Data
 				Liitteet = t.Liites.Select(x => new UploadResult
 				{
 					Location = x.Sijainti,
-					FileName = x.Sijainti != null && x.Sijainti.Length > 68 ? x.Sijainti.Substring(68) : ""
+					FileName = x.Sijainti != null && x.Sijainti.Length > 56 ? x.Sijainti.Substring(56) : ""
 				}).ToList()
 			};
 		}
