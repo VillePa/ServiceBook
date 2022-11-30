@@ -123,7 +123,45 @@ namespace backend.Data
 			};
 		}
 
-		public static VaatimusDTO VaatimusToDTO(this Vaatimu v)
+        // Muutoshistoria helpperi
+
+        public static MuutoshistoriaKohdeDTO MuutoshistoriaKohdeToDTO(this MuutoshistoriaKohde a)
+        {
+            return new MuutoshistoriaKohdeDTO
+            {
+                IdmuutoshistoriaKohde = a.IdmuutoshistoriaKohde,
+                Nimi = a.Nimi,
+                Kuvaus = a.Kuvaus,
+                Sijainti = a.Sijainti,
+                Tunnus = a.Tunnus,
+                IdkohteenTila = a.IdkohteenTila,
+                Muokattu = a.Muokattu,
+				KohdeIdkohde = a.KohdeIdkohde,
+                KayttajaIdkayttaja = a.KayttajaIdkayttaja,
+                
+
+            };
+        }
+
+        // muutoshistoriakohdeDTO to muutoshistoriakohde
+        public static MuutoshistoriaKohde DTOtoMuutoshistoriaKohde(this MuutoshistoriaKohdeDTO a)
+        {
+            return new MuutoshistoriaKohde
+            {
+                IdmuutoshistoriaKohde = a.IdmuutoshistoriaKohde,
+                Nimi = a.Nimi,
+                Kuvaus = a.Kuvaus,
+                Sijainti = a.Sijainti,
+                Tunnus = a.Tunnus,
+                IdkohteenTila = a.IdkohteenTila,
+                Muokattu = a.Muokattu,
+                KohdeIdkohde = a.KohdeIdkohde,
+                KayttajaIdkayttaja = a.KayttajaIdkayttaja,
+
+            };
+        }
+
+        public static VaatimusDTO VaatimusToDTO(this Vaatimu v)
 		{
 			return new VaatimusDTO
 			{
