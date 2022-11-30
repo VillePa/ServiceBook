@@ -17,7 +17,7 @@
 else
 {
     <div style="margin: 1em 0 1em 0">
-    <label>Filter By Tila:</label>
+    <label>Suodata kohteen tilan mukaan:</label>
     <button @onclick="Filter1">Käytössä</button>
     <button @onclick="Filter2">Epäkunnossa</button>
     <button @onclick="Filter3">Poistettu</button>
@@ -81,12 +81,19 @@ else
     private HuoltokohdeDTO[]? kohteet;
     private List<TilaDTO>? tilat;
 
+    private List<HuoltokohdeDTO>? huoltokohteet;
+    private List<HuoltokohdeDTO>? filtteroimaton;
+
+    private int[]? kohdes;
+
     int tila;
 
     protected override async Task OnInitializedAsync()
     {
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
         tilat = await Http.GetFromJsonAsync<List<TilaDTO>>("/tila/all");
+        huoltokohteet = await Http.GetFromJsonAsync<List<HuoltokohdeDTO>>("/kohde/all");
+        filtteroimaton = huoltokohteet;
     }
 
     private async Task ShowUusiKohde()
@@ -124,6 +131,7 @@ else
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
     }
 
+    
     
 
     private async Task SortBySijainti()
