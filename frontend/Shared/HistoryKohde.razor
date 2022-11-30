@@ -18,7 +18,7 @@ else
                 <th>Tunnus</th>
                 <th>Tila</th>
                 <th>Muokattu</th>
-                <th>Muokkaaja</th> 
+                <th>Muokkaaja</th>
             </tr>
         </thead>
         <tbody>
@@ -53,6 +53,8 @@ else
     private MuutoshistoriaKohdeDTO? muutos = new MuutoshistoriaKohdeDTO();
     private MuutoshistoriaKohdeDTO[]? muutokset;
 
+ 
+
 
     [Parameter]
     public int Id { get; set; }
@@ -68,13 +70,6 @@ else
     }
 
 
-    private async Task Tallenna()
-    {
-       
-        await Modal.CloseAsync();
-
-
-    }
 
 
     private async Task Sulje()

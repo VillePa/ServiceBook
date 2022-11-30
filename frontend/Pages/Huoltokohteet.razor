@@ -112,7 +112,13 @@ else
         var parameters = new ModalParameters()
         .Add(nameof(HistoryKohde.Id), Id);
 
-        var historyModal = Modal.Show<HistoryKohde>("Muutoshistoria", parameters);
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+
+
+        var historyModal = Modal.Show<HistoryKohde>("Muutoshistoria", parameters, options);
         var result = await historyModal.Result;
 
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");

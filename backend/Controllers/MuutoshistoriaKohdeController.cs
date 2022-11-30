@@ -46,8 +46,25 @@ namespace backend.Controllers
             return Ok();
         }
 
-       
+        // poistetaan muutos
+        [HttpDelete("/history/delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
 
-        
+            var muutos = await _db.MuutoshistoriaKohdes.Where(i => i.IdmuutoshistoriaKohde == id).FirstOrDefaultAsync();
+
+            if (muutos != null)
+            {
+                _db.MuutoshistoriaKohdes.Remove(muutos);
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            return NotFound("muutosta ei löydy historiasta tällä id:llä");
+
+        }
+
+
+
+
     }
 }
