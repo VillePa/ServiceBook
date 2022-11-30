@@ -1,0 +1,52 @@
+﻿@using SharedLib
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+
+
+  
+    <div>
+        <button type="submit" @onclick="Tallenna" class="btn btn-primary">Tallenna</button>
+        <button type="button" @onclick="Sulje" class="btn btn-secondary">Peruuta</button>
+    </div>
+
+
+
+
+
+@code {
+    [CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
+
+    private HuoltokohdeDTO? kohde = new HuoltokohdeDTO();
+    private HuoltokohdeDTO[]? kohteet;
+
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+        kohde = kohteet.FirstOrDefault(i => i.Idkohde == Id);
+
+
+    }
+
+
+    private async Task Tallenna()
+    {
+       
+        await Modal.CloseAsync();
+
+
+    }
+
+
+    private async Task Sulje()
+    {
+        await Modal.CloseAsync();
+
+    }
+
+}
+
