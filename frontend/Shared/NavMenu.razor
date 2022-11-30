@@ -30,7 +30,7 @@
 			</div>
 			<div class="nav-item px-3">
 				<NavLink class="nav-link" href="register">
-					<span class="oi oi-person" aria-hidden="true"></span> Uusi käyttäjä
+					<span class="oi oi-people" aria-hidden="true"></span> Uusi käyttäjä
 				</NavLink>
 			</div>
 		</AuthorizeView>
@@ -69,6 +69,13 @@
             </NotAuthorized>
 
 			<Authorized>
+				<div class="nav-item px-3">
+					<NavLink class="nav-link" href="kayttajaProfiili">
+						<span class="oi oi-person" aria-hidden="true"></span> Profiili
+					</NavLink>
+				</div>
+
+
 			<div class="nav-item px-3">
 					<NavLink class="nav-link">
 						<button @onclick="Logout" class="btn btn-outline-danger">
@@ -78,7 +85,6 @@
 			</div>
 			</Authorized>
 		</AuthorizeView>
-		
 
 		</nav>
 </div>
@@ -102,7 +108,7 @@
 
 	private void Login()
 	{
-		NavigationManager.NavigateTo("/login");
+		NavigationManager.NavigateTo("/");
 	}
 
 
