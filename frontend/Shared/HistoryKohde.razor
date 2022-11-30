@@ -2,13 +2,47 @@
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 
-
+@if (muutokset == null)
+{
+    <p><em>ladataan...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nimi</th>
+                <th>Kuvaus</th>
+                <th>Sijainti</th>
+                <th>Tunnus</th>
+                <th>Tila</th>
+                <th>Muokattu</th>
+                <th>Muokkaaja</th> 
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in muutokset)
+            {
+                <tr>
+                    <td>@a.IdmuutoshistoriaKohde</td>
+                    <td>@a.Nimi</td>
+                    <td>@a.Kuvaus</td>
+                    <td>@a.Sijainti</td>
+                    <td>@a.Tunnus</td>
+                    <td>@a.IdkohteenTila</td>
+                    <td>@a.Muokattu</td>
+                    <td>@a.KayttajaIdkayttaja</td>
+                </tr>
+            }
+        </tbody>
+    </table>
   
     <div>
-        <button type="submit" @onclick="Tallenna" class="btn btn-primary">Tallenna</button>
+        
         <button type="button" @onclick="Sulje" class="btn btn-secondary">Peruuta</button>
     </div>
-
+}
 
 
 
@@ -16,8 +50,8 @@
 @code {
     [CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
 
-    private HuoltokohdeDTO? kohde = new HuoltokohdeDTO();
-    private HuoltokohdeDTO[]? kohteet;
+    private MuutoshistoriaKohdeDTO? muutos = new MuutoshistoriaKohdeDTO();
+    private MuutoshistoriaKohdeDTO[]? muutokset;
 
 
     [Parameter]
@@ -26,8 +60,9 @@
     protected override async Task OnInitializedAsync()
     {
 
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
-        kohde = kohteet.FirstOrDefault(i => i.Idkohde == Id);
+        muutokset = await Http.GetFromJsonAsync<MuutoshistoriaKohdeDTO[]>($"/history/{Id}/all");
+        
+
 
 
     }

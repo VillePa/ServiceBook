@@ -28,11 +28,11 @@
         </div>
         <div class="mb-3">
             <label for="tyyppi">Tyyppi</label>
-            <InputText id="tyyppi" @bind-Value="kohde.Tyyppi" class="form-control"/>
+            <InputText id="tyyppi" @bind-Value="kohde.Tyyppi" class="form-control" Disabled />
         </div>
         <div class="mb-3">
             <label for="malli">Malli</label>
-            <InputText id="malli" @bind-Value="kohde.Malli" class="form-control" />
+            <InputText id="malli" @bind-Value="kohde.Malli" class="form-control" Disabled />
         </div>
         <div class="mb-3">
             <label for="´tunnus">Tunnus</label>
@@ -44,7 +44,7 @@
         </div>
         <div class="mb-3">
             <label for="kohderyhma">Kohderyhmä</label>
-            <InputNumber id="kohderyhma" @bind-Value="kohde.Idkohderyhma" class="form-control" />
+            <InputNumber id="kohderyhma" @bind-Value="kohde.Idkohderyhma" class="form-control" Disabled />
         </div>
         <div class="mb-3">
             <label for="luotu">Luotu</label>
@@ -68,6 +68,7 @@
 
     private HuoltokohdeDTO? kohde = new HuoltokohdeDTO();
     private HuoltokohdeDTO[]? kohteet;
+    private MuutoshistoriaKohdeDTO? muutos = new MuutoshistoriaKohdeDTO();
 
 
     [Parameter]
@@ -78,14 +79,26 @@
 
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
         kohde = kohteet.FirstOrDefault(i => i.Idkohde == Id);
-       
+
 
     }
 
-    
+
     private async Task Tallenna()
     {
         await Http.PutAsJsonAsync($"/kohde/{Id}", kohde);
+
+        muutos.Nimi = kohde.Nimi;
+        muutos.Kuvaus = kohde.Kuvaus;
+        muutos.Sijainti = kohde.Sijainti;
+        muutos.Tunnus = kohde.Tunnus;
+        muutos.Muokattu = DateTime.Now;
+        muutos.KohdeIdkohde = kohde.Idkohde;
+        muutos.KayttajaIdkayttaja = 18;
+        muutos.IdkohteenTila = kohde.IdkohteenTila;
+
+
+        await Http.PostAsJsonAsync<MuutoshistoriaKohdeDTO>("/history", muutos);
         await Modal.CloseAsync();
         
 
