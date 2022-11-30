@@ -116,7 +116,7 @@ else
         var parameters = new ModalParameters()
         .Add(nameof(EditKayttaja.Id), Id);
 
-        var uusiModal = ModalService.Show<EditKayttaja>("EditKayttaja", parameters);
+        var uusiModal = ModalService.Show<EditKayttaja>("Muokkaa", parameters);
         var result = await uusiModal.Result;
 
         //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);

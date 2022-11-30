@@ -75,9 +75,9 @@ namespace backend.Controllers
             {
                 return NotFound("Käyttäjätunnusta ei löytynyt");
             }
-            else if(kayttaja.Poistettu == 1)
+            else if(kayttaja.Poistettu.Equals(1))
             {
-                return Forbid("Käyttäjätunnus poistettu.");
+                return Forbid();
             }
             else if (ValidatePassword(req.Salasana, kayttaja.Salasana))
             {
@@ -148,7 +148,7 @@ namespace backend.Controllers
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddDays(1),
+                expires: DateTime.Now.AddHours(6),
                 signingCredentials: creds
                 );
 
