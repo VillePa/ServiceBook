@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using SharedLib;
 using System;
+using System.Security.Claims;
 
 namespace backend.Controllers
 {
@@ -38,6 +39,9 @@ namespace backend.Controllers
             {
                 return BadRequest();
             }
+
+            //käyttäjän id tokenista
+            t.KayttajaIdkayttaja = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             MuutoshistoriaKohde newMuutoshistoriaKohde = Helpers.DTOtoMuutoshistoriaKohde(t);
 

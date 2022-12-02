@@ -6,7 +6,7 @@
 {
     // tänne lisättävä muokkaus+tallenna nappi ja muokkauksen tallennus muutoshistoriaan!
     // poistolle ei omaa nappia! tilaa voi muuttaa -> poistettu/ei käytössä
-    <EditForm Model="kohde" OnValidSubmit="Tallenna">
+    <EditForm Model="kohde">
 
         <div class="mb-3">
             <label for="id">Kohteen Id</label>
@@ -94,7 +94,6 @@
         muutos.Tunnus = kohde.Tunnus;
         muutos.Muokattu = DateTime.Now;
         muutos.KohdeIdkohde = kohde.Idkohde;
-        muutos.KayttajaIdkayttaja = 18;
         muutos.IdkohteenTila = kohde.IdkohteenTila;
 
 
