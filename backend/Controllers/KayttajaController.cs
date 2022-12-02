@@ -32,7 +32,7 @@ namespace backend.Controllers
 		}
 
 		[HttpGet("/kayttaja/{id}")]
-		public async Task<IActionResult> GetSingle(int id)
+		public async Task<IActionResult> GetSingle(int? id)
 		{
 			if (id != null)
 			{

@@ -6,29 +6,31 @@
 
 <h3 class="mb-4">Auditointi</h3>
 
-<h4 class="mb-3">Auditointipohjat</h4>
+<h4>Menneet auditoinnit</h4>
 
-@if (auditointipohjat != null)
+@if (auditoinnit != null)
 {
 	<table class="table table-striped">
 		<thead>
 			<tr>
 				<th>ID</th>
 				<th>Selite</th>
-				<th>Luotu</th>
+				<th>Päivämäärä</th>
 				<th>Tekijä</th>
-				<th>Kohderyhmä</th>
+				<th>Kohde</th>
+				<th>Lopputulos</th>
 			</tr>
 		</thead>
 		<tbody>
-			@foreach (var item in auditointipohjat)
+			@foreach (var item in auditoinnit)
 			{
 				<tr>
-					<td>@item.Idauditointipohja</td>
+					<td>@item.Idauditointi</td>
 					<td>@item.Selite</td>
-					<td>@item.Luontiaika</td>
-					<td>@item.KayttajaNimi</td>
-					<td>@item.KohderyhmaNimi</td>
+					<td>@item.Luotu.ToString("dd.MM.yyyy HH:mm")</td>
+					<td>@item.Idkayttaja</td>
+					<td>@item.Idkohde</td>
+					<td>@item.Lopputulos</td>
 				</tr>
 			}
 
@@ -40,20 +42,22 @@ else
 	<p>ladataan dataa..</p>
 }
 
-<button class="btn btn-primary" @onclick="AddAuditointipohja">Lisää uusi auditointipohja</button>
-<button class="btn btn-secondary" @onclick="Vaatimukset">Selaa vaatimuspohjia</button>
+
+
+<button class="btn btn-primary" @onclick="Auditointipohjat">Auditointipohjat</button>
+<button class="btn btn-secondary" @onclick="Vaatimukset">Vaatimuspohjat</button>
 
 @code {
-	AuditointipohjaDTO[]? auditointipohjat;
+	AuditointiDTO[]? auditoinnit;
 
 	protected override async Task OnInitializedAsync()
 	{
-		auditointipohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>("auditointipohja/all");
+		auditoinnit = await Http.GetFromJsonAsync<AuditointiDTO[]>("/auditointi/all");
 	}
 
-	async Task AddAuditointipohja()
+	async Task Auditointipohjat()
 	{
-		var uusiModal = ModalService.Show<AddAuditointipohja>("Auditointipohja");
+		var uusiModal = ModalService.Show<Auditointipohjat>("Auditointipohjat");
 		var result = await uusiModal.Result;
 	}
 

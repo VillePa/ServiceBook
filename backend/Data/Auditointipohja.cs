@@ -9,7 +9,7 @@ public partial class Auditointipohja
 
 	public string? Selite { get; set; }
 
-	public DateTime? Luontiaika { get; set; }
+	public DateTime Luontiaika { get; set; }
 
 	public int Idkayttaja { get; set; }
 

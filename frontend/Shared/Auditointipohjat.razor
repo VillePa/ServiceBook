@@ -1,0 +1,61 @@
+﻿@using SharedLib
+@inject HttpClient Http
+@inject IModalService ModalService
+@inject NavigationManager NavigationManager
+
+
+@if (auditointipohjat != null)
+{
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Selite</th>
+					<th>Luotu</th>
+					<th>Tekijä</th>
+					<th>Kohderyhmä</th>
+				</tr>
+			</thead>
+			<tbody>
+			@foreach (var item in auditointipohjat)
+			{
+						<tr>
+							<td>@item.Idauditointipohja</td>
+							<td>@item.Selite</td>
+							<td>@item.Luontiaika.ToString("dd.MM.yyyy HH:mm")</td>
+							<td>@item.KayttajaNimi</td>
+							<td>@item.KohderyhmaNimi</td>
+						</tr>
+			}
+
+			</tbody>
+		</table>
+}
+else
+{
+		<p>ladataan dataa..</p>
+}
+<button class="btn btn-primary" @onclick="AddAuditointipohja">Lisää uusi auditointipohja</button>
+
+@code {
+	[CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
+	AuditointipohjaDTO[]? auditointipohjat;
+
+	protected override async Task OnInitializedAsync()
+	{
+		auditointipohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>("auditointipohja/all");
+	}
+
+	async Task AddAuditointipohja()
+	{
+		var uusiModal = ModalService.Show<AddAuditointipohja>("Lisää auditointipohja");
+		var result = await uusiModal.Result;
+	}
+
+	private async Task Sulje()
+	{
+		await Modal.CloseAsync();
+
+	}
+
+}

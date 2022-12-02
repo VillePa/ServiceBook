@@ -1,6 +1,9 @@
 ﻿using backend.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using SharedLib;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -35,19 +38,37 @@ namespace backend.Controllers
 		}
 
 		[HttpPost("/auditointi")]
-		public void Post([FromBody] string value)
+		public async Task<ActionResult<Auditointi>> AddAuditointi(AuditointiDTO req)
 		{
+			//var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			//if (string.IsNullOrEmpty(id))
+			//{
+			//	return BadRequest("Käyttäjän ID:tä ei löydy");
+			//}
+
+			//int kayttajaId = int.Parse(id);
+			
+
+			//Auditointi a = new()
+			//{
+				
+			//};
+
+			//_db.Auditointis.Add(a);
+			//await _db.SaveChangesAsync();
+
+			return Ok();
 		}
 
-		[HttpPut("/auditointi/{id}")]
-		public void Put(int id, [FromBody] string value)
-		{
-		}
+		//[HttpPut("/auditointi/{id}")]
+		//public void Put(int id, [FromBody] string value)
+		//{
+		//}
 
-		[HttpDelete("/auditointi/{id}")]
-		public async Task<IActionResult> Delete(int id)
-		{
-		return NoContent();
-		}
+		//[HttpDelete("/auditointi/{id}")]
+		//public async Task<IActionResult> Delete(int id)
+		//{
+		//return NoContent();
+		//}
 	}
 }

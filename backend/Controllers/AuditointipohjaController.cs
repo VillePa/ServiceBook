@@ -86,7 +86,7 @@ namespace backend.Controllers
 		}
 
 		[HttpDelete("/auditointipohja/{id}")]
-		public async Task<IActionResult> Delete(int id)
+		public async Task<IActionResult> Delete(int? id)
 		{
 			if (id == null)
 			{
