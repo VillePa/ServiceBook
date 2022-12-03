@@ -14,6 +14,7 @@
 					<th>Luotu</th>
 					<th>Tekijä</th>
 					<th>Kohderyhmä</th>
+					<th>Kopioi pohja</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -25,6 +26,11 @@
 							<td>@item.Luontiaika.ToString("dd.MM.yyyy HH:mm")</td>
 							<td>@item.KayttajaNimi</td>
 							<td>@item.KohderyhmaNimi</td>
+					@*<td><input type="checkbox" checked="@isChecked" @oninput="CheckboxChanged"></td>*@
+							<td><input type="checkbox" checked="@isChecked" @oninput="@(e=> Select(item.Idauditointipohja))"></td>
+
+					@*@onclick="@(e => Muokkaa(item.Idkayttaja))">*@
+
 						</tr>
 			}
 
@@ -35,21 +41,87 @@ else
 {
 		<p>ladataan dataa..</p>
 }
-<button class="btn btn-primary" @onclick="AddAuditointipohja">Lisää uusi auditointipohja</button>
+
+<div class="mb-2" style="color: red">@message</div>
+
+<div>
+	<button class="btn btn-primary" @onclick="Add">Lisää uusi auditointipohja</button>
+<button class="btn btn-secondary" @onclick="@(e=> Copy(pohjaId))">Kopioi valittu pohja</button>
+</div>
 
 @code {
+
 	[CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
 	AuditointipohjaDTO[]? auditointipohjat;
+
+	//[Parameter]
+	//public bool IsChecked { get; set; } = false;
+	private bool isChecked = false;
+	private int? pohjaId;
+	private string? message;
 
 	protected override async Task OnInitializedAsync()
 	{
 		auditointipohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>("auditointipohja/all");
 	}
 
-	async Task AddAuditointipohja()
+	//protected override void OnParametersSet()
+	//{
+	//	isChecked = false;
+	//}
+
+	//private void CheckboxChanged(ChangeEventArgs e)
+	//{
+	//	// get the checkbox state
+	//	var value = e.Value;
+	//	Console.WriteLine($"Checkbox changed {IsChecked}");
+	//}
+
+	private void Select(int? Id)
+	{
+		if (isChecked == false)
+		{
+			message = string.Empty;
+			isChecked = true;
+			pohjaId = Id;
+			Console.WriteLine("Select: pohja valittu " + pohjaId);
+		}
+
+
+		else
+		{
+			isChecked = false;
+			pohjaId = null;
+			Console.WriteLine("Select: pohja nollattu " + pohjaId);
+		}
+
+	}
+
+	async Task Add()
 	{
 		var uusiModal = ModalService.Show<AddAuditointipohja>("Lisää auditointipohja");
 		var result = await uusiModal.Result;
+	}
+
+	async Task Copy(int? Id)
+	{
+		if(Id == null)
+		{
+			message = "Valitse ensin kopioitava auditointipohja";
+		}
+
+		else
+		{
+			message = string.Empty;
+
+			Console.WriteLine($"Copy: Id = {Id}");
+			var parameters = new ModalParameters()
+			.Add(nameof(AddAuditointipohja.Id), Id);
+
+			var uusiModal = ModalService.Show<AddAuditointipohja>("Lisää auditointipohja", parameters);
+			var result = await uusiModal.Result;
+		}
+		
 	}
 
 	private async Task Sulje()

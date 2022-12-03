@@ -34,7 +34,18 @@ namespace backend.Controllers
 
         }
 
-	
+		[HttpGet("/auditointipohja/{id}")]
+		public async Task<ActionResult<AuditointipohjaDTO>> GetSinge(int? id)
+		{
+            if (id == null) return BadRequest("ei id:tä");
+
+			var auditointipohja = await _db.Auditointipohjas.Where(i=> i.Idauditointipohja == id).FirstOrDefaultAsync();
+
+            return Ok(auditointipohja);
+
+		}
+
+
 		[HttpPost("/auditointipohja/add")]
         public async Task<ActionResult<AuditointipohjaDTO>> Add(AuditointipohjaDTO req)
         {
