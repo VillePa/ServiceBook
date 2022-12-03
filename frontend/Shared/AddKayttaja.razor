@@ -2,9 +2,6 @@
 @inject NavigationManager NavigationManager
 @inject ILogger<Index> Logger
 @inject HttpClient Http
-@attribute [Authorize(Roles = "admin")]
-
-<h3>Lisää uusi käyttäjä</h3>
 
 <EditForm Model="kayttaja" OnValidSubmit="AddUser">
 	<DataAnnotationsValidator />
@@ -28,7 +25,6 @@
 
 	<div class="mb-3">
 		<label for="rooli">Rooli</label>
-		@*<InputText id="rooli" @bind-Value="kayttaja.Rooli" class="form-control"/>*@
 		<InputSelect id="rooli" @bind-Value="kayttaja.Rooli" class="form-control">
 			<option>---</option>
 			<option value="@kayttaja.Rooli">user</option>
