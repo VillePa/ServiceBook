@@ -26,10 +26,8 @@
 							<td>@item.Luontiaika.ToString("dd.MM.yyyy HH:mm")</td>
 							<td>@item.KayttajaNimi</td>
 							<td>@item.KohderyhmaNimi</td>
-					@*<td><input type="checkbox" checked="@isChecked" @oninput="CheckboxChanged"></td>*@
-							<td><input type="checkbox" checked="@isChecked" @oninput="@(e=> Select(item.Idauditointipohja))"></td>
-
-					@*@onclick="@(e => Muokkaa(item.Idkayttaja))">*@
+							@*<td><input type="checkbox" checked="@isChecked" @oninput="@(e=> Select(item.Idauditointipohja))"></td>*@
+					<td><input type="checkbox" @bind-value="isChecked" @oninput="@(e=> Select(item.Idauditointipohja))"></td>
 
 						</tr>
 			}
@@ -47,6 +45,7 @@ else
 <div>
 	<button class="btn btn-primary" @onclick="Add">Lisää uusi auditointipohja</button>
 <button class="btn btn-secondary" @onclick="@(e=> Copy(pohjaId))">Kopioi valittu pohja</button>
+	<button class="btn btn-danger" @onclick="Sulje">Sulje</button>
 </div>
 
 @code {
@@ -101,6 +100,8 @@ else
 	{
 		var uusiModal = ModalService.Show<AddAuditointipohja>("Lisää auditointipohja");
 		var result = await uusiModal.Result;
+
+		await OnInitializedAsync();
 	}
 
 	async Task Copy(int? Id)
@@ -120,6 +121,8 @@ else
 
 			var uusiModal = ModalService.Show<AddAuditointipohja>("Lisää auditointipohja", parameters);
 			var result = await uusiModal.Result;
+
+			await OnInitializedAsync();
 		}
 		
 	}

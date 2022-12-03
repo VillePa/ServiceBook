@@ -10,7 +10,7 @@
 
 <h1 class="mb-3">Käyttäjät</h1>
 
-
+<button style="margin: 2em 0 2em 0" class="btn btn-primary" @onclick="@AddKayttaja">Lisää käyttäjä</button>
 
 @if (kayttajat == null)
 {
@@ -100,6 +100,8 @@ else
 
 
 @code {
+    [CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
+
     private KayttajaDTO[]? kayttajat;
     private bool sortNameDesc = false;
     private bool sortStateDesc = false;
@@ -120,7 +122,7 @@ else
         var result = await uusiModal.Result;
 
         //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
-
+        await OnInitializedAsync();
 
     }
 
@@ -162,12 +164,21 @@ else
             sortByLatest = true;
         }
         else
-            {
-                kayttajat = await Http.GetFromJsonAsync<KayttajaDTO[]>($"/kayttaja/sortByDate/{sort}");
+        {
+            kayttajat = await Http.GetFromJsonAsync<KayttajaDTO[]>($"/kayttaja/sortByDate/{sort}");
             sortByLatest = false;
-            }
         }
     }
+
+    private async Task AddKayttaja()
+    {
+        var uusiModal = ModalService.Show<AddKayttaja>("Lisää uusi käyttäjä");
+        var result = await uusiModal.Result;
+
+        await OnInitializedAsync();
+    }
+    
+}
 
 
 

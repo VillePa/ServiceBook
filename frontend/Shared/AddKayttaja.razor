@@ -1,17 +1,16 @@
-﻿@page "/register"
-@using SharedLib
+﻿@using SharedLib
 @inject NavigationManager NavigationManager
 @inject ILogger<Index> Logger
 @inject HttpClient Http
-@attribute [Authorize(Roles="admin")]
+@attribute [Authorize(Roles = "admin")]
 
 <h3>Lisää uusi käyttäjä</h3>
 
 <EditForm Model="kayttaja" OnValidSubmit="AddUser">
-	<DataAnnotationsValidator/>
+	<DataAnnotationsValidator />
 	<div class="mb-3">
 		<label for="nimi">Nimi</label>
-		<InputText id="nimi" @bind-Value="kayttaja.Nimi" class="form-control"/>
+		<InputText id="nimi" @bind-Value="kayttaja.Nimi" class="form-control" />
 		<ValidationMessage For="@(()=> kayttaja.Nimi)" />
 	</div>
 
@@ -32,24 +31,27 @@
 		@*<InputText id="rooli" @bind-Value="kayttaja.Rooli" class="form-control"/>*@
 		<InputSelect id="rooli" @bind-Value="kayttaja.Rooli" class="form-control">
 			<option>---</option>
-				<option value="@kayttaja.Rooli">user</option>
+			<option value="@kayttaja.Rooli">user</option>
 			<option value="@kayttaja.Rooli">admin</option>
 		</InputSelect>
 		<ValidationMessage For="@(()=> kayttaja.Rooli)" />
 	</div>
 
-		<button type="submit" class="btn btn-primary">Lisää</button>
-		<br /> <br />
+	<button type="submit" class="btn btn-primary">Lisää</button>
+	<button class="btn btn-danger" @onclick="Sulje">Sulje</button>
+	<br /> <br />
 	<div><span style="color: red">@errorMsg</span></div>
 	<div><span style="color: green">@successMsg</span></div>
 </EditForm>
 
 @code {
+	[CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
 	RegisterDTO kayttaja = new();
 	string errorMsg = string.Empty;
 	string successMsg = string.Empty;
 
-	async Task AddUser(){
+	async Task AddUser()
+	{
 
 		var result = await Http.PostAsJsonAsync("/auth/register", kayttaja);
 
@@ -70,7 +72,11 @@
 		}
 	}
 
-	
+	async Task Sulje()
+	{
+		await Modal.CloseAsync();
 	}
+}
+
 
 
