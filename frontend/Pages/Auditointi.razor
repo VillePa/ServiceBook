@@ -55,10 +55,12 @@ else
 		auditoinnit = await Http.GetFromJsonAsync<AuditointiDTO[]>("/auditointi/all");
 	}
 
-	async Task Auditointipohjat()
+	private void Auditointipohjat()
 	{
-		var uusiModal = ModalService.Show<Auditointipohjat>("Auditointipohjat");
-		var result = await uusiModal.Result;
+		//var uusiModal = ModalService.Show<Auditointipohjat>("Auditointipohjat");
+		//var result = await uusiModal.Result;
+
+		NavigationManager.NavigateTo("/auditointipohjat");
 	}
 
 	private void Vaatimukset()
