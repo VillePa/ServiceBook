@@ -26,9 +26,12 @@ namespace backend.Controllers
 
 
 		[HttpGet("/auditointi/all")]
-		public async Task<IEnumerable<Auditointi>> Get()
+		public async Task<IEnumerable<AuditointiDTO>> Get()
 		{
-			return await _db.Auditointis.OrderBy(i=>i.Idauditointi).ToListAsync();
+			return await _db.Auditointis
+				.Include(a => a.IdkohdeNavigation)
+				.Include(a => a.IdkayttajaNavigation)
+				.Select(a => Helpers.AuditointiToDTO(a)).ToListAsync();
 		}
 
 		[HttpGet("/auditointi/{id}")]

@@ -39,7 +39,11 @@ namespace backend.Controllers
 		{
             if (id == null) return BadRequest("ei id:tä");
 
-			var auditointipohja = await _db.Auditointipohjas.Where(i=> i.Idauditointipohja == id).FirstOrDefaultAsync();
+			var auditointipohja = await _db.Auditointipohjas.Where(i=> i.Idauditointipohja == id)
+				.Include(k => k.IdkayttajaNavigation)
+				.Include(k => k.IdkohderyhmaNavigation)
+                .Select(k => Helpers.AuditointipohjaToDTO(k))
+				.FirstOrDefaultAsync();
 
             return Ok(auditointipohja);
 

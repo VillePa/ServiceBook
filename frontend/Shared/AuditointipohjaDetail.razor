@@ -1,0 +1,55 @@
+﻿@using SharedLib
+@inject HttpClient Http
+@inject IModalService ModalService
+@inject NavigationManager NavigationManager
+
+
+
+<EditForm Model="a">
+	<div class="mb-3">
+		<label for="id">ID</label>
+		<InputNumber id="id" @bind-Value="a.Idauditointipohja" class="form-control" Disabled />
+	</div>
+
+	<div class="mb-3">
+		<label for="selite">Selite</label>
+		<InputText id="selite" @bind-Value="a.Selite" class="form-control" Disabled />
+	</div>
+
+	<div class="mb-3">
+		<label for="luontiaika">Luontiaika</label>
+		<InputDate id="luontiaika" @bind-Value="a.Luontiaika" @bind-Value:format="dd.MM.yyyy" class="form-control" Disabled />
+	</div>
+
+	<div class="mb-3">
+		<label for="kayttaja">Käyttäjä</label>
+		<InputNumber id="kayttajaid" @bind-Value="a.Idkayttaja" class="form-control" Disabled/>
+		<InputText id="kayttaja" @bind-Value="a.KayttajaNimi" class="form-control" Disabled />
+	</div>
+
+	<div class="mb-3">
+		<label for="kohderyhma">Kohderyhmä</label>
+		<InputNumber id="kohderyhmaid" @bind-Value="a.Idkohderyhma" class="form-control" Disabled />
+		<InputText id="kohderyhma" @bind-Value="a.KohderyhmaNimi" class="form-control" Disabled />
+	</div>
+</EditForm>
+
+
+
+
+
+
+
+@code {
+	[CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
+	AuditointipohjaDTO? a = new();
+
+	[Parameter]
+	public int? Id { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		a = await Http.GetFromJsonAsync<AuditointipohjaDTO>($"/auditointipohja/{Id}");
+	}
+
+}

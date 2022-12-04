@@ -18,8 +18,12 @@ namespace SharedLib
 
 		public int Idkohde { get; set; }
 
+		public string? KohdeNimi { get; set; }
+
 		public int Idkayttaja { get; set; }
 
-		public List<VaatimusDTO>? Vaatimukset { get; set; }
+		public string? KayttajaNimi { get; set; }
+
+		public List<VaatimusDTO>? Vaatimukset { get; set; } //listaus vaatimuksista?
 	}
 }
