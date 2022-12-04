@@ -189,7 +189,7 @@ namespace backend.Controllers
         }
 
         // Poistetaan tarkastus
-        [HttpDelete("/tarkastus/{id}")]
+        [HttpDelete("/tarkastus/{id}"), Authorize(Roles = "admin")]
         public async Task<IActionResult> PoistaTarkastus(int id)
         {
 
@@ -216,6 +216,29 @@ namespace backend.Controllers
             _db.Tarkastus.Remove(t);
             await _db.SaveChangesAsync();
             return Ok("Poistettu");
+        }
+
+        // Muokataan tarkastusta
+        [HttpPut("/tarkastus/muokkaa/{id}"), Authorize(Roles = "admin")]
+        public async Task<IActionResult> EditTarkastus(TarkastusDTO item)
+        {
+            var k = await _db.Tarkastus.FindAsync(item.Idtarkastus);
+
+            if (k is null)
+            {
+                return NotFound();
+            }
+
+            // Ainoastaan havaintoja ja syytä voi muokata
+            k.Havainnot = item.Havainnot;
+            k.Syy = item.Syy;
+
+
+
+            _db.Tarkastus.Update(k);
+            await _db.SaveChangesAsync();
+
+            return Ok(k);
         }
 
     }

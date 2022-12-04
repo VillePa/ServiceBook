@@ -1,12 +1,13 @@
 ﻿@using SharedLib
 @inject HttpClient Http
 @inject IJSRuntime JS
+@attribute [Authorize]
 
 
 @if (tarkastus != null && tila != null && aikaleima != null)
 {
     int Id = tarkastus.Idkohde;
-    <EditForm Model="tarkastus" OnValidSubmit="Sulje">
+    <EditForm Model="tarkastus" OnValidSubmit="Sulje" Context="formContext">
 
         <div class="mb-3">
             <label for="id">Tarkastuksen Id</label>
@@ -30,12 +31,12 @@
 
         <div class="mb-3">
             <label for="syy">Tarkastuksen syy</label>
-            <InputText id="syy" @bind-Value="tarkastus.Syy" class="form-control" Disabled />
+            <InputText id="syy" @bind-Value="tarkastus.Syy" class="form-control" Disabled="@muokataanko" />
         </div>
 
         <div class="mb-3">
             <label for="havainnot">Havainnot</label>
-            <InputText id="havainnot" @bind-Value="tarkastus.Havainnot" class="form-control" Disabled />
+            <InputText id="havainnot" @bind-Value="tarkastus.Havainnot" class="form-control" Disabled="@muokataanko" />
         </div>
 
         <div class="mb-3">
@@ -60,11 +61,21 @@
                 </ul>
             }
         </div>
-
-        <button type="submit" class="btn btn-primary">Sulje</button>
+        @if (!muokataanko)
+        {
+        <button style="margin-right: 0.5em" type="button" class="btn btn-primary" @onclick="@TallennaTarkastus">Tallenna</button>
+        }
+        else
+        {
+        <button style="margin-right: 0.5em" type="submit" class="btn btn-primary">Sulje</button>
+        }
         
+    <AuthorizeView Roles="admin" Context="authContext">
+        <button type="button" class="btn btn-secondary" @onclick="@MuokkaaTarkastus">Muokkaa</button>
         <button type="button" class="btn btn-danger" @onclick="@DeleteTarkastus">Poista</button>
-        <button type="button" class="btn btn-secondary" @onclick="@(e => ShowTarkastukset(Id))">Näytä kohteen tarkastukset</button>
+    </AuthorizeView>
+        <br />
+        <button style="margin-top: 1em" type="button" class="btn btn-secondary" @onclick="@(e => ShowTarkastukset(Id))">Näytä kohteen tarkastukset</button>
     </EditForm>
 }
 else
@@ -87,6 +98,8 @@ else
     private List<TilaDTO>? tilat;
     private string? tila;
     private string? aikaleima;
+    private bool muokataanko = true;
+    private bool paivitys = false;
 
     [Parameter]
     public int Id { get; set; }
@@ -109,7 +122,8 @@ else
 
     private async Task Sulje()
     {
-        await Modal.CloseAsync();
+        if (paivitys) await Modal.CloseAsync(ModalResult.Cancel("Päivitetään"));
+        else await Modal.CloseAsync(ModalResult.Cancel());
     }
 
     private async Task ShowTarkastukset(int Id)
@@ -163,8 +177,21 @@ else
 
             await Http.DeleteAsync($"/tarkastus/{tarkastus.Idtarkastus}");
 
-            await Modal.CloseAsync(ModalResult.Ok("Poistettu"));
+            await Modal.CloseAsync(ModalResult.Ok($"Poistettu: {tarkastus.Idtarkastus}"));
         }
+    }
+
+    private void MuokkaaTarkastus()
+    {
+        muokataanko = false;
+    }
+
+    private async Task TallennaTarkastus()
+    {
+
+        if (tarkastus is not null) await Http.PutAsJsonAsync<TarkastusDTO>($"/tarkastus/muokkaa/{tarkastus.Idtarkastus}", tarkastus);
+        muokataanko = true;
+        paivitys = true;
     }
 
 }

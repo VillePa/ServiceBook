@@ -147,9 +147,24 @@ else
         var uusiModal = Modal.Show<TarkastusDetail>("Tarkastus", parameters);
         var result = await uusiModal.Result;
 
-        if (result.Confirmed && result.Data.ToString() == "Poistettu")
+        if (result.Confirmed && result.Data.ToString().Contains("Poistettu"))
         {
-            Console.WriteLine("Poistettu");
+            int id = int.Parse(result.Data.ToString().Substring(11));
+
+            Console.WriteLine(id);
+
+            if (tarkastukset is not null) tarkastukset.Remove(tarkastukset.Find(x => x.Idtarkastus == id));
+        }
+        else if (result.Cancelled && result.Data is not null)
+        {
+            tarkastukset = await Http.GetFromJsonAsync<List<TarkastusDTO>>("/tarkastus/kaikki");
+            filtteroimaton = tarkastukset;
+
+            if (kohteet != null && kohteet.Length != 0)
+            {
+
+                if (tarkastukset != null) tarkastukset = tarkastukset.FindAll(x => kohteet.Contains(x.Idkohde));
+            }
         }
     }
 }
