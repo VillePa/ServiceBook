@@ -19,6 +19,7 @@ namespace backend.Controllers
         {
             _logger = logger;
             _db = db;
+
         }
 
 
@@ -165,6 +166,8 @@ namespace backend.Controllers
                 }
             }
 
+            // TÄHÄN MUUTOSHISTORIAN MUOKKAAMINEN
+
             // Päivitetään liitteet oikeaan tauluun
             if (t.Liitteet != null)
             {
@@ -185,6 +188,35 @@ namespace backend.Controllers
             return Ok();
         }
 
-        
+        // Poistetaan tarkastus
+        [HttpDelete("/tarkastus/{id}")]
+        public async Task<IActionResult> PoistaTarkastus(int id)
+        {
+
+            var t = await _db.Tarkastus
+                .Include(t => t.IdkayttajaNavigation)
+                .Include(t => t.IdkohdeNavigation)
+                .Include(t => t.Liites)
+                .Where(t => t.Idtarkastus == id).FirstOrDefaultAsync();
+
+            if (t == null)
+            {
+                return NotFound();
+            }
+
+            if (t.Liites is not null)
+            {
+                foreach (var liite in t.Liites)
+                {
+                    Liite l = await _db.Liites.FindAsync(liite.Idliite);
+                    if (l is not null) _db.Liites.Remove(l);
+                }
+            }
+
+            _db.Tarkastus.Remove(t);
+            await _db.SaveChangesAsync();
+            return Ok("Poistettu");
+        }
+
     }
 }

@@ -146,6 +146,11 @@ else
 
         var uusiModal = Modal.Show<TarkastusDetail>("Tarkastus", parameters);
         var result = await uusiModal.Result;
+
+        if (result.Confirmed && result.Data.ToString() == "Poistettu")
+        {
+            Console.WriteLine("Poistettu");
+        }
     }
 }
 

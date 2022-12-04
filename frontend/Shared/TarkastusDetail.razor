@@ -1,5 +1,7 @@
 ﻿@using SharedLib
 @inject HttpClient Http
+@inject IJSRuntime JS
+
 
 @if (tarkastus != null && tila != null && aikaleima != null)
 {
@@ -41,10 +43,28 @@
             <InputText id="tilanMuunnos" @bind-Value="tila" class="form-control" Disabled />
         </div>
 
+        <div class="mb-3">
+            <label>Liitteet</label>
+            @if (tarkastus.Liitteet is not null)
+            {
+                <ul>
+                    @foreach (var file in tarkastus.Liitteet)
+                    {
+                        <li>
+                            <a style="text-decoration:none" href="@file.Location" target="_blank">@file.FileName</a>
+                            <button type="button" class="btn" @onclick="@(()=> DownloadFile(@file.FileName))"><span class="oi oi-cloud-download"></span></button>
+                            <button type="button" class="btn" @onclick="@(()=> RemoveFile(@file.FileName))"><span class="oi oi-trash"></span></button>
+                        </li>
 
+                    }
+                </ul>
+            }
+        </div>
 
         <button type="submit" class="btn btn-primary">Sulje</button>
-        <button type="reset" class="btn btn-secondary" @onclick="@(e => ShowTarkastukset(Id))">Näytä kohteen tarkastukset</button>
+        
+        <button type="button" class="btn btn-danger" @onclick="@DeleteTarkastus">Poista</button>
+        <button type="button" class="btn btn-secondary" @onclick="@(e => ShowTarkastukset(Id))">Näytä kohteen tarkastukset</button>
     </EditForm>
 }
 else
@@ -61,6 +81,7 @@ else
 @code {
     [CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
     [CascadingParameter] public IModalService ShowModal { get; set; } = default!;
+    private List<UploadResult> uploadResults = new List<UploadResult>();
 
     private TarkastusDTO? tarkastus = new TarkastusDTO();
     private List<TilaDTO>? tilat;
@@ -74,11 +95,12 @@ else
     {
         tilat = await Http.GetFromJsonAsync<List<TilaDTO>>("/tila/all");
         tilat.Add(new TilaDTO { IdkohteenTila = 0, Kuvaus = "ei muutosta" });
+
         tarkastus = await Http.GetFromJsonAsync<TarkastusDTO>($"/tarkastus/{Id}");
 
-        if (tarkastus != null)
+        if (tarkastus is not null)
         {
-            tila = tilat.Find(x => x.IdkohteenTila == tarkastus.TilanMuutos).Kuvaus;
+            tila = tilat.Find(t => t.IdkohteenTila == tarkastus.TilanMuutos).Kuvaus;
             aikaleima = tarkastus.Aikaleima.ToString("dd.MM.yyyy HH:mm");
         }
 
@@ -98,6 +120,51 @@ else
 
         var uusiModal = ShowModal.Show<KohteenTarkastukset>($"Tarkastukset", parameters);
         var result = await uusiModal.Result;
+    }
+
+    private async Task DownloadFile(string fileName)
+    {
+        var respone = await Http.GetAsync($"/tiedosto/lataa/{fileName}");
+
+        if (!respone.IsSuccessStatusCode)
+        {
+            await JS.InvokeVoidAsync("alert", "Tiedostoa ei löytynyt.");
+        }
+        else
+        {
+            var fileStream = respone.Content.ReadAsStream();
+            using var streamRef = new DotNetStreamReference(stream: fileStream);
+            await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+        }
+    }
+
+    private async Task RemoveFile(string fileName)
+    {
+        await Http.DeleteAsync($"/tiedosto/{fileName}");
+        if (tarkastus is not null && tarkastus.Liitteet is not null)
+        {
+            tarkastus.Liitteet.Remove(tarkastus.Liitteet.Find(u => u.FileName == fileName));
+        }
+    }
+
+
+    private async Task DeleteTarkastus()
+    {
+        List<UploadResult> lista = new List<UploadResult>();
+        if (tarkastus is not null)
+        {
+
+            if (tarkastus.Liitteet is not null) lista = tarkastus.Liitteet.ToList();
+
+            foreach (var upload in lista)
+            {
+                if (upload.FileName is not null) await RemoveFile(upload.FileName);
+            }
+
+            await Http.DeleteAsync($"/tarkastus/{tarkastus.Idtarkastus}");
+
+            await Modal.CloseAsync(ModalResult.Ok("Poistettu"));
+        }
     }
 
 }
