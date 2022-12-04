@@ -32,6 +32,8 @@
 		<InputNumber id="kohderyhmaid" @bind-Value="a.Idkohderyhma" class="form-control" Disabled />
 		<InputText id="kohderyhma" @bind-Value="a.KohderyhmaNimi" class="form-control" Disabled />
 	</div>
+
+	<button class="btn btn-danger" @onclick="Sulje">Sulje</button>
 </EditForm>
 
 
@@ -50,6 +52,11 @@
 	protected override async Task OnInitializedAsync()
 	{
 		a = await Http.GetFromJsonAsync<AuditointipohjaDTO>($"/auditointipohja/{Id}");
+	}
+
+	async Task Sulje()
+	{
+		await Modal.CloseAsync();
 	}
 
 }

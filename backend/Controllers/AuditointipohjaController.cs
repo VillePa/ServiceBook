@@ -23,16 +23,49 @@ namespace backend.Controllers
             _conf = conf;
 		}
 
-		[HttpGet("/auditointipohja/all")]
-        public async Task<IEnumerable<AuditointipohjaDTO>> Get()
+		[HttpGet("/auditointipohja/all/{sort}")]
+        public async Task<IEnumerable<AuditointipohjaDTO>> Get(string? sort)
         {
+            if(sort == string.Empty)
+            {
+				return await _db.Auditointipohjas
+								.Include(k => k.IdkayttajaNavigation)
+								.Include(k => k.IdkohderyhmaNavigation)
+								.Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
+			}
+			else if(sort == "desc")
+			{
+				return await _db.Auditointipohjas.OrderByDescending(a => a.Luontiaika)
+								.Include(k => k.IdkayttajaNavigation)
+								.Include(k => k.IdkohderyhmaNavigation)
+								.Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
+			}
+			else if(sort == "asc")
+			{
+				return await _db.Auditointipohjas.OrderBy(a => a.Luontiaika)
+								.Include(k => k.IdkayttajaNavigation)
+								.Include(k => k.IdkohderyhmaNavigation)
+								.Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
+			}
+			else if(sort == "nimi")
+			{
+				return await _db.Auditointipohjas.OrderBy(a => a.IdkayttajaNavigation.Nimi)
+								.Include(k => k.IdkayttajaNavigation)
+								.Include(k => k.IdkohderyhmaNavigation)
+								.Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
+			}
+			else
+			{
+				return await _db.Auditointipohjas.OrderByDescending(a => a.IdkayttajaNavigation.Nimi)
+								.Include(k => k.IdkayttajaNavigation)
+								.Include(k => k.IdkohderyhmaNavigation)
+								.Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
+			}
 
-            return await _db.Auditointipohjas
-                .Include(k=>k.IdkayttajaNavigation)
-                .Include(k=>k.IdkohderyhmaNavigation)
-                .Select(k=> Helpers.AuditointipohjaToDTO(k)).ToListAsync();
 
-        }
+
+
+		}
 
 		[HttpGet("/auditointipohja/{id}")]
 		public async Task<ActionResult<AuditointipohjaDTO>> GetSinge(int? id)

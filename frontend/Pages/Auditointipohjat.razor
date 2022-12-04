@@ -13,8 +13,27 @@
 			<tr>
 				<th>ID</th>
 				<th>Selite</th>
-				<th>Luotu</th>
-				<th>Tekijä</th>
+				<th>Luotu
+					@if (sortByLatest == false)
+					{
+						<button class="oi oi-sort-ascending" style="font-size: 80%; background-color:orange; border-radius: 30%" @onclick="@(e=> SortBy("desc"))" />
+					}
+					else
+					{
+						<button class="oi oi-sort-descending" style="font-size: 80%; background-color:orange; border-radius: 30%" @onclick="@(e=> SortBy("asc"))" />
+					}
+				</th>
+				<th>Tekijä
+					@if (sortNameDesc == false)
+					{
+						<button class="oi oi-sort-ascending" style="font-size: 80%; background-color:orange; border-radius: 30%" @onclick="@(e=> SortBy("nimi"))" />
+					}
+					else
+					{
+						<button class="oi oi-sort-descending" style="font-size: 80%; background-color:orange; border-radius: 30%" @onclick="@(e=> SortBy(""))" />
+						
+					}
+				</th>
 				<th>Kohderyhmä</th>
 				<th></th>
 				<th>Kopioi pohja</th>
@@ -56,14 +75,16 @@ else
 
 @code {
 	AuditointipohjaDTO[]? auditointipohjat;
-
+	private bool sortNameDesc = false;
+	private bool sortByLatest = false;
 	private bool isChecked = false;
 	private int? pohjaId;
 	private string? message;
 
 	protected override async Task OnInitializedAsync()
 	{
-		auditointipohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>("auditointipohja/all");
+		var sort = "sort";
+		auditointipohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>($"auditointipohja/all/{sort}");
 	}
 
 
@@ -128,6 +149,31 @@ else
 		var result = await detailModal.Result;
 
 		await OnInitializedAsync();
+	}
+
+	private async Task SortBy(string? sort)
+	{
+		if (sort == "desc")
+		{
+			auditointipohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>($"/auditointipohja/all/{sort}");
+			sortByLatest = true;
+		}
+		else if (sort == "asc")
+		{
+			auditointipohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>($"/auditointipohja/all/{sort}");
+			sortByLatest = false;
+		}
+		//else if (sort == "nimi")
+		//{
+		//	auditointipohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>($"/auditointipohja/all/{sort}");
+		//	sortNameDesc == true;
+		//}
+		else
+		{
+			auditointipohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>($"/auditointipohja/all/{sort}");
+			//sortNameDesc == false;
+		}
+		
 	}
 
 
