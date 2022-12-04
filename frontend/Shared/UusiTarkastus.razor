@@ -60,8 +60,8 @@
             }
          </div>
 
-        <button type="submit" class="btn btn-primary">Tallenna</button>
-        <button type="reset" @onclick="Tyhjenna" class="btn btn-secondary">Tyhjenna</button>
+        <button type="submit" class="btn btn-primary" disabled="@Busy">Tallenna</button>
+        <button type="reset" @onclick="Tyhjenna" disabled="@Busy" class="btn btn-secondary">Tyhjenna</button>
     </EditForm>
 
     
@@ -78,8 +78,9 @@ else
 
 
 @code {
-    [CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
+        [CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
 
+    private bool Busy = false;
     private TarkastusDTO tarkastus = new TarkastusDTO();
     private HuoltokohdeDTO[]? kohteet;
 
@@ -107,16 +108,24 @@ else
         await Modal.CloseAsync();
     }
 
-    private void Tyhjenna()
+    private async Task Tyhjenna()
     {
         tarkastus = new TarkastusDTO();
-        uploadResults = new List<UploadResult>();
+
+        List<UploadResult> lista = uploadResults.ToList();
+
+        foreach (var upload in lista)
+        {
+            if (upload.FileName is not null) await RemoveFile(upload.FileName);
+        }
+
     }
 
     // Tiedostojen lisääminen/poistaminen
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
         using var content = new MultipartFormDataContent();
+        Busy = true;
 
         foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
         {
@@ -141,6 +150,8 @@ else
         {
             uploadResults = uploadResults.Concat(newUploadResults).ToList();
         }
+
+        Busy = false;
     }
 
     private async Task DownloadFile(string fileName)
