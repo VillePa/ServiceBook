@@ -123,45 +123,45 @@ namespace backend.Data
 			};
 		}
 
-        // Muutoshistoria helpperi
+		// Muutoshistoria helpperi
 
-        public static MuutoshistoriaKohdeDTO MuutoshistoriaKohdeToDTO(this MuutoshistoriaKohde a)
-        {
-            return new MuutoshistoriaKohdeDTO
-            {
-                IdmuutoshistoriaKohde = a.IdmuutoshistoriaKohde,
-                Nimi = a.Nimi,
-                Kuvaus = a.Kuvaus,
-                Sijainti = a.Sijainti,
-                Tunnus = a.Tunnus,
-                IdkohteenTila = a.IdkohteenTila,
-                Muokattu = a.Muokattu,
+		public static MuutoshistoriaKohdeDTO MuutoshistoriaKohdeToDTO(this MuutoshistoriaKohde a)
+		{
+			return new MuutoshistoriaKohdeDTO
+			{
+				IdmuutoshistoriaKohde = a.IdmuutoshistoriaKohde,
+				Nimi = a.Nimi,
+				Kuvaus = a.Kuvaus,
+				Sijainti = a.Sijainti,
+				Tunnus = a.Tunnus,
+				IdkohteenTila = a.IdkohteenTila,
+				Muokattu = a.Muokattu,
 				KohdeIdkohde = a.KohdeIdkohde,
-                KayttajaIdkayttaja = a.KayttajaIdkayttaja,
-                
+				KayttajaIdkayttaja = a.KayttajaIdkayttaja,
 
-            };
-        }
 
-        // muutoshistoriakohdeDTO to muutoshistoriakohde
-        public static MuutoshistoriaKohde DTOtoMuutoshistoriaKohde(this MuutoshistoriaKohdeDTO a)
-        {
-            return new MuutoshistoriaKohde
-            {
-                IdmuutoshistoriaKohde = a.IdmuutoshistoriaKohde,
-                Nimi = a.Nimi,
-                Kuvaus = a.Kuvaus,
-                Sijainti = a.Sijainti,
-                Tunnus = a.Tunnus,
-                IdkohteenTila = a.IdkohteenTila,
-                Muokattu = a.Muokattu,
-                KohdeIdkohde = a.KohdeIdkohde,
-                KayttajaIdkayttaja = a.KayttajaIdkayttaja,
+			};
+		}
 
-            };
-        }
+		// muutoshistoriakohdeDTO to muutoshistoriakohde
+		public static MuutoshistoriaKohde DTOtoMuutoshistoriaKohde(this MuutoshistoriaKohdeDTO a)
+		{
+			return new MuutoshistoriaKohde
+			{
+				IdmuutoshistoriaKohde = a.IdmuutoshistoriaKohde,
+				Nimi = a.Nimi,
+				Kuvaus = a.Kuvaus,
+				Sijainti = a.Sijainti,
+				Tunnus = a.Tunnus,
+				IdkohteenTila = a.IdkohteenTila,
+				Muokattu = a.Muokattu,
+				KohdeIdkohde = a.KohdeIdkohde,
+				KayttajaIdkayttaja = a.KayttajaIdkayttaja,
 
-        public static VaatimusDTO VaatimusToDTO(this Vaatimu v)
+			};
+		}
+
+		public static VaatimusDTO VaatimusToDTO(this Vaatimu v)
 		{
 			return new VaatimusDTO
 			{
@@ -171,6 +171,21 @@ namespace backend.Data
 				Taytetty = v.Taytetty,
 				Idauditointi = v.Idauditointi,
 				AuditointiSelite = v.IdauditointiNavigation.Selite
+			};
+		}
+
+		public static AuditointiDTO AuditointiToDTO(this Auditointi a)
+		{
+			return new AuditointiDTO
+			{
+				Idauditointi = a.Idauditointi,
+				Luotu = a.Luotu,
+				Selite = a.Selite,
+				Lopputulos = a.Lopputulos,
+				Idkohde = a.Idkohde,
+				KohdeNimi = a.IdkohdeNavigation.Nimi,
+				Idkayttaja = a.Idkayttaja,
+				KayttajaNimi = a.IdkayttajaNavigation.Nimi
 			};
 		}
 
@@ -195,10 +210,10 @@ namespace backend.Data
 			{
 				Idvaatimuspohja = v.Idvaatimuspohja,
 				Kuvaus = v.Kuvaus,
-				Pakollisuus= v.Pakollisuus,	
+				Pakollisuus = v.Pakollisuus,
 				Idauditointipohja = v.Idauditointipohja,
 				AuditointipohjaSelite = v.IdauditointipohjaNavigation.Selite
 			};
 		}
-    }
+	}
 }

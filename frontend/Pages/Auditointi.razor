@@ -6,7 +6,7 @@
 
 <h3 class="mb-4">Auditointi</h3>
 
-<h4>Menneet auditoinnit</h4>
+<h4>Suoritetut auditoinnit</h4>
 
 @if (auditoinnit != null)
 {
@@ -28,9 +28,19 @@
 					<td>@item.Idauditointi</td>
 					<td>@item.Selite</td>
 					<td>@item.Luotu.ToString("dd.MM.yyyy HH:mm")</td>
-					<td>@item.Idkayttaja</td>
-					<td>@item.Idkohde</td>
-					<td>@item.Lopputulos</td>
+					<td>@item.KayttajaNimi</td>
+					<td>@item.KohdeNimi</td>
+					<td>
+						@if (item.Lopputulos == 1)
+						{
+							<span style="color: green">hyväksytty</span>
+						}
+						else
+						{
+							<span style="color: red">hylätty</span>
+						}
+						
+					</td>
 				</tr>
 			}
 
