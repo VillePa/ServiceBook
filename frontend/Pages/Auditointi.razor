@@ -3,6 +3,7 @@
 @inject HttpClient Http
 @inject IModalService ModalService
 @inject NavigationManager NavigationManager
+@attribute [Authorize]
 
 <div class="mb-5">
 	<button class="btn btn-primary" @onclick="Auditointipohjat">Auditointipohjat</button>
