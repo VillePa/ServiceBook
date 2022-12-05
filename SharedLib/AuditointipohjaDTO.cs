@@ -22,6 +22,8 @@ namespace SharedLib
 
         public string? KohderyhmaNimi { get; set; }
 
-		//public ICollection<VaatimuspohjaDTO> Vaatimuspohjas { get; } = new List<VaatimuspohjaDTO>();
-	}
+        public List<VaatimuspohjaDTO>? Vaatimuspohjat { get; set; }
+
+        //public ICollection<VaatimuspohjaDTO> Vaatimuspohjas { get; } = new List<VaatimuspohjaDTO>();
+    }
 }

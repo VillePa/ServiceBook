@@ -200,8 +200,17 @@ namespace backend.Data
 				KayttajaNimi = a.IdkayttajaNavigation.Nimi,
 				Idkohderyhma = a.Idkohderyhma,
 				KohderyhmaNimi = a.IdkohderyhmaNavigation.Nimi,
-				//Vaatimuspohjas = a.Vaatimuspohjas,
-			};
+                Vaatimuspohjat = a.Vaatimuspohjas.Select(v => new VaatimuspohjaDTO
+                {
+					Idvaatimuspohja= v.Idvaatimuspohja,
+                    Kuvaus = v.Kuvaus,
+					Pakollisuus= v.Pakollisuus,
+					Idauditointipohja= v.Idauditointipohja,
+					AuditointipohjaSelite = v.IdauditointipohjaNavigation.Selite
+                    
+                }).ToList()
+                //Vaatimuspohjas = a.Vaatimuspohjas,
+            };
 		}
 
 		public static VaatimuspohjaDTO VaatimuspohjaToDTO(this Vaatimuspohja v)

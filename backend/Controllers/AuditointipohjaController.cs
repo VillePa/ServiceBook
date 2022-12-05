@@ -31,6 +31,7 @@ namespace backend.Controllers
 				return await _db.Auditointipohjas
 								.Include(k => k.IdkayttajaNavigation)
 								.Include(k => k.IdkohderyhmaNavigation)
+								.Include(k=> k.Vaatimuspohjas)
 								.Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
 			}
 			else if(sort == "desc")
