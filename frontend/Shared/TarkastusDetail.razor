@@ -31,12 +31,12 @@
 
         <div class="mb-3">
             <label for="syy">Tarkastuksen syy</label>
-            <InputText id="syy" @bind-Value="tarkastus.Syy" class="form-control" Disabled="@muokataanko" />
+            <InputText id="syy" @bind-Value="tarkastus.Syy" class="form-control" Disabled="@disable" />
         </div>
 
         <div class="mb-3">
             <label for="havainnot">Havainnot</label>
-            <InputText id="havainnot" @bind-Value="tarkastus.Havainnot" class="form-control" Disabled="@muokataanko" />
+            <InputText id="havainnot" @bind-Value="tarkastus.Havainnot" class="form-control" Disabled="@disable" />
         </div>
 
         <div class="mb-3">
@@ -46,6 +46,12 @@
 
         <div class="mb-3">
             <label>Liitteet</label>
+
+            @if (!disable)
+            {
+                <InputFile OnChange="@OnInputFileChange" multiple />
+            }
+
             @if (tarkastus.Liitteet is not null)
             {
                 <ul>
@@ -54,16 +60,17 @@
                         <li>
                             <a style="text-decoration:none" href="@file.Location" target="_blank">@file.FileName</a>
                             <button type="button" class="btn" @onclick="@(()=> DownloadFile(@file.FileName))"><span class="oi oi-cloud-download"></span></button>
-                            <button type="button" class="btn" @onclick="@(()=> RemoveFile(@file.FileName))"><span class="oi oi-trash"></span></button>
+                            @if (!disable)
+                            {<button type="button" class="btn" @onclick="@(() => RemoveFile(@file.FileName, file.Location))"><span class="oi oi-trash"></span></button>}
                         </li>
 
                     }
                 </ul>
             }
         </div>
-        @if (!muokataanko)
+        @if (!disable)
         {
-        <button style="margin-right: 0.5em" type="button" class="btn btn-primary" @onclick="@TallennaTarkastus">Tallenna</button>
+        <button style="margin-right: 0.5em" type="button" class="btn btn-primary" @onclick="@TallennaTarkastus" disabled="@busy">Tallenna</button>
         }
         else
         {
@@ -71,11 +78,13 @@
         }
         
     <AuthorizeView Roles="admin" Context="authContext">
-        <button type="button" class="btn btn-secondary" @onclick="@MuokkaaTarkastus">Muokkaa</button>
+        @if (disable) {<button style="margin-right: 0.5em" type="button" class="btn btn-secondary" @onclick="@MuokkaaTarkastus">Muokkaa</button>}
+        else {<button style="margin-right: 0.5em" type="button" class="btn btn-secondary" @onclick="@Peruuta" disabled="@busy">Peruuta</button> }
+        
         <button type="button" class="btn btn-danger" @onclick="@DeleteTarkastus">Poista</button>
     </AuthorizeView>
         <br />
-        <button style="margin-top: 1em" type="button" class="btn btn-secondary" @onclick="@(e => ShowTarkastukset(Id))">Näytä kohteen tarkastukset</button>
+        <button style="margin-top: 1em" type="button" class="btn btn-secondary" @onclick="@(e => ShowTarkastukset(Id))" disabled="@busy">Näytä kohteen tarkastukset</button>
     </EditForm>
 }
 else
@@ -94,12 +103,16 @@ else
     [CascadingParameter] public IModalService ShowModal { get; set; } = default!;
     private List<UploadResult> uploadResults = new List<UploadResult>();
 
+    private int maxAllowedFiles = 5;
+    private long maxFileSize = 1024 * 5000;
+
     private TarkastusDTO? tarkastus = new TarkastusDTO();
     private List<TilaDTO>? tilat;
     private string? tila;
     private string? aikaleima;
-    private bool muokataanko = true;
+    private bool disable = true;
     private bool paivitys = false;
+    private bool busy = false;
 
     [Parameter]
     public int Id { get; set; }
@@ -152,9 +165,11 @@ else
         }
     }
 
-    private async Task RemoveFile(string fileName)
+    private async Task RemoveFile(string fileName, string sijainti)
     {
         await Http.DeleteAsync($"/tiedosto/{fileName}");
+        await Http.PostAsJsonAsync($"/liite/poista", new UploadResult { FileName = fileName, Location = sijainti});
+
         if (tarkastus is not null && tarkastus.Liitteet is not null)
         {
             tarkastus.Liitteet.Remove(tarkastus.Liitteet.Find(u => u.FileName == fileName));
@@ -172,7 +187,7 @@ else
 
             foreach (var upload in lista)
             {
-                if (upload.FileName is not null) await RemoveFile(upload.FileName);
+                if (upload.FileName is not null) await RemoveFile(upload.FileName, upload.Location);
             }
 
             await Http.DeleteAsync($"/tarkastus/{tarkastus.Idtarkastus}");
@@ -183,16 +198,53 @@ else
 
     private void MuokkaaTarkastus()
     {
-        muokataanko = false;
+        disable = false;
+    }
+
+    private void Peruuta()
+    {
+        disable = true;
     }
 
     private async Task TallennaTarkastus()
     {
 
         if (tarkastus is not null) await Http.PutAsJsonAsync<TarkastusDTO>($"/tarkastus/muokkaa/{tarkastus.Idtarkastus}", tarkastus);
-        muokataanko = true;
+        disable = true;
         paivitys = true;
     }
 
+    // Tiedostojen lisääminen
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        using var content = new MultipartFormDataContent();
+        busy = true;
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+
+
+            content.Add(
+                content: fileContent,
+                name: "\"files\"",
+                fileName: DateTime.Now.ToString("dd-MM-yyyy-HHmmss_") + file.Name
+                );
+
+
+        }
+
+        var response = await Http.PostAsync("/tiedosto", content);
+
+        var newUploadResults = await response.Content.ReadFromJsonAsync<List<UploadResult>>();
+
+        if (newUploadResults is not null)
+        {
+            if (tarkastus is not null) tarkastus.Liitteet = tarkastus.Liitteet.Concat(newUploadResults).ToList();
+        }
+
+        busy = false;
+    }
 }
 

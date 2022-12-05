@@ -234,9 +234,42 @@ namespace backend.Controllers
             k.Syy = item.Syy;
 
 
-
             _db.Tarkastus.Update(k);
             await _db.SaveChangesAsync();
+
+            // päivitetään liitteet
+
+            if (item.Liitteet is not null)
+            {
+                bool loytyyko = false;
+
+                foreach (var liite in item.Liitteet)
+                {
+                    loytyyko = false;
+
+                    foreach (var tallennettu in k.Liites)
+                    {
+                        Console.WriteLine($"Vertailu: {liite.Location} & {tallennettu.Sijainti}");
+                        if (liite.Location.Equals(tallennettu.Sijainti)) {
+                            loytyyko = true;
+                            Console.WriteLine($"Löytyy.");
+                        }
+
+                    }
+
+                    if (!loytyyko)
+                    {
+                        Liite l = new Liite { Sijainti = liite.Location, Idtarkastus = item.Idtarkastus };
+                        _db.Liites.Add(l);
+                        await _db.SaveChangesAsync();
+                    }
+                }   
+                
+            }
+
+
+
+            
 
             return Ok(k);
         }
