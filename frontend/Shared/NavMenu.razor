@@ -51,11 +51,11 @@
 		<AuthorizeView>
 			 <NotAuthorized>
 				<div class="nav-item px-3">
-					<NavLink class="nav-link">
+					
 						<button class="btn btn-outline-primary" @onclick="Login">
 							<span class="oi oi-account-login" aria-hidden="true"></span> Kirjaudu sisään
 						</button>
-					</NavLink>
+					
 				</div>
             </NotAuthorized>
 
@@ -68,11 +68,11 @@
 
 
 			<div class="nav-item px-3">
-					<NavLink class="nav-link">
+					
 						<button @onclick="Logout" class="btn btn-outline-danger">
 							<span class="oi oi-account-logout" aria-hidden="true"></span> Kirjaudu ulos
 						</button>
-						</NavLink>
+						
 			</div>
 			</Authorized>
 		</AuthorizeView>
