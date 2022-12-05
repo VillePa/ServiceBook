@@ -7,13 +7,21 @@
 
 <div class="mb-5">
 	<button class="btn btn-outline-primary" @onclick="Previous">Vaatimussivulle</button>
-	<button class="btn btn-success" @onclick="LisaaVaatimuspohja">Lisää vaatimuspohja</button>
+	<button class="btn btn-success" @onclick="LisaaVaatimuspohja">Lisää uusi vaatimuspohja</button>
 </div>
 
 <h3>Vaatimuspohjat</h3>
 
+
+
 @if (vaatimuspohjat != null)
 {
+	
+@foreach (var item in vaatimuspohjat)
+{
+	@*<PohjaKortti Vaatimuspohja="@item"/>*@
+}
+
 	<table class="table table-striped">
 		<thead>
 			<tr>
@@ -28,6 +36,7 @@
 		<tbody>
 			@foreach (var item in vaatimuspohjat)
 			{
+				
 				<tr>
 					<td>@item.Idvaatimuspohja</td>
 					<td>@item.Kuvaus</td>
@@ -40,6 +49,7 @@
 					</td>
 					<td><input type="checkbox" @bind-value="isChecked" @oninput="@(e=> Copy(item.Idvaatimuspohja))"></td>
 				</tr>
+						
 			}
 
 		</tbody>

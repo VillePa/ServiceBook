@@ -5,6 +5,21 @@
 @inject NavigationManager NavigationManager
 
 
+
+	<div class="column">
+		<div class="card">
+		<h5>Vaatimuspohja @Vaatimuspohja.Idvaatimuspohja @Vaatimuspohja.Kuvaus</h5>
+		<ul>
+		<li>@Vaatimuspohja.Pakollisuus</li>
+		<li>@Vaatimuspohja.AuditointipohjaSelite</li>
+		</ul>
+	</div>
+	</div>
+
+
+
 @code {
+	[Parameter]
+	public VaatimuspohjaDTO? Vaatimuspohja { get; set; }
 
 }
