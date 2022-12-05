@@ -10,7 +10,7 @@
 	</div>
 
 	<div class="mb-3">
-		<label for="selite">Selite</label>
+		<label for="selite">Pakollisuus</label>
 		<InputText id="selite" @bind-Value="v.Pakollisuus" class="form-control" />
 	</div>
 
@@ -38,12 +38,25 @@
 @code {
 	[CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
 	VaatimuspohjaDTO v = new();
+	VaatimuspohjaDTO kopio = new();
 	AuditointipohjaDTO[]? auditointipohjat;
+	private string sort = "sort";
+
+	[Parameter]
+	public int? Id { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
-		auditointipohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>("/auditointipohja/all");
+		auditointipohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>($"/auditointipohja/all/{sort}");
 
+		if(Id != null)
+		{
+			kopio = await Http.GetFromJsonAsync<VaatimuspohjaDTO>($"/vaatimuspohja/{Id}");
+
+			v.Kuvaus = kopio.Kuvaus;
+			v.Pakollisuus = kopio.Pakollisuus;
+			v.Idauditointipohja = kopio.Idauditointipohja;
+		}
 	}
 
 	async Task Close()
@@ -54,6 +67,7 @@
 	async Task Save()
 	{
 		var result = await Http.PostAsJsonAsync<VaatimuspohjaDTO>("/vaatimuspohja/add", v);
+		await Close();
 
 	}
 

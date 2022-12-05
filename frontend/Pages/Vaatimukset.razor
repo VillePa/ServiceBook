@@ -4,6 +4,11 @@
 @inject IModalService ModalService
 @inject NavigationManager NavigationManager
 
+<div class="mb-5">
+<button class="btn btn-outline-primary" @onclick="Previous">Auditointisivulle</button>
+<button class="btn btn-primary" @onclick="Vaatimuspohjat">Vaatimuspohjat</button>
+</div>
+
 <h3 class="mb-4">Vaatimukset</h3>
 
 @if(vaatimukset != null)
@@ -33,57 +38,31 @@
 	</table>
 }
 
-	<h4 class="mb-3">Vaatimuspohjat</h4>
-
-@if (vaatimuspohjat != null)
-{
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th>ID</th>
-						<th>Kuvaus</th>
-						<th>Pakollisuus</th>
-						<th>Auditointipohja</th>
-					</tr>
-				</thead>
-				<tbody>
-			@foreach (var item in vaatimuspohjat)
-			{
-							<tr>
-								<td>@item.Idvaatimuspohja</td>
-								<td>@item.Kuvaus</td>
-								<td>@item.Pakollisuus</td>
-								<td>@item.AuditointipohjaSelite</td>
-							</tr>
-			}
-
-				</tbody>
-			</table>
-
-}
 else
 {
 	<p>ladataan dataa..</p>
 }
 
-<button class="btn btn-primary" @onclick="AddVaatimuspohja">Lisää vaatimuspohja</button>
+@*<button class="btn btn-secondary" @onclick="@(e=> Copy(pohjaId))">Kopioi valittu pohja</button>*@
 
 
 @code {
 	VaatimusDTO[]? vaatimukset;
-	VaatimuspohjaDTO[]? vaatimuspohjat;
 
 	protected override async Task OnInitializedAsync()
 	{
 		vaatimukset = await Http.GetFromJsonAsync<VaatimusDTO[]>("vaatimus/all");
-		vaatimuspohjat = await Http.GetFromJsonAsync<VaatimuspohjaDTO[]>("vaatimuspohja/all");
 	}
 
 
-	async Task AddVaatimuspohja()
+	async Task Vaatimuspohjat()
 	{
-		var uusiModal = ModalService.Show<AddVaatimuspohja>("Vaatimuspohja");
-		var result = await uusiModal.Result;
+		NavigationManager.NavigateTo("/vaatimuspohjat");
+	}
+
+	async Task Previous()
+	{
+		NavigationManager.NavigateTo("/auditointi");
 	}
 
 

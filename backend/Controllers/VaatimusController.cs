@@ -67,6 +67,17 @@ namespace backend.Controllers
 				.Select(v=>Helpers.VaatimuspohjaToDTO(v)).ToListAsync();	
 		}
 
+		[HttpGet("/vaatimuspohja/{id}")]
+		public async Task<ActionResult<VaatimuspohjaDTO>> GetSingle(int? id)
+		{
+			if (id == null) return BadRequest("ei id:tä");
+
+			return await _db.Vaatimuspohjas.Where(v => v.Idvaatimuspohja == id)
+				.Include(v=>v.IdauditointipohjaNavigation)
+				.Select(v=>Helpers.VaatimuspohjaToDTO(v))
+				.FirstOrDefaultAsync();
+		}
+
 		[HttpPost("/vaatimuspohja/add")]
 		public async Task<ActionResult<Vaatimuspohja>> AddVaatimusPohja(VaatimuspohjaDTO req)
 		{

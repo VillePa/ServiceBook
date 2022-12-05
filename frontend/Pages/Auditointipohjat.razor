@@ -5,6 +5,14 @@
 @inject NavigationManager NavigationManager
 @attribute [Authorize]
 
+<div class="mb-5">
+	<button class="btn btn-outline-primary" @onclick="Previous">Auditointisivulle</button>
+	<button class="btn btn-success" @onclick="Add">Lisää uusi auditointipohja</button>
+	@*<button class="btn btn-secondary" @onclick="@(e=> Copy(pohjaId))">Kopioi valittu pohja</button>*@
+</div>
+
+<h3 class="mb-4">Auditointipohjat</h3>
+
 
 @if (auditointipohjat != null)
 {
@@ -53,7 +61,7 @@
 							<i class="oi oi-list"></i>
 					</button>
 					</td>
-					<td><input type="checkbox" @bind-value="isChecked" @oninput="@(e=> Select(item.Idauditointipohja))"></td>
+					<td><input type="checkbox" @bind-value="isChecked" @oninput="@(e=> Copy(item.Idauditointipohja))"></td>
 
 				</tr>
 			}
@@ -68,10 +76,7 @@ else
 
 <div class="mb-2" style="color: red">@message</div>
 
-<div>
-	<button class="btn btn-primary" @onclick="Add">Lisää uusi auditointipohja</button>
-	<button class="btn btn-secondary" @onclick="@(e=> Copy(pohjaId))">Kopioi valittu pohja</button>
-</div>
+
 
 @code {
 	AuditointipohjaDTO[]? auditointipohjat;
@@ -89,25 +94,25 @@ else
 
 
 
-	private void Select(int? Id)
-	{
-		if (isChecked == false)
-		{
-			message = string.Empty;
-			isChecked = true;
-			pohjaId = Id;
-			Console.WriteLine("Select: pohja valittu " + pohjaId);
-		}
+	//private void Select(int? Id)
+	//{
+	//	if (isChecked == false)
+	//	{
+	//		message = string.Empty;
+	//		isChecked = true;
+	//		pohjaId = Id;
+	//		Console.WriteLine("Select: pohja valittu " + pohjaId);
+	//	}
 
 
-		else
-		{
-			isChecked = false;
-			pohjaId = null;
-			Console.WriteLine("Select: pohja nollattu " + pohjaId);
-		}
+	//	else
+	//	{
+	//		isChecked = false;
+	//		pohjaId = null;
+	//		Console.WriteLine("Select: pohja nollattu " + pohjaId);
+	//	}
 
-	}
+	//}
 
 	async Task Add()
 	{
@@ -119,16 +124,13 @@ else
 
 	async Task Copy(int? Id)
 	{
-		if (Id == null)
+		if (isChecked == false)
 		{
-			message = "Valitse ensin kopioitava auditointipohja";
-		}
+			isChecked = true;
+			pohjaId = Id;
 
-		else
-		{
-			message = string.Empty;
+			Console.WriteLine($"pohja valittu {Id}");
 
-			Console.WriteLine($"Copy: Id = {Id}");
 			var parameters = new ModalParameters()
 			.Add(nameof(AddAuditointipohja.Id), Id);
 
@@ -136,6 +138,15 @@ else
 			var result = await uusiModal.Result;
 
 			await OnInitializedAsync();
+
+		}
+
+		else
+		{
+			isChecked = false;
+			pohjaId = null;
+			Console.WriteLine("Pohja nollattu");
+			
 		}
 
 	}
@@ -173,7 +184,12 @@ else
 			auditointipohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>($"/auditointipohja/all/{sort}");
 			//sortNameDesc == false;
 		}
-		
+
+	}
+
+	async Task Previous()
+	{
+		NavigationManager.NavigateTo("/auditointi");
 	}
 
 
