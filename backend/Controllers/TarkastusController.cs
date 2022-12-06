@@ -163,10 +163,27 @@ namespace backend.Controllers
                     kohde.IdkohteenTila = tilanMuutos;
                     _db.Kohdes.Update(kohde);
                     await _db.SaveChangesAsync();
+
+                    // Tallennetaan myös muutoshistoria
+
+                    MuutoshistoriaKohde muutos = new MuutoshistoriaKohde
+                    {
+                        Nimi = kohde.Nimi,
+                        Kuvaus = kohde.Kuvaus,
+                        Sijainti = kohde.Sijainti,
+                        Tunnus = kohde.Tunnus,
+                        Muokattu = newTarkastus.Aikaleima,
+                        KohdeIdkohde = kohde.Idkohde,
+                        KayttajaIdkayttaja = newTarkastus.Idkayttaja,
+                        IdkohteenTila = kohde.IdkohteenTila
+                    };
+
+                    _db.MuutoshistoriaKohdes.Add(muutos);
+                    await _db.SaveChangesAsync();
                 }
             }
 
-            // TÄHÄN MUUTOSHISTORIAN MUOKKAAMINEN
+            
 
             // Päivitetään liitteet oikeaan tauluun
             if (t.Liitteet != null)
@@ -222,7 +239,9 @@ namespace backend.Controllers
         [HttpPut("/tarkastus/muokkaa/{id}"), Authorize(Roles = "admin")]
         public async Task<IActionResult> EditTarkastus(TarkastusDTO item)
         {
-            var k = await _db.Tarkastus.FindAsync(item.Idtarkastus);
+            var k = await _db.Tarkastus
+                .Include(t => t.Liites)
+                .Where(t => t.Idtarkastus == item.Idtarkastus).FirstOrDefaultAsync();
 
             if (k is null)
             {
@@ -247,29 +266,22 @@ namespace backend.Controllers
                 {
                     loytyyko = false;
 
-                    foreach (var tallennettu in k.Liites)
-                    {
-                        Console.WriteLine($"Vertailu: {liite.Location} & {tallennettu.Sijainti}");
-                        if (liite.Location.Equals(tallennettu.Sijainti)) {
-                            loytyyko = true;
-                            Console.WriteLine($"Löytyy.");
-                        }
+                    var tallennettu = k.Liites.Where(l => l.Sijainti == liite.Location).SingleOrDefault();
 
+                    if (tallennettu is not null)
+                    {
+                        loytyyko = true;
                     }
 
                     if (!loytyyko)
                     {
                         Liite l = new Liite { Sijainti = liite.Location, Idtarkastus = item.Idtarkastus };
                         _db.Liites.Add(l);
-                        await _db.SaveChangesAsync();
                     }
-                }   
-                
+
+                }
+                await _db.SaveChangesAsync();
             }
-
-
-
-            
 
             return Ok(k);
         }

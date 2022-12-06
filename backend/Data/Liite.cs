@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace backend.Data;
 
@@ -11,5 +12,6 @@ public partial class Liite
 
 	public int Idtarkastus { get; set; }
 
-	public virtual Tarkastu IdtarkastusNavigation { get; set; } = null!;
+    [JsonIgnore]
+    public virtual Tarkastu IdtarkastusNavigation { get; set; } = null!;
 }
