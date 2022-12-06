@@ -26,11 +26,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Remove="wwwroot\css\fontawesome\" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Update="wwwroot\appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <None Remove="Blazored.Modal" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\css\fontawesome\" />
   </ItemGroup>
 </Project>

@@ -6,15 +6,23 @@
     <table class="table">
         <thead>
             <tr>
-                <th @onclick="sortDate">
-                        Luotu
-                        @if (sort.Equals("laskeva"))
-                        {<i class="oi oi-caret-bottom"></i>}
-                        else if (sort.Equals("nouseva"))
-                        {<i class="oi oi-caret-top"></i>}
+                <th style="cursor:pointer" @onclick="sortDate">
+                    Luotu
+                    @if (sort.Equals(""))
+                    {<i class="fa-solid fa-sort"></i>}
+                    else if (sort.Equals("laskeva"))
+                    {<i class="fa-solid fa-sort-down"></i>}
+                    else if (sort.Equals("nouseva"))
+                    {<i class="fa-solid fa-sort-up"></i>}
                 </th>
                 <th>Tila</th>
-                <th @onclick="filterKayttaja">Tekijä</th>
+                <th style="cursor:pointer" @onclick="filterKayttaja">
+                    Tekijä
+                    @if (tekija is null || tekija.Length == 0)
+                    {<i class="fa-solid fa-filter-circle-xmark"></i>}
+                    else
+                    {<i class="fa-solid fa-filter"></i>}
+                </th>
                 <th></th>
 
             </tr>

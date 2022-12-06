@@ -15,13 +15,17 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th @onclick="filterKohde">Kohde</th>
+                <th style="cursor:pointer" @onclick="filterKohde">Kohde
+                @if (kohteet is null || kohteet.Length == 0) {<i class="fa-solid fa-filter-circle-xmark"></i>}
+                else {<i class="fa-solid fa-filter"></i>}
+                </th>
                 <th>Syy</th>
                 <th>Havainnot</th>
                 <th>Tila</th>
-                <th @onclick="sortDate">Luotu
-                @if (sort.Equals("laskeva")) {<i class="oi oi-caret-bottom"></i>}
-                else if (sort.Equals("nouseva")) {<i class="oi oi-caret-top"></i> }
+                <th style="cursor:pointer" @onclick="sortDate">Luotu
+                @if (sort.Equals("")) {<i class="fa-solid fa-sort"></i>}
+                else if (sort.Equals("laskeva")) {<i class="fa-solid fa-sort-down"></i>}
+                else if (sort.Equals("nouseva")) {<i class="fa-solid fa-sort-up"></i> }
                 </th>
                 <th>Tekijä</th>
                 <th></th>
@@ -42,7 +46,7 @@
                     <td>@item.KayttajanNimi</td>
                     <td>
                         <button style="font-size: 75%" class="btn btn-primary" @onclick="@(e => ShowTarkastus(Id))">
-                            <span class="oi oi-list"></span>
+                            <span class="oi oi-pencil"></span>
                         </button>
                     </td>
                 </tr>
