@@ -56,6 +56,7 @@
         </div>
 
         <button type="submit" @onclick="Tallenna" class="btn btn-primary">Tallenna</button>
+        <button type="button" @onclick="@Poista" class="btn btn-danger">Poista</button>
         <button type="button" @onclick="Sulje" class="btn btn-secondary">Peruuta</button>
     </EditForm>
 }
@@ -99,7 +100,29 @@
 
         await Http.PostAsJsonAsync<MuutoshistoriaKohdeDTO>("/history", muutos);
         await Modal.CloseAsync();
+
+
+    }
+
+    private async Task Poista()
+    {
+        kohde.IdkohteenTila = 3;
+
+        await Http.PutAsJsonAsync($"/kohde/{Id}", kohde);
+
         
+        muutos.Nimi = kohde.Nimi;
+        muutos.Kuvaus = kohde.Kuvaus;
+        muutos.Sijainti = kohde.Sijainti;
+        muutos.Tunnus = kohde.Tunnus;
+        muutos.Muokattu = DateTime.Now;
+        muutos.KohdeIdkohde = kohde.Idkohde;
+        muutos.IdkohteenTila = 3;
+
+
+        await Http.PostAsJsonAsync<MuutoshistoriaKohdeDTO>("/history", muutos);
+        await Modal.CloseAsync();
+
 
     }
 

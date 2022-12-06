@@ -26,7 +26,7 @@ else
 }
 
 
-@if (kohteet == null)
+@if (kohteet == null && tilat == null)
 {
     <p><em>ladataan...</em></p>
 }
@@ -61,7 +61,21 @@ else
                     <td>@a.Tyyppi</td>
                     <td>@a.Malli</td>
                     <td>@a.Tunnus</td>
-                    <td>@a.IdkohteenTila</td>
+                    <td>
+                        @if (a.IdkohteenTila == 1)
+                        {
+                            <span style="color: green">@tilat.Find(x => x.IdkohteenTila == a.IdkohteenTila).Kuvaus</span>
+                        }
+                        else if (a.IdkohteenTila == 2)
+                        {
+                            <span style="color: red">@tilat.Find(x => x.IdkohteenTila == a.IdkohteenTila).Kuvaus</span>
+                        }
+                        else
+                        {
+                            <span style="color: black">@tilat.Find(x => x.IdkohteenTila == a.IdkohteenTila).Kuvaus</span>
+                        }
+
+                        </td>
                     <td>@a.Luotu</td>
                     <td>@a.Idkayttaja</td>
                     <td>@a.Idkohderyhma</td>
@@ -90,17 +104,17 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all/tila1or2");
         tilat = await Http.GetFromJsonAsync<List<TilaDTO>>("/tila/all");
-        huoltokohteet = await Http.GetFromJsonAsync<List<HuoltokohdeDTO>>("/kohde/all");
-        filtteroimaton = huoltokohteet;
+      
+      
     }
 
     private async Task ShowUusiKohde()
     {
         var uusiModal = Modal.Show<UusiKohde>("Uusi huoltokohde");
         var result = await uusiModal.Result;
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all/tila1or2");
     }
 
     private async Task Edit(int Id)
@@ -111,7 +125,7 @@ else
         var editModal = Modal.Show<EditKohde>("Kohde", parameters);
         var result = await editModal.Result;
 
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all/tila1or2");
     }
 
     private async Task History(int Id)
@@ -128,7 +142,7 @@ else
         var historyModal = Modal.Show<HistoryKohde>("Muutoshistoria", parameters, options);
         var result = await historyModal.Result;
 
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all/tila1or2");
     }
 
     
@@ -142,7 +156,7 @@ else
 
     private async Task SortById()
     {
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all/tila1or2");
 
     }
 

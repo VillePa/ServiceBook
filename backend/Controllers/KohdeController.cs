@@ -30,6 +30,15 @@ namespace backend.Controllers
 
         }
 
+        // Kaikki paitsi poistetut kohteet
+        [HttpGet("/kohde/all/tila1or2")]
+        public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> GetAll1Or2()
+        {
+
+            return await _db.Kohdes.Where(a => a.IdkohteenTila < 3).OrderBy(a => a.Idkohde).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+
+        }
+
         // Luodaan uusi kohde
         [HttpPost("/kohde")]
         public async Task<IActionResult> LisaaKohde([FromBody] HuoltokohdeDTO t)
@@ -95,7 +104,7 @@ namespace backend.Controllers
         public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> SortBySijainti()
         {
 
-            return await _db.Kohdes.OrderBy(a => a.Sijainti).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+            return await _db.Kohdes.Where(a => a.IdkohteenTila < 3).OrderBy(a => a.Sijainti).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
 
         }
 
@@ -103,7 +112,7 @@ namespace backend.Controllers
         public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> SortByTyyppi()
         {
 
-            return await _db.Kohdes.OrderBy(a => a.Tyyppi).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+            return await _db.Kohdes.Where(a => a.IdkohteenTila < 3).OrderBy(a => a.Tyyppi).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
 
         }
 
@@ -111,7 +120,7 @@ namespace backend.Controllers
         public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> SortByTila()
         {
 
-            return await _db.Kohdes.OrderBy(a => a.IdkohteenTila).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+            return await _db.Kohdes.Where(a => a.IdkohteenTila < 3).OrderBy(a => a.IdkohteenTila).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
 
         }
 
@@ -119,7 +128,7 @@ namespace backend.Controllers
         public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> SortByLuotu()
         {
 
-            return await _db.Kohdes.OrderBy(a => a.Luotu).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+            return await _db.Kohdes.Where(a => a.IdkohteenTila < 3).OrderBy(a => a.Luotu).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
 
         }
 
@@ -127,7 +136,7 @@ namespace backend.Controllers
         public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> SortByLuoja()
         {
 
-            return await _db.Kohdes.OrderBy(a => a.Idkayttaja).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+            return await _db.Kohdes.Where(a => a.IdkohteenTila < 3).OrderBy(a => a.Idkayttaja).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
 
         }
 
@@ -135,7 +144,7 @@ namespace backend.Controllers
         public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> SortByKohderyhma()
         {
 
-            return await _db.Kohdes.OrderBy(a => a.Idkohderyhma).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+            return await _db.Kohdes.Where(a => a.IdkohteenTila < 3).OrderBy(a => a.Idkohderyhma).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
 
         }
 
