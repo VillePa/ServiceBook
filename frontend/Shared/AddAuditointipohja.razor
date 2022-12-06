@@ -32,12 +32,14 @@
                 <tr>
                     <th>Vaatimus</th>
                     <th>Pakollisuus</th>
+                    <th></th>
                 </tr>
                 @foreach (var vaatimus in a.Vaatimuspohjat)
                 {
                     <tr>
                         <td>@vaatimus.Kuvaus</td>
                         <td>@vaatimus.Pakollisuus</td>
+                        <td><button class="btn" @onclick="@(()=> PoistaVaatimus(vaatimus))"><span class="oi oi-trash"></span></button></td>
                     </tr>
                 }
             </table>
@@ -144,6 +146,14 @@
         lisaaVaatimus = false;
 
 
+    }
+
+    void PoistaVaatimus(VaatimuspohjaDTO v)
+    {
+        if (a.Vaatimuspohjat is not null)
+        {
+            a.Vaatimuspohjat.Remove(v);
+        }
     }
 
 }

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using SharedLib;
 using Microsoft.AspNetCore.Authorization;
+using Azure;
 
 namespace backend.Controllers
 {
@@ -39,28 +40,32 @@ namespace backend.Controllers
 				return await _db.Auditointipohjas.OrderByDescending(a => a.Luontiaika)
 								.Include(k => k.IdkayttajaNavigation)
 								.Include(k => k.IdkohderyhmaNavigation)
-								.Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
+                                .Include(k => k.Vaatimuspohjas)
+                                .Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
 			}
 			else if(sort == "asc")
 			{
 				return await _db.Auditointipohjas.OrderBy(a => a.Luontiaika)
 								.Include(k => k.IdkayttajaNavigation)
 								.Include(k => k.IdkohderyhmaNavigation)
-								.Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
+                                .Include(k => k.Vaatimuspohjas)
+                                .Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
 			}
 			else if(sort == "nimi")
 			{
 				return await _db.Auditointipohjas.OrderBy(a => a.IdkayttajaNavigation.Nimi)
 								.Include(k => k.IdkayttajaNavigation)
 								.Include(k => k.IdkohderyhmaNavigation)
-								.Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
+                                .Include(k => k.Vaatimuspohjas)
+                                .Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
 			}
 			else
 			{
 				return await _db.Auditointipohjas.OrderByDescending(a => a.IdkayttajaNavigation.Nimi)
 								.Include(k => k.IdkayttajaNavigation)
 								.Include(k => k.IdkohderyhmaNavigation)
-								.Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
+                                .Include(k => k.Vaatimuspohjas)
+                                .Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
 			}
 
 
@@ -149,7 +154,43 @@ namespace backend.Controllers
 			_db.Auditointipohjas.Update(v);
 			await _db.SaveChangesAsync();
 
-			return Ok(v);
+			// päivitetään myös pohjaan liittyvät vaatimukset
+			if (req.Vaatimuspohjat is not null)
+			{
+                // poistetaan ne vaatimukset joita ei enää kutsun mukana tulleessa oliossa ollut // TÄMÄ EI TOIMI VIELÄ
+                foreach (var item in v.Vaatimuspohjas)
+                {
+                    Console.WriteLine(item.Idvaatimuspohja);
+                    if (req.Vaatimuspohjat.Where(x => x.Idvaatimuspohja == item.Idvaatimuspohja).FirstOrDefault() == null)
+                    {
+                        var response = _db.Vaatimuspohjas.Remove(item);
+                        Console.WriteLine(response);
+                    }
+                }
+                await _db.SaveChangesAsync();
+
+                // lisätään uudet eli ne vaatimukset joilla ei ole vielä id:tä
+                foreach (var item in req.Vaatimuspohjat)
+				{
+					if (item.Idvaatimuspohja == 0)
+					{
+						Vaatimuspohja vaatimus = new Vaatimuspohja
+						{
+							Kuvaus = item.Kuvaus,
+							Pakollisuus = item.Pakollisuus,
+							Idauditointipohja = v.Idauditointipohja
+						};
+
+						var response = _db.Vaatimuspohjas.Add(vaatimus);
+                    }
+				}
+				await _db.SaveChangesAsync();
+
+				
+			
+
+			}
+             return Ok(v);
 
 		}
 

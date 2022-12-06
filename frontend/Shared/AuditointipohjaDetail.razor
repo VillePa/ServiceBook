@@ -5,37 +5,98 @@
 
 
 
-<EditForm Model="a">
-	<div class="mb-3">
-		<label for="id">ID</label>
-		<InputNumber id="id" @bind-Value="a.Idauditointipohja" class="form-control" Disabled />
-	</div>
+<EditForm Model="a" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="id">ID</label>
+        <InputNumber id="id" @bind-Value="a.Idauditointipohja" class="form-control" Disabled />
+    </div>
 
-	<div class="mb-3">
-		<label for="selite">Selite</label>
-		<InputText id="selite" @bind-Value="a.Selite" class="form-control" Disabled />
-	</div>
+    <div class="mb-3">
+        <label for="selite">Selite</label>
+        <InputText id="selite" @bind-Value="a.Selite" class="form-control" Disabled="@disabled" />
+        <ValidationMessage For="()=>a.Selite" />
+    </div>
 
-	<div class="mb-3">
-		<label for="luontiaika">Luontiaika</label>
-		<InputDate id="luontiaika" @bind-Value="a.Luontiaika" @bind-Value:format="dd.MM.yyyy" class="form-control" Disabled />
-	</div>
+    <div class="mb-3">
+        <label for="luontiaika">Luontiaika</label>
+        <InputDate id="luontiaika" @bind-Value="a.Luontiaika" @bind-Value:format="dd.MM.yyyy" class="form-control" Disabled />
+    </div>
 
-	<div class="mb-3">
-		<label for="kayttaja">Käyttäjä</label>
-		<InputNumber id="kayttajaid" @bind-Value="a.Idkayttaja" class="form-control" Disabled/>
-		<InputText id="kayttaja" @bind-Value="a.KayttajaNimi" class="form-control" Disabled />
-	</div>
+    <div class="mb-3">
+        <label for="kayttaja">Käyttäjä</label>
+        <InputNumber id="kayttajaid" @bind-Value="a.Idkayttaja" class="form-control" Disabled />
+        <InputText id="kayttaja" @bind-Value="a.KayttajaNimi" class="form-control" Disabled />
+    </div>
 
-	<div class="mb-3">
-		<label for="kohderyhma">Kohderyhmä</label>
-		<InputNumber id="kohderyhmaid" @bind-Value="a.Idkohderyhma" class="form-control" Disabled />
-		<InputText id="kohderyhma" @bind-Value="a.KohderyhmaNimi" class="form-control" Disabled />
-	</div>
+    <div class="mb-3">
+        <label for="kohderyhma">Kohderyhmä</label>
+        <InputNumber id="kohderyhmaid" @bind-Value="a.Idkohderyhma" class="form-control" Disabled />
+        <InputText id="kohderyhma" @bind-Value="a.KohderyhmaNimi" class="form-control" Disabled />
+    </div>
 
-	<button class="btn btn-danger" @onclick="Sulje">Sulje</button>
+    @if (a.Vaatimuspohjat is not null)
+    {
+        <div class="mb-3">
+            <table class="table">
+                <tr>
+                    <th>Vaatimus</th>
+                    <th>Pakollisuus</th>
+                    <th></th>
+                </tr>
+                @foreach (var vaatimus in a.Vaatimuspohjat)
+                {
+                    <tr>
+                        <td>@vaatimus.Kuvaus</td>
+                        <td>@vaatimus.Pakollisuus</td>
+                        @if (!disabled)
+                        {
+                            <td><button class="btn" @onclick="@(() => PoistaVaatimus(vaatimus))"><span class="oi oi-trash"></span></button></td>
+}
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+
+    @if (disabled)
+    {
+        <button type="button" class="btn btn-primary" @onclick="Sulje">Sulje</button>
+        <button type="button" class="btn btn-danger" @onclick="Muokkaa">Muokkaa</button>
+    }
+    else
+    {
+        <button type="submit" class="btn btn-primary">Tallenna</button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancel">Peruuta</button>
+    }
 </EditForm>
 
+@if (!disabled) { 
+<div class="mb-3">
+    <button style="margin-top: 1em" class="btn btn-secondary" @onclick="Lisaa">Lisää vaatimus</button>
+</div>
+}
+
+@if (lisaaVaatimus)
+{
+    <EditForm Model="v" OnValidSubmit="SaveVaatimus">
+        <DataAnnotationsValidator />
+        <div class="mb-3">
+            <label for="kuvaus">Kuvaus</label>
+            <InputText id="kuvaus" @bind-Value="v.Kuvaus" class="form-control" />
+            <ValidationMessage For="()=>v.Kuvaus" />
+        </div>
+
+        <div class="mb-3">
+            <label for="selite">Pakollisuus</label>
+            <InputText id="selite" @bind-Value="v.Pakollisuus" class="form-control" />
+            <ValidationMessage For="()=>v.Pakollisuus" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Tallenna</button>
+        <button type="reset" class="btn btn-secondary" @onclick="CancelVaatimus">Peruuta</button>
+    </EditForm>
+}
 
 
 
@@ -43,20 +104,74 @@
 
 
 @code {
-	[CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
-	AuditointipohjaDTO? a = new();
+    [CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
+    AuditointipohjaDTO? a = new AuditointipohjaDTO();
+    VaatimuspohjaDTO? v = new VaatimuspohjaDTO();
 
-	[Parameter]
-	public int? Id { get; set; }
+    public bool lisaaVaatimus = false;
+    public bool disabled = true;
 
-	protected override async Task OnInitializedAsync()
-	{
-		a = await Http.GetFromJsonAsync<AuditointipohjaDTO>($"/auditointipohja/{Id}");
-	}
+    [Parameter]
+    public int? Id { get; set; }
 
-	async Task Sulje()
-	{
-		await Modal.CloseAsync();
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        a = await Http.GetFromJsonAsync<AuditointipohjaDTO>($"/auditointipohja/{Id}");
+    }
+
+    async Task Sulje()
+    {
+        await Modal.CloseAsync();
+    }
+
+    void Muokkaa()
+    {
+        disabled = false;
+    }
+
+    async Task Save()
+    {
+        if (a is not null) await Http.PutAsJsonAsync<AuditointipohjaDTO>($"/auditointipohja/edit", a);
+        disabled = true;
+    }
+
+    async Task Cancel()
+    {
+        a = await Http.GetFromJsonAsync<AuditointipohjaDTO>($"/auditointipohja/{Id}");
+        disabled = true;
+        lisaaVaatimus = false;
+        v = new VaatimuspohjaDTO();
+    }
+
+    void Lisaa()
+    {
+        lisaaVaatimus = true;
+    }
+
+    void SaveVaatimus()
+    {
+        if (a.Vaatimuspohjat is null) a.Vaatimuspohjat = new List<VaatimuspohjaDTO>();
+
+        a.Vaatimuspohjat.Add(v);
+
+        v = new VaatimuspohjaDTO();
+        lisaaVaatimus = false;
+
+
+    }
+
+    void CancelVaatimus()
+    {
+        lisaaVaatimus = false;
+        v = new VaatimuspohjaDTO();
+    }
+
+    void PoistaVaatimus(VaatimuspohjaDTO v)
+    {
+        if (a.Vaatimuspohjat is not null)
+        {
+            a.Vaatimuspohjat.Remove(v);
+        }
+    }
 
 }
