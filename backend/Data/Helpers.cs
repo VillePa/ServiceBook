@@ -209,7 +209,7 @@ namespace backend.Data
 					AuditointipohjaSelite = v.IdauditointipohjaNavigation.Selite
                     
                 }).ToList()
-                //Vaatimuspohjas = a.Vaatimuspohjas,
+                //Vaatimuspohjat = a.Vaatimuspohjas
             };
 		}
 

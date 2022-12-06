@@ -76,6 +76,7 @@ namespace backend.Controllers
 			var auditointipohja = await _db.Auditointipohjas.Where(i=> i.Idauditointipohja == id)
 				.Include(k => k.IdkayttajaNavigation)
 				.Include(k => k.IdkohderyhmaNavigation)
+                .Include(k => k.Vaatimuspohjas)
                 .Select(k => Helpers.AuditointipohjaToDTO(k))
 				.FirstOrDefaultAsync();
 
@@ -102,8 +103,26 @@ namespace backend.Controllers
                     Idkayttaja = int.Parse(id),
                     Idkohderyhma = req.Idkohderyhma,
                 };
-                _db.Auditointipohjas.Add(a);
+
+                var response = _db.Auditointipohjas.Add(a);
                 await _db.SaveChangesAsync();
+
+				// Lisätään auditointipohjaan liittyvät vaatimukset
+				if (req.Vaatimuspohjat is not null)
+				{
+					foreach (var vaatimus in req.Vaatimuspohjat)
+					{
+						Vaatimuspohja v = new Vaatimuspohja
+						{
+							Kuvaus = vaatimus.Kuvaus,
+							Pakollisuus = vaatimus.Pakollisuus,
+							Idauditointipohja = response.Entity.Idauditointipohja
+						};
+
+						_db.Vaatimuspohjas.Add(v);
+					}
+					await _db.SaveChangesAsync();
+				}
                 
                 return Ok(a);   
 

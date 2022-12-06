@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace backend.Data;
 
@@ -13,5 +14,6 @@ public partial class Vaatimuspohja
 
 	public int Idauditointipohja { get; set; }
 
-	public virtual Auditointipohja IdauditointipohjaNavigation { get; set; } = null!;
+    [JsonIgnore]
+    public virtual Auditointipohja IdauditointipohjaNavigation { get; set; } = null!;
 }

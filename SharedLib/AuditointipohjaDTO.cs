@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace SharedLib
 {
@@ -10,6 +11,7 @@ namespace SharedLib
     {
         public int Idauditointipohja { get; set; }
 
+        [Required]
         public string? Selite { get; set; }
 
         public DateTime Luontiaika { get; set; }
@@ -18,6 +20,7 @@ namespace SharedLib
 
         public string? KayttajaNimi { get; set; }
 
+        [Required]
         public int Idkohderyhma { get; set; }
 
         public string? KohderyhmaNimi { get; set; }
