@@ -19,13 +19,29 @@
         </div>
         <div class="mb-3">
             <label for="sijainti">Sijainti</label>
-            <InputText id="sijainti" @bind-Value="kohde.Sijainti" class="form-control" />
+            <InputSelect id="sijainti" @bind-Value="kohde.Sijainti" class="form-control" >
+            <option>Varasto</option>
+            <option>Sorvaamo</option>
+            <option>Halli 1</option>
+            <option>Halli 2</option>
+            <option>Paja</option>
+            <option>Huoltamo</option>
+            </InputSelect>
             <ValidationMessage For="()=>kohde.Sijainti" />
+               
         </div>
         <div class="mb-3">
             <label for="tyyppi">Tyyppi</label>
-            <InputText id="tyyppi" @bind-Value="kohde.Tyyppi" class="form-control" />
+            <InputSelect id="tyyppi" @bind-Value="kohde.Tyyppi" class="form-control" >
+                <option>sorvi</option>
+                <option>pesuri</option>
+                <option>imuri</option>
+                <option>työstäjä</option>
+                <option>työkalu</option>
+                <option>muu laite</option>
+            </InputSelect>
             <ValidationMessage For="()=>kohde.Tyyppi" />
+            
         </div>
         <div class="mb-3">
             <label for="malli">Malli</label>
@@ -80,7 +96,7 @@
     protected override async Task OnInitializedAsync()
     {
         ryhmat = await Http.GetFromJsonAsync<KohderyhmaDTO[]>("/kohderyhma/all");
-        tilat = await Http.GetFromJsonAsync<TilaDTO[]>("/tila/all");
+        tilat = await Http.GetFromJsonAsync<TilaDTO[]>("/tila/all1or2");
     }
 
 

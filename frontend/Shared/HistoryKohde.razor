@@ -30,7 +30,21 @@ else
                     <td>@a.Kuvaus</td>
                     <td>@a.Sijainti</td>
                     <td>@a.Tunnus</td>
-                    <td>@a.IdkohteenTila</td>
+                    <td>
+                        @if (a.IdkohteenTila == 1)
+                        {
+                            <span style="color: green">@tilat.Find(x => x.IdkohteenTila == a.IdkohteenTila).Kuvaus</span>
+                        }
+                        else if (a.IdkohteenTila == 2)
+                        {
+                            <span style="color: red">@tilat.Find(x => x.IdkohteenTila == a.IdkohteenTila).Kuvaus</span>
+                        }
+                        else
+                        {
+                            <span style="color: black">@tilat.Find(x => x.IdkohteenTila == a.IdkohteenTila).Kuvaus</span>
+                        }
+
+                    </td>
                     <td>@a.Muokattu</td>
                     <td>@a.KayttajaIdkayttaja</td>
                 </tr>
@@ -52,6 +66,7 @@ else
 
     private MuutoshistoriaKohdeDTO? muutos = new MuutoshistoriaKohdeDTO();
     private MuutoshistoriaKohdeDTO[]? muutokset;
+    private List<TilaDTO>? tilat;
 
  
 
@@ -63,6 +78,7 @@ else
     {
 
         muutokset = await Http.GetFromJsonAsync<MuutoshistoriaKohdeDTO[]>($"/history/{Id}/all");
+        tilat = await Http.GetFromJsonAsync<List<TilaDTO>>("/tila/all");
         
 
 

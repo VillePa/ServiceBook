@@ -2,7 +2,7 @@
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 
-@if (kohde != null)
+@if (kohde != null && tilat != null)
 {
     // tänne lisättävä muokkaus+tallenna nappi ja muokkauksen tallennus muutoshistoriaan!
     // poistolle ei omaa nappia! tilaa voi muuttaa -> poistettu/ei käytössä
@@ -24,11 +24,25 @@
         </div>
         <div class="mb-3">
             <label for="sijainti">Sijainti</label>
-            <InputText id="sijainti" @bind-Value="kohde.Sijainti" class="form-control" />
+            <InputSelect id="sijainti" @bind-Value="kohde.Sijainti" class="form-control" >
+            <option>Varasto</option>
+            <option>Sorvaamo</option>
+            <option>Halli 1</option>
+            <option>Halli 2</option>
+            <option>Paja</option>
+            <option>Huoltamo</option>
+            </InputSelect>
         </div>
         <div class="mb-3">
             <label for="tyyppi">Tyyppi</label>
-            <InputText id="tyyppi" @bind-Value="kohde.Tyyppi" class="form-control" Disabled />
+            <InputSelect id="tyyppi" @bind-Value="kohde.Tyyppi" class="form-control" Disabled >
+                <option>sorvi</option>
+                <option>pesuri</option>
+                <option>imuri</option>
+                <option>työstäjä</option>
+                <option>työkalu</option>
+                <option>muu laite</option>
+            </InputSelect>
         </div>
         <div class="mb-3">
             <label for="malli">Malli</label>
@@ -40,7 +54,12 @@
         </div>
         <div class="mb-3">
             <label for="tila">Tila</label>
-            <InputNumber id="tila" @bind-Value="kohde.IdkohteenTila" class="form-control" />
+             <InputSelect id="tila" @bind-Value="kohde.IdkohteenTila" class="form-control">
+                @foreach (var item in tilat)
+                {
+                    <option value="@item.IdkohteenTila">@item.Kuvaus</option>
+                }
+            </InputSelect>
         </div>
         <div class="mb-3">
             <label for="kohderyhma">Kohderyhmä</label>
@@ -70,6 +89,7 @@
     private HuoltokohdeDTO? kohde = new HuoltokohdeDTO();
     private HuoltokohdeDTO[]? kohteet;
     private MuutoshistoriaKohdeDTO? muutos = new MuutoshistoriaKohdeDTO();
+    private TilaDTO[]? tilat;
 
 
     [Parameter]
@@ -80,6 +100,7 @@
 
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
         kohde = kohteet.FirstOrDefault(i => i.Idkohde == Id);
+        tilat = await Http.GetFromJsonAsync<TilaDTO[]>("/tila/all1or2");
 
 
     }

@@ -18,12 +18,42 @@ else
 {
     <div style="margin: 1em 0 1em 0">
     <label>Suodata kohteen tilan mukaan:</label>
-    <button @onclick="Filter1">Käytössä</button>
-    <button @onclick="Filter2">Epäkunnossa</button>
-    <button @onclick="Filter3">Poistettu</button>
+        <button class="btn btn-success" @onclick="Filter1">Käytössä</button>
+        <button class="btn btn-danger" @onclick="Filter2">Epäkunnossa</button>
+        <AuthorizeView Roles="admin">
+            <button class="btn btn-secondary" @onclick="Filter3">Poistettu</button>
+        </AuthorizeView>
+    </div>
+
+    <div style="margin: 1em 0 1em 0">
+        <label>Suodata kohteen sijainnin mukaan:</label>
+            @foreach (var item in Sijainnit)
+            {
+                <input id="sijainnit" type="checkbox"  @onchange="args=>Suodata1(args, item)" style="margin-left: 0.5em" />
+                @item
+               
+            }
+
+        <button style="margin-left: 0.5em" class="btn btn-info" @onclick="Filter4"><span class="oi oi-magnifying-glass"></span></button>
+    </div>
+    <div style="margin: 1em 0 1em 0">
+        <label>Suodata kohteen tyypin mukaan:</label>
+        @foreach (var item in Tyypit)
+        {
+            <input id="tyypit" type="checkbox" @onchange="args=>Suodata2(args, item)" style="margin-left: 0.5em" />
+            @item
+
+        }
+        <button style="margin-left: 0.5em" class="btn btn-info" @onclick="Filter5"><span class="oi oi-magnifying-glass"></span></button>
+    </div>
+
+    <div style="margin: 1em 0 1em 0">
+    <button class="btn btn-info" @onclick="OnInitializedAsync"><span class="oi oi-reload"></span></button>
     </div>
     
 }
+
+
 
 
 @if (kohteet == null && tilat == null)
@@ -102,13 +132,39 @@ else
 
     int tila;
 
+
+    private List<string> Sijainnit = new List<string> { "Varasto", "Sorvaamo", "Halli 1", "Halli 2", "Paja", "Huoltamo"};
+    private List<string> valitutsijainnit = new List<string>();
+
+    private List<string> Tyypit = new List<string> { "sorvi", "pesuri", "imuri", "työstäjä", "työkalu", "muu laite" };
+    private List<string> valituttyypit = new List<string>();
+
+
     protected override async Task OnInitializedAsync()
     {
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all/tila1or2");
         tilat = await Http.GetFromJsonAsync<List<TilaDTO>>("/tila/all");
-      
-      
+
     }
+
+    private async Task Suodata1(ChangeEventArgs args, string item)
+    {
+        
+        bool SijaintiSelected = (bool)args.Value;
+        if (SijaintiSelected) valitutsijainnit.Add(item);
+        else valitutsijainnit.Remove(item);
+
+    }
+
+    private async Task Suodata2(ChangeEventArgs args, string item)
+    {
+        bool TyyppiSelected = (bool)args.Value;
+        if (TyyppiSelected) valituttyypit.Add(item);
+        else valituttyypit.Remove(item);
+
+    }
+
+
 
     private async Task ShowUusiKohde()
     {
@@ -145,8 +201,8 @@ else
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all/tila1or2");
     }
 
-    
-    
+
+
 
     private async Task SortBySijainti()
     {
@@ -204,6 +260,18 @@ else
     private async Task Filter3()
     {
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/filterbypoistettu");
+
+    }
+
+    private async Task Filter4()
+    {
+        Console.WriteLine(valitutsijainnit);
+
+    }
+
+    private async Task Filter5()
+    {
+        Console.WriteLine(valituttyypit);
 
     }
 }
