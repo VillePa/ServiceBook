@@ -24,10 +24,10 @@ namespace backend.Controllers
 		}
 
 		[HttpGet("/kayttaja/kaikki")]
-		public async Task<IEnumerable<Kayttaja>> Get()
+		public async Task<IEnumerable<KayttajaDTO>> Get()
 		{
 
-			return await _db.Kayttajas.OrderByDescending(i => i.Idkayttaja).ToListAsync();
+			return await _db.Kayttajas.OrderByDescending(i => i.Idkayttaja).Select(i => Helpers.KayttajaToDTO(i)).ToListAsync();
 
 		}
 
