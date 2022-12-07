@@ -5,13 +5,14 @@
 @inject NavigationManager NavigationManager
 @attribute [Authorize]
 
+<PageTitle>Vaatimuspohjat</PageTitle>
+
 <div class="mb-5">
 	<button class="btn btn-outline-primary" @onclick="Previous">Vaatimussivulle</button>
 	<button class="btn btn-success" @onclick="LisaaVaatimuspohja">Lisää uusi vaatimuspohja</button>
 </div>
 
 <h3>Vaatimuspohjat</h3>
-
 
 
 @if (vaatimuspohjat != null)
