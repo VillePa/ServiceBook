@@ -1,9 +1,11 @@
 ﻿using backend.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using SharedLib;
 using System;
+using System.Security.Claims;
 
 namespace backend.Controllers
 {
@@ -49,13 +51,29 @@ namespace backend.Controllers
         }
 
         // Luodaan uusi kohde
-        [HttpPost("/kohde")]
+        [HttpPost("/kohde"), Authorize]
         public async Task<IActionResult> LisaaKohde([FromBody] HuoltokohdeDTO t)
         {
+            // Tarkistetaan käyttäjä
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (id == null)
+            {
+                return BadRequest("Käyttäjää ei löydy");
+            }
+            var kayttaja = await _db.Kayttajas.Where(i => i.Idkayttaja == int.Parse(id)).FirstOrDefaultAsync();
+
+            if (kayttaja == null)
+            {
+                return BadRequest("Käyttäjää ei löydy");
+            }
+
+
             if (false == ModelState.IsValid)
             {
                 return BadRequest();
             }
+
+            t.Idkayttaja = int.Parse(id);
 
             Kohde newKohde = Helpers.DTOtoKohde(t);
 
@@ -106,6 +124,23 @@ namespace backend.Controllers
             await _db.SaveChangesAsync();
 
             return Ok();
+        }
+
+        // kohteen poisto
+        [HttpDelete("/kohde/{id}")]
+        public async Task<IActionResult> Delete(int? id)
+        {
+
+            var kohde = await _db.Kohdes.Where(i => i.Idkohde == id).FirstOrDefaultAsync();
+
+            if (kohde != null)
+            {
+                _db.Kohdes.Remove(kohde);
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            return NotFound("kohdetta ei löydy");
+
         }
 
         // tänne sorttausta ja filtteröintiä

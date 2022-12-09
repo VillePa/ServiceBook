@@ -20,6 +20,7 @@
         <div class="mb-3">
             <label for="sijainti">Sijainti</label>
             <InputSelect id="sijainti" @bind-Value="kohde.Sijainti" class="form-control" >
+                <option default>Valitse</option>
             <option>Varasto</option>
             <option>Sorvaamo</option>
             <option>Halli 1</option>
@@ -33,6 +34,7 @@
         <div class="mb-3">
             <label for="tyyppi">Tyyppi</label>
             <InputSelect id="tyyppi" @bind-Value="kohde.Tyyppi" class="form-control" >
+                <option default>Valitse</option>
                 <option>sorvi</option>
                 <option>pesuri</option>
                 <option>imuri</option>
@@ -103,7 +105,7 @@
     private async Task Tallenna()
     {
         kohde.Luotu = DateTime.Now;
-        kohde.Idkayttaja = 18;
+        
 
 
         await Http.PostAsJsonAsync<HuoltokohdeDTO>("/kohde", kohde);
