@@ -9,10 +9,9 @@
 @*Jatka ilman pohjaa nollaa tiedot ja auditointia jatketaan tyhjällä pohjalla*@
 @*Auditointi tarvii saada tehtyä myös kohderyhmälle, eli kohde voidaan jättää tyhjäksi*@
 
-@if(pohjat != null)
+@if (pohjat != null)
 {
-	<EditForm Model="auditointipohja" OnInvalidSubmit="PohjaValittu">
-		<DataAnnotationsValidator />
+		<EditForm Model="auditointipohja">
 		<label for="pohja">Valitse auditointipohja</label>
 		<InputSelect id="pohja" @bind-Value="auditointipohja.Idauditointipohja" class="form-select">
 			@foreach (var item in pohjat)
@@ -20,22 +19,30 @@
 				<option value="@item.Idauditointipohja">@item.Selite, @item.KohderyhmaNimi</option>
 			}
 		</InputSelect>
-		<button type="submit" class="btn btn-primary">Pohjalla</button>
-		<button class="btn btn-secondary" @onclick="IlmanPohjaa">Ilman pohjaa</button>
+	
+	
+		
+		@if (auditointipohja.Idauditointipohja != 0)
+		{
+			<button type="button" class="btn btn-primary" @onclick="PohjaValittu">Jatka valitulla pohjalla</button>
+
+		}
+		else
+		{
+			<button type="button" class="btn btn-secondary" @onclick="IlmanPohjaa">Jatka ilman pohjaa</button>
+
+		}
 	</EditForm>
 }
 
 
-
 @if (kohteet != null && jatketaan == true)
 {
-	<EditForm Model="auditointi" OnValidSubmit="Start">
+	<EditForm Model="auditointi">
 		<DataAnnotationsValidator />
 
 		<div class="mb-3">
 			<label for="idkohde">Kohde</label>
-
-			@*tähän ehdollinen haku, jos pohja on valittu, vain pohjan kohderyhmän kohteet listataan!*@
 
 			<InputSelect id="idkohde" @bind-Value="auditointi.Idkohde" class="form-select">
 
@@ -55,7 +62,7 @@
 			<ValidationMessage For="()=> auditointi.Selite" />
 		</div>
 
-		<button type="submit" class="btn btn-primary">Aloita</button>
+		<button @onclick="Start" class="btn btn-primary">Aloita</button>
 		<button class="btn btn-danger" @onclick="Close">Peruuta</button>
 
 	</EditForm>
@@ -79,14 +86,14 @@ else
 	private AuditointipohjaDTO[]? pohjat;
 	private AuditointipohjaDTO? auditointipohja = new();
 	private string sort = "asc";
-	private bool pohjaValinta = false;
+	private int? ryhmaId;
 	private bool jatketaan = false;
+	private string? message = "";
 
 	protected override async Task OnInitializedAsync()
 	{
 		pohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>($"/auditointipohja/all/{sort}");
-
-	
+		Console.WriteLine($"pohja = {auditointipohja.Idauditointipohja}");
 	}
 
 	async Task Close()
@@ -102,20 +109,33 @@ else
 
 	async Task PohjaValittu()
 	{
-		pohjaValinta = true;
-		jatketaan = true;
-		Console.WriteLine($"Pohja {auditointipohja.Idauditointipohja} valittu. Kohderyhmä: {auditointipohja.Idkohderyhma}");
+		//haetaan valitun pohjan tiedot
+		auditointipohja = await Http.GetFromJsonAsync<AuditointipohjaDTO>($"/auditointipohja/{auditointipohja.Idauditointipohja}");
 
-		//haetaan kyseisen auditointipohjan tiedot alempaan formiin
-		kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>($"/kohde/ryhma/{auditointipohja.Idkohderyhma}");
+		if(auditointipohja != null)
+		{
+			Console.WriteLine($"Pohja {auditointipohja.Idauditointipohja} valittu. Kohderyhmä: {auditointipohja.Idkohderyhma}");
+
+			//haetaan kyseisen auditointipohjan kohderyhman kohteet
+			kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>($"/kohde/ryhma/{auditointipohja.Idkohderyhma}");
+
+			auditointi.Selite = auditointipohja.Selite;
+
+			jatketaan = true;
+		}
+		else
+		{
+			message = "Jotain meni vikaan..";
+		}
+
+
 	}
 
 	async Task IlmanPohjaa()
 	{
-		pohjaValinta = false;
-		jatketaan = true;
-		Console.WriteLine("Nollataan pohjan tiedot");
-		kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+		Console.WriteLine("Jatketaan ilman valittua pohjaa");
 		auditointi = new();
+		kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+		jatketaan = true;
 	}
 }
