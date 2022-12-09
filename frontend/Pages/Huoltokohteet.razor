@@ -12,12 +12,19 @@
 <button style="margin: 2em 0 2em 0" class="btn btn-primary" @onclick="@ShowUusiKohde">Lisää uusi huoltokohde</button>
     <br />
 
-@if (tilat == null)
+@if (filtered == null && tilat == null && kohdelist == null && kohteet == null)
 {
-    
+    <p>ladataan....</p>
 }
 else
 {
+    <div>
+        <input @bind-value="SearchTextNimi" @bind-value:event="oninput" placeholder="Suodata nimen mukaan" />
+        <input @bind-value="SearchTextMalli" @bind-value:event="oninput" placeholder="Suodata mallin mukaan" />
+        <input @bind-value="SearchTextTunnus" @bind-value:event="oninput" placeholder="Suodata tunnuksen mukaan" />
+    </div>
+
+
     <div style="margin: 1em 0 1em 0">
     <label>Suodata kohteen tilan mukaan:</label>
         <button class="btn btn-success" @onclick="Filter1">Käytössä</button>
@@ -58,7 +65,7 @@ else
 
 
 
-@if (kohteet == null && tilat == null)
+@if (filtered == null && tilat == null && kohdelist == null && kohteet == null)
 {
     <p><em>ladataan...</em></p>
 }
@@ -83,7 +90,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var a in kohteet)
+            @foreach (var a in filtered)
             {
                 <tr>
                     <td>@a.Idkohde</td>
@@ -124,6 +131,11 @@ else
 
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
+    public string SearchTextNimi = "";
+    public string SearchTextMalli = "";
+    public string SearchTextTunnus = "";
+    public IEnumerable<HuoltokohdeDTO>? kohdelist { get; set; } = new List<HuoltokohdeDTO>();
+
     private HuoltokohdeDTO[]? kohteet;
     private List<TilaDTO>? tilat;
 
@@ -144,10 +156,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all/tila1or2");
+        kohdelist = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all/tila1or2");
         tilat = await Http.GetFromJsonAsync<List<TilaDTO>>("/tila/all");
 
     }
+
+    List<HuoltokohdeDTO> filtered => kohdelist.Where(a => a.Nimi.ToLower().Contains(SearchTextNimi.ToLower()))
+    .Where(a => a.Malli.ToLower().Contains(SearchTextMalli.ToLower()))
+    .Where(a => a.Tunnus.ToLower().Contains(SearchTextTunnus.ToLower())).ToList();
 
     private async Task Suodata1(ChangeEventArgs args, string item)
     {
@@ -208,60 +224,60 @@ else
 
     private async Task SortBySijainti()
     {
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbysijainti");
+        kohdelist = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbysijainti");
 
     }
 
     private async Task SortById()
     {
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all/tila1or2");
+        kohdelist = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all/tila1or2");
 
     }
 
     private async Task SortByTyyppi()
     {
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbytyyppi");
+        kohdelist = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbytyyppi");
 
     }
 
     private async Task SortByTila()
     {
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbytila");
+        kohdelist = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbytila");
 
     }
 
     private async Task SortByLuotu()
     {
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbyluotu");
+        kohdelist = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbyluotu");
 
     }
 
     private async Task SortByLuoja()
     {
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbyluoja");
+        kohdelist = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbyluoja");
 
     }
 
     private async Task SortByKohderyhma()
     {
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbykohderyhma");
+        kohdelist = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbykohderyhma");
 
     }
 
     private async Task Filter1()
     {
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/filterbykaytossa");
+        kohdelist = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/filterbykaytossa");
 
     }
 
     private async Task Filter2()
     {
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/filterbyepakunnossa");
+        kohdelist = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/filterbyepakunnossa");
 
     }
     private async Task Filter3()
     {
-        kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/filterbypoistettu");
+        kohdelist = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/filterbypoistettu");
 
     }
 
