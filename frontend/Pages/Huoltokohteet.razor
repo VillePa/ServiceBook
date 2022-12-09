@@ -12,21 +12,22 @@
 <button style="margin: 2em 0 2em 0" class="btn btn-primary" @onclick="@ShowUusiKohde">Lisää uusi huoltokohde</button>
     <br />
 
-@if (filtered == null && tilat == null && kohdelist == null && kohteet == null)
+@if (kohdelist == null)
 {
     <p>ladataan....</p>
 }
 else
 {
+    // avoin haku
     <div>
         <input @bind-value="SearchTextNimi" @bind-value:event="oninput" placeholder="Suodata nimen mukaan" />
         <input @bind-value="SearchTextMalli" @bind-value:event="oninput" placeholder="Suodata mallin mukaan" />
         <input @bind-value="SearchTextTunnus" @bind-value:event="oninput" placeholder="Suodata tunnuksen mukaan" />
     </div>
 
-
+    // suodatus tilan mukaan
     <div style="margin: 1em 0 1em 0">
-    <label>Suodata kohteen tilan mukaan:</label>
+        <label>Suodata kohteen tilan mukaan:</label>
         <button class="btn btn-success" @onclick="Filter1">Käytössä</button>
         <button class="btn btn-danger" @onclick="Filter2">Epäkunnossa</button>
         <AuthorizeView Roles="admin">
@@ -34,38 +35,42 @@ else
         </AuthorizeView>
     </div>
 
+    @*TÄMÄ EI TOIMI *@
     <div style="margin: 1em 0 1em 0">
         <label>Suodata kohteen sijainnin mukaan:</label>
-            @foreach (var item in Sijainnit)
-            {
-                <input id="sijainnit" type="checkbox"  @onchange="args=>Suodata1(args, item)" style="margin-left: 0.5em" />
-                @item
-               
-            }
 
-        <button style="margin-left: 0.5em" class="btn btn-info" @onclick="Filter4"><span class="oi oi-magnifying-glass"></span></button>
+        @foreach (var item in Sijainnit)
+        {
+            <input id="tyypit" type="checkbox" style="margin-left: 0.5em" />
+            @item
+
+        }
+        <button style="margin-left: 0.5em" class="btn btn-info" @onclick="FilterSijainti"><span class="oi oi-magnifying-glass"></span></button>
     </div>
+
+    @*EIKÄ TÄMÄ*@
     <div style="margin: 1em 0 1em 0">
         <label>Suodata kohteen tyypin mukaan:</label>
         @foreach (var item in Tyypit)
         {
-            <input id="tyypit" type="checkbox" @onchange="args=>Suodata2(args, item)" style="margin-left: 0.5em" />
+            <input id="tyypit" type="checkbox" style="margin-left: 0.5em" />
             @item
 
         }
-        <button style="margin-left: 0.5em" class="btn btn-info" @onclick="Filter5"><span class="oi oi-magnifying-glass"></span></button>
+        <button style="margin-left: 0.5em" class="btn btn-info" @onclick="FilterTyyppi"><span class="oi oi-magnifying-glass"></span></button>
     </div>
 
+
+    // päivitä table /kohde/getall() nappi
     <div style="margin: 1em 0 1em 0">
-    <button class="btn btn-info" @onclick="OnInitializedAsync"><span class="oi oi-reload"></span></button>
+        <button class="btn btn-info" @onclick="OnInitializedAsync"><span class="oi oi-reload"></span></button>
     </div>
-    
 }
 
 
 
-
-@if (filtered == null && tilat == null && kohdelist == null && kohteet == null)
+@*Table element*@
+@if (kohdelist == null)
 {
     <p><em>ladataan...</em></p>
 }
@@ -114,7 +119,7 @@ else
                             <span style="color: black">@tilat.Find(x => x.IdkohteenTila == a.IdkohteenTila).Kuvaus</span>
                         }
 
-                        </td>
+                    </td>
                     <td>@a.Luotu</td>
                     <td>@a.Idkayttaja</td>
                     <td>@a.Idkohderyhma</td>
@@ -128,7 +133,6 @@ else
 }
 
 @code {
-
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
     public string SearchTextNimi = "";
@@ -139,19 +143,14 @@ else
     private HuoltokohdeDTO[]? kohteet;
     private List<TilaDTO>? tilat;
 
-    private List<HuoltokohdeDTO>? huoltokohteet;
-    private List<HuoltokohdeDTO>? filtteroimaton;
-
     private int[]? kohdes;
 
     int tila;
 
-
+    // kova koodatut sijainnit ja tyypit
     private List<string> Sijainnit = new List<string> { "Varasto", "Sorvaamo", "Halli 1", "Halli 2", "Paja", "Huoltamo"};
-    private List<string> valitutsijainnit = new List<string>();
-
     private List<string> Tyypit = new List<string> { "sorvi", "pesuri", "imuri", "työstäjä", "työkalu", "muu laite" };
-    private List<string> valituttyypit = new List<string>();
+    
 
 
     protected override async Task OnInitializedAsync()
@@ -161,29 +160,12 @@ else
 
     }
 
+    // avoin haku
     List<HuoltokohdeDTO> filtered => kohdelist.Where(a => a.Nimi.ToLower().Contains(SearchTextNimi.ToLower()))
     .Where(a => a.Malli.ToLower().Contains(SearchTextMalli.ToLower()))
     .Where(a => a.Tunnus.ToLower().Contains(SearchTextTunnus.ToLower())).ToList();
 
-    private async Task Suodata1(ChangeEventArgs args, string item)
-    {
-        
-        bool SijaintiSelected = (bool)args.Value;
-        if (SijaintiSelected) valitutsijainnit.Add(item);
-        else valitutsijainnit.Remove(item);
-
-    }
-
-    private async Task Suodata2(ChangeEventArgs args, string item)
-    {
-        bool TyyppiSelected = (bool)args.Value;
-        if (TyyppiSelected) valituttyypit.Add(item);
-        else valituttyypit.Remove(item);
-
-    }
-
-
-
+    // lisää uusi kohde modal
     private async Task ShowUusiKohde()
     {
         var uusiModal = Modal.Show<UusiKohde>("Uusi huoltokohde");
@@ -191,6 +173,7 @@ else
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all/tila1or2");
     }
 
+    // Edit modal
     private async Task Edit(int Id)
     {
         var parameters = new ModalParameters()
@@ -202,6 +185,7 @@ else
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all/tila1or2");
     }
 
+    // muutoshistoria modal
     private async Task History(int Id)
     {
         var parameters = new ModalParameters()
@@ -220,8 +204,20 @@ else
     }
 
 
+    private async Task FilterSijainti()
+    {
+        // tänne jotain
+
+    }
+
+    private async Task FilterTyyppi()
+    {
+        // tänne jotain
+
+    }
 
 
+    // sorttausta
     private async Task SortBySijainti()
     {
         kohdelist = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/sortbysijainti");
@@ -281,15 +277,7 @@ else
 
     }
 
-    private async Task Filter4()
-    {
-        Console.WriteLine(valitutsijainnit);
+   
 
-    }
-
-    private async Task Filter5()
-    {
-        Console.WriteLine(valituttyypit);
-
-    }
+   
 }
