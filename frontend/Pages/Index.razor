@@ -17,7 +17,7 @@
 			<h3>Kirjaudu sisään</h3>
 
 			<EditForm Model="kayttaja" OnValidSubmit="HandleLogin">
-
+				<DataAnnotationsValidator/>
 				<div class="mb-3">
 					<label for="kayttajatunnus">Käyttäjätunnus</label>
 					<InputText id="kayttajatunnus" @bind-Value="kayttaja.Kayttajatunnus" class="form-control" />

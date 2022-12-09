@@ -5,8 +5,10 @@ namespace SharedLib
 {
 	public class LoginDTO
 	{
-            public string Kayttajatunnus { get; set; }
-            public string Salasana { get; set; }
+		[Required]
+        public string Kayttajatunnus { get; set; }
+		[Required]
+		public string Salasana { get; set; }
 	}
 }
 
