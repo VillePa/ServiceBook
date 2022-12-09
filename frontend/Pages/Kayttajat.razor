@@ -14,7 +14,11 @@
 
 @if (kayttajat == null)
 {
-    <p><em>Ladataan käyttäjälistaa</em></p>
+    <div class="text-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 }
 else
 {

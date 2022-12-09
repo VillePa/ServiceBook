@@ -16,7 +16,7 @@
 
 
 
-<h4>Suoritetut auditoinnit</h4>
+<h3>Suoritetut auditoinnit</h3>
 
 @if (auditoinnit != null)
 {
@@ -59,8 +59,14 @@
 }
 else
 {
-	<p>ladataan dataa..</p>
+	<div class="text-center">
+		<div class="spinner-border text-primary" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+	</div>
 }
+<br />
+<button class="btn btn-success" style="font-size: 200%" @onclick="Start">Aloita uusi auditointi</button>
 
 
 
@@ -84,6 +90,12 @@ else
 		NavigationManager.NavigateTo("/vaatimukset");
 	}
 
+	async Task Start()
+	{
+		var auditModal = ModalService.Show<StartAudit>("Auditointi");
+		var result = await auditModal.Result;
 
+		await OnInitializedAsync();
+	}
 
 }

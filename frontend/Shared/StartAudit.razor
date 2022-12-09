@@ -1,5 +1,121 @@
-﻿<h3>StartAudit</h3>
+﻿@using SharedLib
+@inject HttpClient Http
+@inject IModalService ModalService
+@inject NavigationManager NavigationManager
+
+
+@*Ensin valitaan auditointipohja tai jatketaan ilman pohjaa*@
+@*Pohjan valinta hakee alempaan formiin tiedot ja soveltuvat kohteet auditoinnille*@
+@*Jatka ilman pohjaa nollaa tiedot ja auditointia jatketaan tyhjällä pohjalla*@
+@*Auditointi tarvii saada tehtyä myös kohderyhmälle, eli kohde voidaan jättää tyhjäksi*@
+
+@if(pohjat != null)
+{
+	<EditForm Model="auditointipohja" OnInvalidSubmit="PohjaValittu">
+		<DataAnnotationsValidator />
+		<label for="pohja">Valitse auditointipohja</label>
+		<InputSelect id="pohja" @bind-Value="auditointipohja.Idauditointipohja" class="form-select">
+			@foreach (var item in pohjat)
+			{
+				<option value="@item.Idauditointipohja">@item.Selite, @item.KohderyhmaNimi</option>
+			}
+		</InputSelect>
+		<button type="submit" class="btn btn-primary">Pohjalla</button>
+		<button class="btn btn-secondary" @onclick="IlmanPohjaa">Ilman pohjaa</button>
+	</EditForm>
+}
+
+
+
+@if (kohteet != null && jatketaan == true)
+{
+	<EditForm Model="auditointi" OnValidSubmit="Start">
+		<DataAnnotationsValidator />
+
+		<div class="mb-3">
+			<label for="idkohde">Kohde</label>
+
+			@*tähän ehdollinen haku, jos pohja on valittu, vain pohjan kohderyhmän kohteet listataan!*@
+
+			<InputSelect id="idkohde" @bind-Value="auditointi.Idkohde" class="form-select">
+
+				@foreach (var item in kohteet)
+				{
+					<option value="@item.Idkohde">@item.Nimi, @item.Sijainti</option>
+				}
+
+			</InputSelect>
+			<ValidationMessage For="()=>auditointi.Idkohde" />
+		</div>
+
+
+		<div class="mb-3">
+			<label for="selite">Auditoinnin selite</label>
+			<InputText id="selite" @bind-Value="auditointi.Selite" class="form-control" />
+			<ValidationMessage For="()=> auditointi.Selite" />
+		</div>
+
+		<button type="submit" class="btn btn-primary">Aloita</button>
+		<button class="btn btn-danger" @onclick="Close">Peruuta</button>
+
+	</EditForm>
+}
+else
+{
+	<div class="text-center">
+		<div class="spinner-border text-primary" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+		<span>Valitse pohja tai jatka ilman pohjaa</span>
+	</div>
+}
+
+
 
 @code {
+	[CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
+	private AuditointiDTO auditointi = new();
+	private HuoltokohdeDTO[]? kohteet;
+	private AuditointipohjaDTO[]? pohjat;
+	private AuditointipohjaDTO? auditointipohja = new();
+	private string sort = "asc";
+	private bool pohjaValinta = false;
+	private bool jatketaan = false;
 
+	protected override async Task OnInitializedAsync()
+	{
+		pohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>($"/auditointipohja/all/{sort}");
+
+	
+	}
+
+	async Task Close()
+	{
+		await Modal.CloseAsync();
+
+	}
+
+	async Task Start()
+	{
+		Console.WriteLine("aloitetaan auditointi");
+	}
+
+	async Task PohjaValittu()
+	{
+		pohjaValinta = true;
+		jatketaan = true;
+		Console.WriteLine($"Pohja {auditointipohja.Idauditointipohja} valittu. Kohderyhmä: {auditointipohja.Idkohderyhma}");
+
+		//haetaan kyseisen auditointipohjan tiedot alempaan formiin
+		kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>($"/kohde/ryhma/{auditointipohja.Idkohderyhma}");
+	}
+
+	async Task IlmanPohjaa()
+	{
+		pohjaValinta = false;
+		jatketaan = true;
+		Console.WriteLine("Nollataan pohjan tiedot");
+		kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+		auditointi = new();
+	}
 }

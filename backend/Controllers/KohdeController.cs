@@ -21,8 +21,17 @@ namespace backend.Controllers
             _db = db;
         }
 
-        // Kaikki kohteet
-        [HttpGet("/kohde/all")]
+		//kohteet auditoinnille kohderyhmän mukaan
+		[HttpGet("/kohde/ryhma/{ryhmaid}")]
+		public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> GetAll(int? ryhmaid)
+		{
+
+			return await _db.Kohdes.Where(a => a.Idkohderyhma == ryhmaid).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+
+		}
+
+		// Kaikki kohteet
+		[HttpGet("/kohde/all")]
         public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> GetAll()
         {
 
