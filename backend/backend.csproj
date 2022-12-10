@@ -9,6 +9,16 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
+    <Compile Remove="DataUusi\**" />
+    <Compile Remove="Data\backup\**" />
+    <Content Remove="DataUusi\**" />
+    <Content Remove="Data\backup\**" />
+    <EmbeddedResource Remove="DataUusi\**" />
+    <EmbeddedResource Remove="Data\backup\**" />
+    <None Remove="DataUusi\**" />
+    <None Remove="Data\backup\**" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.0" />
