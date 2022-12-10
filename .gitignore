@@ -403,3 +403,14 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+/backend/DataUusi/Vaatimuspohja.cs
+/backend/DataUusi/Vaatimu.cs
+/backend/DataUusi/Tarkastu.cs
+/backend/DataUusi/MuutoshistoriaKohde.cs
+/backend/DataUusi/Liite.cs
+/backend/DataUusi/KohteenTila.cs
+/backend/DataUusi/Kohderyhma.cs
+/backend/DataUusi/Kohde.cs
+/backend/DataUusi/Kayttaja.cs
+/backend/DataUusi/Auditointipohja.cs
+/backend/DataUusi/Auditointi.cs
