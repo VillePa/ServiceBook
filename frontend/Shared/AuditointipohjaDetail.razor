@@ -5,7 +5,7 @@
 
 
 
-<EditForm Model="a" OnValidSubmit="Save">
+<EditForm Model="a" OnValidSubmit="Save" Context="formContext">
     <DataAnnotationsValidator />
     <div class="mb-3">
         <label for="id">ID</label>
@@ -25,13 +25,11 @@
 
     <div class="mb-3">
         <label for="kayttaja">Käyttäjä</label>
-        <InputNumber id="kayttajaid" @bind-Value="a.Idkayttaja" class="form-control" Disabled />
         <InputText id="kayttaja" @bind-Value="a.KayttajaNimi" class="form-control" Disabled />
     </div>
 
     <div class="mb-3">
         <label for="kohderyhma">Kohderyhmä</label>
-        <InputNumber id="kohderyhmaid" @bind-Value="a.Idkohderyhma" class="form-control" Disabled />
         <InputText id="kohderyhma" @bind-Value="a.KohderyhmaNimi" class="form-control" Disabled />
     </div>
 
@@ -51,8 +49,8 @@
                         <td>@vaatimus.Pakollisuus</td>
                         @if (!disabled)
                         {
-                            <td><button class="btn" @onclick="@(() => PoistaVaatimus(vaatimus))"><span class="oi oi-trash"></span></button></td>
-}
+                            <td><button class="btn" type="button" @onclick="@(() => PoistaVaatimus(vaatimus))"><i class="oi oi-trash"></i></button></td>
+                        }
                     </tr>
                 }
             </table>
@@ -62,18 +60,21 @@
     @if (disabled)
     {
         <button type="button" class="btn btn-primary" @onclick="Sulje">Sulje</button>
-        <button type="button" class="btn btn-danger" @onclick="Muokkaa">Muokkaa</button>
+        <button type="button" class="btn btn-secondary" @onclick="Muokkaa">Muokkaa</button>
+        <AuthorizeView Roles="admin" Context="authContext">
+            <button type="button" class="btn btn-danger" @onclick="Poista">Poista</button>
+        </AuthorizeView>
     }
     else
     {
-        <button type="submit" class="btn btn-primary">Tallenna</button>
-        <button type="button" class="btn btn-secondary" @onclick="Cancel">Peruuta</button>
+        <button type="submit" class="btn btn-primary" disabled="@lisaaVaatimus">Tallenna</button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancel" disabled="@lisaaVaatimus">Peruuta</button>
     }
-</EditForm>
+    </EditForm>
 
 @if (!disabled) { 
 <div class="mb-3">
-    <button style="margin-top: 1em" class="btn btn-secondary" @onclick="Lisaa">Lisää vaatimus</button>
+    <button style="margin-top: 1em" class="btn btn-secondary" @onclick="Lisaa" disabled="@lisaaVaatimus">Lisää vaatimus</button>
 </div>
 }
 
@@ -172,6 +173,12 @@
         {
             a.Vaatimuspohjat.Remove(v);
         }
+    }
+
+    async Task Poista()
+    {
+        if (a is not null) await Http.DeleteAsync($"/auditointipohja/{a.Idauditointipohja}");
+        await Modal.CloseAsync();
     }
 
 }

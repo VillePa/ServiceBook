@@ -10,7 +10,6 @@
 <div class="mb-5">
 	<button class="btn btn-outline-primary" @onclick="Previous">Auditointisivulle</button>
 	<button class="btn btn-success" @onclick="Add">Lisää uusi auditointipohja</button>
-	@*<button class="btn btn-secondary" @onclick="@(e=> Copy(pohjaId))">Kopioi valittu pohja</button>*@
 </div>
 
 <h3 class="mb-4">Auditointipohjat</h3>
@@ -45,8 +44,7 @@
 					}
 				</th>
 				<th>Kohderyhmä</th>
-				<th></th>
-				<th>Kopioi pohja</th>
+				<th>Muokkaa / Kopioi</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -58,12 +56,14 @@
 					<td>@item.Luontiaika.ToString("dd.MM.yyyy HH:mm")</td>
 					<td>@item.KayttajaNimi</td>
 					<td>@item.KohderyhmaNimi</td>
-					<td>
-						<button style="font-size: 75%" class="btn btn-primary" @onclick="@(e=> Auditointipohja(item.Idauditointipohja))">
-							<i class="oi oi-list"></i>
-					</button>
-					</td>
-					<td><input type="checkbox" @bind-value="isChecked" @oninput="@(e=> Copy(item.Idauditointipohja))"></td>
+                    <td>
+                        <button style="font-size: 75%" class="btn btn-primary" @onclick="@(()=> Auditointipohja(item.Idauditointipohja))">
+                            <i class="oi oi-pencil"></i>
+                        </button>
+                        <button style="font-size: 75%" class="btn btn-success" @onclick="@(()=> Copy(item.Idauditointipohja))">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                    </td>
 
 				</tr>
 			}
@@ -88,7 +88,6 @@ else
 	AuditointipohjaDTO[]? auditointipohjat;
 	private bool sortNameDesc = false;
 	private bool sortByLatest = false;
-	private bool isChecked = false;
 	private int? pohjaId;
 	private string? message;
 
@@ -100,25 +99,6 @@ else
 
 
 
-	//private void Select(int? Id)
-	//{
-	//	if (isChecked == false)
-	//	{
-	//		message = string.Empty;
-	//		isChecked = true;
-	//		pohjaId = Id;
-	//		Console.WriteLine("Select: pohja valittu " + pohjaId);
-	//	}
-
-
-	//	else
-	//	{
-	//		isChecked = false;
-	//		pohjaId = null;
-	//		Console.WriteLine("Select: pohja nollattu " + pohjaId);
-	//	}
-
-	//}
 
 	async Task Add()
 	{
@@ -130,12 +110,6 @@ else
 
 	async Task Copy(int? Id)
 	{
-		if (isChecked == false)
-		{
-			isChecked = true;
-			pohjaId = Id;
-
-			Console.WriteLine($"pohja valittu {Id}");
 
 			var parameters = new ModalParameters()
 			.Add(nameof(AddAuditointipohja.Id), Id);
@@ -144,16 +118,6 @@ else
 			var result = await uusiModal.Result;
 
 			await OnInitializedAsync();
-
-		}
-
-		else
-		{
-			isChecked = false;
-			pohjaId = null;
-			Console.WriteLine("Pohja nollattu");
-			
-		}
 
 	}
 

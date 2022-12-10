@@ -45,10 +45,11 @@
 					<td>@item.AuditointipohjaSelite</td>
 					<td>
 						<button style="font-size: 75%" class="btn btn-primary" @*@onclick="@(e=> Vaatimuspohja(item.Idvaatimuspohja))*@">
-							<i class="oi oi-list"></i>
+							<i class="oi oi-pencil"></i>
 						</button>
 					</td>
-					<td><input type="checkbox" @bind-value="isChecked" @oninput="@(e=> Copy(item.Idvaatimuspohja))"></td>
+					<td><button style="font-size: 75%" class="btn btn-primary" type="button" @onclick="@(()=> Copy(item.Idvaatimuspohja))">
+						<i class="oi oi-copy"></i></button></td>
 				</tr>
 						
 			}

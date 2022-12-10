@@ -85,12 +85,14 @@ namespace backend.Controllers
                 .Select(k => Helpers.AuditointipohjaToDTO(k))
 				.FirstOrDefaultAsync();
 
+			if (auditointipohja is null) return NotFound();
+
             return Ok(auditointipohja);
 
 		}
 
 
-		[HttpPost("/auditointipohja/add")]
+		[HttpPost("/auditointipohja/add"), Authorize]
         public async Task<ActionResult<AuditointipohjaDTO>> Add(AuditointipohjaDTO req)
         {
             var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -138,7 +140,9 @@ namespace backend.Controllers
 		public async Task<IActionResult> EditAuditointipohja(AuditointipohjaDTO req)
 		{
 			var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-			var v = await _db.Auditointipohjas.Where(i => i.Idauditointipohja == req.Idauditointipohja).FirstOrDefaultAsync();
+			var v = await _db.Auditointipohjas
+				.Include(i => i.Vaatimuspohjas)
+				.Where(i => i.Idauditointipohja == req.Idauditointipohja).FirstOrDefaultAsync();
 
 			if (req == null || v == null)
 			{
@@ -157,17 +161,18 @@ namespace backend.Controllers
 			// päivitetään myös pohjaan liittyvät vaatimukset
 			if (req.Vaatimuspohjat is not null)
 			{
-                // poistetaan ne vaatimukset joita ei enää kutsun mukana tulleessa oliossa ollut // TÄMÄ EI TOIMI VIELÄ
-                foreach (var item in v.Vaatimuspohjas)
-                {
-                    Console.WriteLine(item.Idvaatimuspohja);
-                    if (req.Vaatimuspohjat.Where(x => x.Idvaatimuspohja == item.Idvaatimuspohja).FirstOrDefault() == null)
-                    {
-                        var response = _db.Vaatimuspohjas.Remove(item);
-                        Console.WriteLine(response);
-                    }
-                }
-                await _db.SaveChangesAsync();
+				// poistetaan ne vaatimukset joita ei enää kutsun mukana tulleessa oliossa ollut
+				if (v.Vaatimuspohjas is not null && v.Vaatimuspohjas.Count != 0)
+				{
+					foreach (var item in v.Vaatimuspohjas)
+					{
+
+						if (item.Idvaatimuspohja != 0 && req.Vaatimuspohjat.Where(x => x.Idvaatimuspohja == item.Idvaatimuspohja).FirstOrDefault() == null)
+						{
+							var response = _db.Vaatimuspohjas.Remove(item);
+						}
+					}
+				}
 
                 // lisätään uudet eli ne vaatimukset joilla ei ole vielä id:tä
                 foreach (var item in req.Vaatimuspohjat)
@@ -182,19 +187,19 @@ namespace backend.Controllers
 						};
 
 						var response = _db.Vaatimuspohjas.Add(vaatimus);
-                    }
+					}
 				}
-				await _db.SaveChangesAsync();
 
 				
-			
-
+				await _db.SaveChangesAsync();
 			}
+            
+
              return Ok(v);
 
 		}
 
-		[HttpDelete("/auditointipohja/{id}")]
+		[HttpDelete("/auditointipohja/{id}"), Authorize(Roles = "admin")]
 		public async Task<IActionResult> Delete(int? id)
 		{
 			if (id == null)
@@ -206,7 +211,15 @@ namespace backend.Controllers
 
 			if (a == null)
 			{
-				return BadRequest("tietoja ei löydy");
+				return NotFound("tietoja ei löydy");
+			}
+
+			if (a.Vaatimuspohjas is not null)
+			{
+				foreach (var item in a.Vaatimuspohjas)
+				{
+					_db.Vaatimuspohjas.Remove(item);
+				}
 			}
 
 			_db.Auditointipohjas.Remove(a);
