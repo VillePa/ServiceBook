@@ -99,9 +99,16 @@
 		if(auditointipohja != null)
 		{
 			Console.WriteLine($"Pohja {auditointipohja.Idauditointipohja} valittu. Kohderyhmä: {auditointipohja.Idkohderyhma}");
+			if(auditointipohja.Idkohderyhma != null)
+			{
+				//haetaan kyseisen auditointipohjan kohderyhman kohteet
+				kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>($"/kohde/ryhma/{auditointipohja.Idkohderyhma}");
+			}
+			else
+			{
+				kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
+			}
 
-			//haetaan kyseisen auditointipohjan kohderyhman kohteet
-			kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>($"/kohde/ryhma/{auditointipohja.Idkohderyhma}");
 
 			//if(auditointipohja.Vaatimuspohjat != null)
 			//{

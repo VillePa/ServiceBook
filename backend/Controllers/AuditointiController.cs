@@ -59,20 +59,45 @@ namespace backend.Controllers
 			_db.Auditointis.Add(a);
 			await _db.SaveChangesAsync();
 
-			//muutetaan auditoinnin kohteen tila, jos tarvetta
+			//tarkistetaan/muutetaan auditoinnin kohteen tila
 			var kohde = await _db.Kohdes.Where(i => i.Idkohde == a.Idkohde).FirstOrDefaultAsync();
+			int tila;
 
 			if(a.Lopputulos == 0)
 			{
-				kohde.IdkohteenTila = 2;
+				tila = 2;
 			}
 			else
 			{
-				kohde.IdkohteenTila = 1;
+				tila = 1;
 			}
 
-			//tallennetaan contextiin!
-			
+			if(kohde.IdkohteenTila != tila)
+			{
+				kohde.IdkohteenTila = tila;
+
+				_db.Kohdes.Update(kohde);
+				await _db.SaveChangesAsync();
+
+				//lisätään tilamuutos kohteen muutoshistoriaan
+				MuutoshistoriaKohde mk = new()
+				{
+					Nimi = kohde.Nimi,
+					Kuvaus = kohde.Kuvaus,
+					Sijainti = kohde.Sijainti,
+					Tunnus = kohde.Tunnus,
+					Muokattu = DateTime.Now,
+					KohdeIdkohde = kohde.Idkohde,
+					KayttajaIdkayttaja = kayttaja,
+					IdkohteenTila = tila
+				};
+				_db.MuutoshistoriaKohdes.Add(mk);
+				await _db.SaveChangesAsync();
+
+			}
+
+
+
 
 			//Tallennetaan vaatimukset vaatimus-tauluun
 			foreach (var item in req.Vaatimukset)
