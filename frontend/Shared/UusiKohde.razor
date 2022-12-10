@@ -79,7 +79,8 @@
 
 
         <button type="submit" class="btn btn-primary">Tallenna</button>
-        <button type="reset" @onclick="Tyhjenna" class="btn btn-secondary">Tyhjenna</button>
+        <button type="reset" @onclick="Tyhjenna" class="btn btn-info">Tyhjennä</button>
+        <button type="button" @onclick="Sulje" class="btn btn-secondary">Peruuta</button>
     </EditForm>
 }
 
@@ -118,6 +119,12 @@
     private void Tyhjenna()
     {
         kohde = new HuoltokohdeDTO();
+    }
+
+    private async Task Sulje()
+    {
+        await Modal.CloseAsync();
+
     }
 
 }

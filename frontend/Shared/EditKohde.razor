@@ -63,7 +63,7 @@
         </div>
         <div class="mb-3">
             <label for="kohderyhma">Kohderyhmä</label>
-            <InputNumber id="kohderyhma" @bind-Value="kohde.Idkohderyhma" class="form-control" Disabled />
+            <InputText id="kohderyhma" @bind-Value="kohderyhmat.Find(x => x.Idkohderyhma == kohde.Idkohderyhma).Nimi" class="form-control" Disabled />
         </div>
         <div class="mb-3">
             <label for="luotu">Luotu</label>
@@ -71,13 +71,17 @@
         </div>
         <div class="mb-3">
             <label for="luoja">Luoja</label>
-            <InputNumber id="luoja" @bind-Value="kohde.Idkayttaja" class="form-control" Disabled />
+            <InputText id="luoja" @bind-Value="kayttajat.Find(x => x.Idkayttaja == kohde.Idkayttaja).Nimi" class="form-control" Disabled />
         </div>
 
         <button type="submit" @onclick="Tallenna" class="btn btn-primary">Tallenna</button>
         <button type="button" @onclick="@Poista" class="btn btn-danger">Poista</button>
         <button type="button" @onclick="Sulje" class="btn btn-secondary">Peruuta</button>
     </EditForm>
+}
+else
+{
+    <p>ladataan..</p>
 }
 
 
@@ -90,6 +94,9 @@
     private HuoltokohdeDTO[]? kohteet;
     private MuutoshistoriaKohdeDTO? muutos = new MuutoshistoriaKohdeDTO();
     private TilaDTO[]? tilat;
+    private List<KayttajaDTO>? kayttajat;
+    private KayttajaDTO? kayttaja;
+    private List<KohderyhmaDTO>? kohderyhmat;
 
 
     [Parameter]
@@ -101,6 +108,9 @@
         kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
         kohde = kohteet.FirstOrDefault(i => i.Idkohde == Id);
         tilat = await Http.GetFromJsonAsync<TilaDTO[]>("/tila/all1or2");
+        kayttajat = await Http.GetFromJsonAsync<List<KayttajaDTO>>("/kayttaja/kaikki");
+        kayttaja = kayttajat.FirstOrDefault(i => i.Idkayttaja == Id);
+        kohderyhmat = await Http.GetFromJsonAsync<List<KohderyhmaDTO>>("/kohderyhma/all");
 
 
     }

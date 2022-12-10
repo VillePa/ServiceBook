@@ -46,7 +46,7 @@ else
 
                     </td>
                     <td>@a.Muokattu</td>
-                    <td>@a.KayttajaIdkayttaja</td>
+                    <td>@kayttajat.Find(x => x.Idkayttaja == a.KayttajaIdkayttaja).Nimi</td>
                 </tr>
             }
         </tbody>
@@ -67,6 +67,7 @@ else
     private MuutoshistoriaKohdeDTO? muutos = new MuutoshistoriaKohdeDTO();
     private MuutoshistoriaKohdeDTO[]? muutokset;
     private List<TilaDTO>? tilat;
+    private List<KayttajaDTO>? kayttajat;
 
  
 
@@ -79,6 +80,7 @@ else
 
         muutokset = await Http.GetFromJsonAsync<MuutoshistoriaKohdeDTO[]>($"/history/{Id}/all");
         tilat = await Http.GetFromJsonAsync<List<TilaDTO>>("/tila/all");
+        kayttajat = await Http.GetFromJsonAsync<List<KayttajaDTO>>("/kayttaja/kaikki");
         
 
 
