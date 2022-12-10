@@ -129,7 +129,6 @@ else
 
             if (tarkastukset != null) tarkastukset = tarkastukset.FindAll(x => kohteet.Contains(x.Idkohde));
         }
-        //else if (kohteet != null && kohteet.Length == 0) tarkastukset = filtteroimaton;
 
     }
 
@@ -138,9 +137,7 @@ else
         var uusiModal = Modal.Show<UusiTarkastus>("Uusi tarkastus");
         var result = await uusiModal.Result;
 
-        if (sort.Equals("Luotu, laskeva")) tarkastukset = await Http.GetFromJsonAsync<List<TarkastusDTO>>("/tarkastus/kaikki/desc");
-        if (sort.Equals("Luotu, nouseva")) tarkastukset = await Http.GetFromJsonAsync<List<TarkastusDTO>>("/tarkastus/kaikki/asc");
-        else tarkastukset = await Http.GetFromJsonAsync<List<TarkastusDTO>>("/tarkastus/kaikki");
+        await Päivitä();
     }
 
     private async Task ShowTarkastus(int Id)
@@ -151,25 +148,22 @@ else
         var uusiModal = Modal.Show<TarkastusDetail>("Tarkastus", parameters);
         var result = await uusiModal.Result;
 
-        if (result.Confirmed && result.Data.ToString().Contains("Poistettu"))
+        await Päivitä();
+
+    }
+
+    private async Task Päivitä()
+    {
+        if (sort.Equals("laskeva")) tarkastukset = await Http.GetFromJsonAsync<List<TarkastusDTO>>("/tarkastus/kaikki/desc");
+        else if (sort.Equals("nouseva")) tarkastukset = await Http.GetFromJsonAsync<List<TarkastusDTO>>("/tarkastus/kaikki/asc");
+        else tarkastukset = await Http.GetFromJsonAsync<List<TarkastusDTO>>("/tarkastus/kaikki");
+        filtteroimaton = tarkastukset;
+
+        if (kohteet != null && kohteet.Length != 0)
         {
-            int id = int.Parse(result.Data.ToString().Substring(11));
 
-            Console.WriteLine(id);
-
-            if (tarkastukset is not null) tarkastukset.Remove(tarkastukset.Find(x => x.Idtarkastus == id));
-        }
-        else if (result.Cancelled && result.Data is not null)
-        {
-            tarkastukset = await Http.GetFromJsonAsync<List<TarkastusDTO>>("/tarkastus/kaikki");
-            filtteroimaton = tarkastukset;
-
-            if (kohteet != null && kohteet.Length != 0)
-            {
-
-                if (tarkastukset != null) tarkastukset = tarkastukset.FindAll(x => kohteet.Contains(x.Idkohde));
-            }
+            if (tarkastukset != null) tarkastukset = tarkastukset.FindAll(x => kohteet.Contains(x.Idkohde));
         }
     }
-}
+    }
 

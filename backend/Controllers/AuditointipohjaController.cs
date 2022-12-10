@@ -27,51 +27,50 @@ namespace backend.Controllers
 		[HttpGet("/auditointipohja/all/{sort}")]
         public async Task<IEnumerable<AuditointipohjaDTO>> Get(string? sort)
         {
-            if(sort == string.Empty)
-            {
-				return await _db.Auditointipohjas
-								.Include(k => k.IdkayttajaNavigation)
-								.Include(k => k.IdkohderyhmaNavigation)
-								.Include(k=> k.Vaatimuspohjas)
-								.Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
-			}
-			else if(sort == "desc")
+			if (sort == "desc")
 			{
 				return await _db.Auditointipohjas.OrderByDescending(a => a.Luontiaika)
 								.Include(k => k.IdkayttajaNavigation)
 								.Include(k => k.IdkohderyhmaNavigation)
-                                .Include(k => k.Vaatimuspohjas)
-                                .Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
+								.Include(k => k.Vaatimuspohjas)
+								.Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
 			}
-			else if(sort == "asc")
+			else if (sort == "asc")
 			{
 				return await _db.Auditointipohjas.OrderBy(a => a.Luontiaika)
 								.Include(k => k.IdkayttajaNavigation)
 								.Include(k => k.IdkohderyhmaNavigation)
-                                .Include(k => k.Vaatimuspohjas)
-                                .Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
+								.Include(k => k.Vaatimuspohjas)
+								.Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
 			}
-			else if(sort == "nimi")
+			else if (sort == "nimi")
 			{
 				return await _db.Auditointipohjas.OrderBy(a => a.IdkayttajaNavigation.Nimi)
 								.Include(k => k.IdkayttajaNavigation)
 								.Include(k => k.IdkohderyhmaNavigation)
-                                .Include(k => k.Vaatimuspohjas)
-                                .Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
+								.Include(k => k.Vaatimuspohjas)
+								.Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
 			}
-			else
+			else if (sort == "nimidesc")
 			{
 				return await _db.Auditointipohjas.OrderByDescending(a => a.IdkayttajaNavigation.Nimi)
 								.Include(k => k.IdkayttajaNavigation)
 								.Include(k => k.IdkohderyhmaNavigation)
+								.Include(k => k.Vaatimuspohjas)
+								.Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
+			}
+            else
+
+            {
+                return await _db.Auditointipohjas
+                                .Include(k => k.IdkayttajaNavigation)
+                                .Include(k => k.IdkohderyhmaNavigation)
                                 .Include(k => k.Vaatimuspohjas)
                                 .Select(k => Helpers.AuditointipohjaToDTO(k)).ToListAsync();
-			}
+            }
 
 
-
-
-		}
+        }
 
 		[HttpGet("/auditointipohja/{id}")]
 		public async Task<ActionResult<AuditointipohjaDTO>> GetSinge(int? id)
@@ -208,7 +207,9 @@ namespace backend.Controllers
 				return BadRequest("id:tä ei annettu");
 			}
 
-			var a = await _db.Auditointipohjas.Where(i => i.Idauditointipohja == id).FirstOrDefaultAsync();
+			var a = await _db.Auditointipohjas
+				.Include(i => i.Vaatimuspohjas)
+				.Where(i => i.Idauditointipohja == id).FirstOrDefaultAsync();
 
 			if (a == null)
 			{
@@ -221,6 +222,7 @@ namespace backend.Controllers
 				{
 					_db.Vaatimuspohjas.Remove(item);
 				}
+				await _db.SaveChangesAsync();
 			}
 
 			_db.Auditointipohjas.Remove(a);
