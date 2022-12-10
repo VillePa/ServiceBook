@@ -20,7 +20,7 @@ namespace SharedLib
 
         public string? KayttajaNimi { get; set; }
 
-        public int Idkohderyhma { get; set; }
+        public int? Idkohderyhma { get; set; }
 
         public string? KohderyhmaNimi { get; set; }
 

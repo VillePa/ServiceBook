@@ -190,27 +190,36 @@ namespace backend.Data
 		}
 
 		public static AuditointipohjaDTO AuditointipohjaToDTO(this Auditointipohja a)
-		{
-			return new AuditointipohjaDTO
-			{
-				Idauditointipohja = a.Idauditointipohja,
-				Selite = a.Selite,
-				Luontiaika = a.Luontiaika,
-				Idkayttaja = a.Idkayttaja,
-				KayttajaNimi = a.IdkayttajaNavigation.Nimi,
-				Idkohderyhma = a.Idkohderyhma,
-				KohderyhmaNimi = a.IdkohderyhmaNavigation.Nimi,
+        {
+			AuditointipohjaDTO dto = new AuditointipohjaDTO
+            {
+                Idauditointipohja = a.Idauditointipohja,
+                Selite = a.Selite,
+                Luontiaika = a.Luontiaika,
+                Idkayttaja = a.Idkayttaja,
+                KayttajaNimi = a.IdkayttajaNavigation.Nimi,
                 Vaatimuspohjat = a.Vaatimuspohjas.Select(v => new VaatimuspohjaDTO
                 {
-					Idvaatimuspohja= v.Idvaatimuspohja,
+                    Idvaatimuspohja = v.Idvaatimuspohja,
                     Kuvaus = v.Kuvaus,
-					Pakollisuus= v.Pakollisuus,
-					Idauditointipohja= v.Idauditointipohja,
-					AuditointipohjaSelite = v.IdauditointipohjaNavigation.Selite
-                    
+                    Pakollisuus = v.Pakollisuus,
+                    Idauditointipohja = v.Idauditointipohja,
+                    AuditointipohjaSelite = v.IdauditointipohjaNavigation.Selite
+
                 }).ToList()
-                //Vaatimuspohjat = a.Vaatimuspohjas
+                
             };
+			if (a.Idkohderyhma is not null)
+			{
+				dto.Idkohderyhma = a.Idkohderyhma;
+				dto.KohderyhmaNimi = a.IdkohderyhmaNavigation is not null ? a.IdkohderyhmaNavigation.Nimi : "Kohderyhmän nimi ei tiedossa";
+
+            }
+			else
+			{
+				dto.KohderyhmaNimi = "Ei kohderyhmää";
+			}
+			return dto;
 		}
 
 		public static VaatimuspohjaDTO VaatimuspohjaToDTO(this Vaatimuspohja v)

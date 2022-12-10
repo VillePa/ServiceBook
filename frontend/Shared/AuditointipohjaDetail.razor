@@ -90,7 +90,10 @@
 
         <div class="mb-3">
             <label for="selite">Pakollisuus</label>
-            <InputText id="selite" @bind-Value="v.Pakollisuus" class="form-control" />
+            <InputSelect id="selite" @bind-Value="v.Pakollisuus" class="form-control">
+                <option value="pakollinen">pakollinen</option>
+                <option value="ei pakollinen">ei pakollinen</option>
+            </InputSelect>
             <ValidationMessage For="()=>v.Pakollisuus" />
         </div>
 
