@@ -107,6 +107,8 @@ else
 
 	private string message = string.Empty;
 
+	private List<string> Fail = new();
+
 	protected override async Task OnInitializedAsync()
 	{
 		//pohja = await Http.GetFromJsonAsync<AuditointipohjaDTO>($"/auditointipohja/{Id}");
@@ -120,22 +122,23 @@ else
 
 		foreach (var item in Auditointi.Vaatimukset)
 		{
-			Console.WriteLine($"{item.Kuvaus} {item.Pakollisuus} täytetty: {item.Taytetty}");
+			//Console.WriteLine($"{item.Kuvaus} {item.Pakollisuus} täytetty: {item.Taytetty}");
 
 			if(item.Pakollisuus == "pakollinen" && item.Taytetty == 0)
 			{
-				Auditointi.Lopputulos = 0;
-				Console.WriteLine("ei mene läpi");
+				Fail.Add($"fail");
 			}
-
-			Auditointi.Lopputulos = 1;
-
-			Console.WriteLine("Lopputulos = ", Auditointi.Lopputulos);
 		}
 
-		//vaatimusten tsekkaus ei toimi, asetetaan auditoinnille lopputuloksesti 1
+		if (Fail.Contains("fail"))
+		{
+			Auditointi.Lopputulos = 0;
+		}
+		else
+		{
+			Auditointi.Lopputulos = 1;
 
-		Auditointi.Lopputulos = 1;
+		}
 
 		var result = await Http.PostAsJsonAsync<AuditointiDTO>("/auditointi/add", Auditointi);
 
