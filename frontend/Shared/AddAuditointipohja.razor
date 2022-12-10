@@ -14,6 +14,7 @@
     <div class="mb-3">
         <label for="idkohderyhma">Kohderyhmä</label>
         <InputSelect id="idkohderyhma" @bind-Value="a.Idkohderyhma" class="form-control">
+            <option value="0"></option>
             @if (kohderyhmat != null)
             {
                 @foreach (var item in kohderyhmat)
@@ -46,14 +47,14 @@
         </div>
     }
 
-    <button type="submit" class="btn btn-primary">Tallenna</button>
-    <button type="reset" class="btn btn-secondary" @onclick="Close">Sulje</button>
+    <button type="submit" class="btn btn-primary" disabled="@lisaaVaatimus">Tallenna</button>
+    <button type="reset" class="btn btn-secondary" @onclick="Close" disabled="@lisaaVaatimus">Sulje</button>
 </EditForm>
 
 
 
 <div class="mb-3">
-    <button class="btn btn-secondary" @onclick="Lisaa">Lisää vaatimus</button>
+    <button style="margin-top:1em" class="btn btn-secondary" @onclick="Lisaa" disabled="@lisaaVaatimus">Lisää vaatimus</button>
 </div>
 
 @if (lisaaVaatimus)
@@ -68,7 +69,10 @@
 
         <div class="mb-3">
             <label for="selite">Pakollisuus</label>
-            <InputText id="selite" @bind-Value="v.Pakollisuus" class="form-control" />
+            <InputSelect id="selite" @bind-Value="v.Pakollisuus" class="form-control">
+                <option value="pakollinen">pakollinen</option>
+                <option value="ei pakollinen">ei pakollinen</option>
+            </InputSelect>
             <ValidationMessage For="()=>v.Pakollisuus" />
         </div>
 

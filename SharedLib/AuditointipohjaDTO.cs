@@ -20,13 +20,11 @@ namespace SharedLib
 
         public string? KayttajaNimi { get; set; }
 
-        [Required]
         public int Idkohderyhma { get; set; }
 
         public string? KohderyhmaNimi { get; set; }
 
         public List<VaatimuspohjaDTO>? Vaatimuspohjat { get; set; }
 
-        //public ICollection<VaatimuspohjaDTO> Vaatimuspohjas { get; } = new List<VaatimuspohjaDTO>();
     }
 }

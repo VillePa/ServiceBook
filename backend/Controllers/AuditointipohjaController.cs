@@ -107,9 +107,10 @@ namespace backend.Controllers
                 {
                     Selite = req.Selite,
                     Luontiaika = DateTime.Now,
-                    Idkayttaja = int.Parse(id),
-                    Idkohderyhma = req.Idkohderyhma,
+                    Idkayttaja = int.Parse(id)
                 };
+
+				if (req.Idkohderyhma != 0) a.Idkohderyhma = req.Idkohderyhma;
 
                 var response = _db.Auditointipohjas.Add(a);
                 await _db.SaveChangesAsync();
