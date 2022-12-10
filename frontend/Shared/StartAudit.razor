@@ -4,16 +4,14 @@
 @inject NavigationManager NavigationManager
 
 
-@*Ensin valitaan auditointipohja tai jatketaan ilman pohjaa*@
+@*Ensin valitaan auditointipohja*@
 @*Pohjan valinta hakee alempaan formiin tiedot ja soveltuvat kohteet auditoinnille*@
-@*Jatka ilman pohjaa nollaa tiedot ja auditointia jatketaan tyhjällä pohjalla*@
-@*Auditointi tarvii saada tehtyä myös kohderyhmälle, eli kohde voidaan jättää tyhjäksi*@
 
 @if (pohjat != null)
 {
 		<EditForm Model="auditointipohja">
 		<label for="pohja">Valitse auditointipohja</label>
-		<InputSelect id="pohja" @bind-Value="auditointipohja.Idauditointipohja" class="form-select">
+		<InputSelect id="pohja" @bind-Value="auditointipohja.Idauditointipohja" class="form-select mb-3">
 			@foreach (var item in pohjat)
 			{
 				<option value="@item.Idauditointipohja">@item.Selite, @item.KohderyhmaNimi</option>
@@ -24,14 +22,10 @@
 		
 		@if (auditointipohja.Idauditointipohja != 0)
 		{
-			<button type="button" class="btn btn-primary" @onclick="PohjaValittu">Jatka valitulla pohjalla</button>
+			<button type="button" class="btn btn-primary mb-3" @onclick="PohjaValittu">Hyväksy valinta</button>
 
 		}
-		else
-		{
-			<button type="button" class="btn btn-secondary" @onclick="IlmanPohjaa">Jatka ilman pohjaa</button>
-
-		}
+		
 	</EditForm>
 }
 
@@ -62,20 +56,12 @@
 			<ValidationMessage For="()=> auditointi.Selite" />
 		</div>
 
-		<button @onclick="Start" class="btn btn-primary">Aloita</button>
+		<button @onclick="Start" class="btn btn-primary">Aloita auditointi</button>
 		<button class="btn btn-danger" @onclick="Close">Peruuta</button>
 
 	</EditForm>
 }
-else
-{
-	<div class="text-center">
-		<div class="spinner-border text-primary" role="status">
-			<span class="visually-hidden">Loading...</span>
-		</div>
-		<span>Valitse pohja tai jatka ilman pohjaa</span>
-	</div>
-}
+
 
 
 
@@ -86,7 +72,6 @@ else
 	private AuditointipohjaDTO[]? pohjat;
 	private AuditointipohjaDTO? auditointipohja = new();
 	private string sort = "asc";
-	private int? ryhmaId;
 	private bool jatketaan = false;
 	private string? message = "";
 
@@ -105,6 +90,9 @@ else
 	async Task Start()
 	{
 		Console.WriteLine("aloitetaan auditointi");
+
+
+
 	}
 
 	async Task PohjaValittu()
@@ -131,11 +119,4 @@ else
 
 	}
 
-	async Task IlmanPohjaa()
-	{
-		Console.WriteLine("Jatketaan ilman valittua pohjaa");
-		auditointi = new();
-		kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
-		jatketaan = true;
-	}
 }
