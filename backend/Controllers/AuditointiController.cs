@@ -1,4 +1,5 @@
 ﻿using backend.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -34,31 +35,43 @@ namespace backend.Controllers
 				.Select(a => Helpers.AuditointiToDTO(a)).ToListAsync();
 		}
 
-		[HttpGet("/auditointi/{id}")]
-		public string Get(int id)
-		{
-			return "value";
-		}
+		//[HttpGet("/auditointi/{id}")]
+		//public string Get(int id)
+		//{
+		//	return "value";
+		//}
 
-		[HttpPost("/auditointi")]
+		[HttpPost("/auditointi/add"), Authorize]
 		public async Task<ActionResult<Auditointi>> AddAuditointi(AuditointiDTO req)
 		{
-			//var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-			//if (string.IsNullOrEmpty(id))
-			//{
-			//	return BadRequest("Käyttäjän ID:tä ei löydy");
-			//}
-
-			//int kayttajaId = int.Parse(id);
+			int kayttaja = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 			
-
-			//Auditointi a = new()
-			//{
+			Auditointi a = new()
+			{
+				Luotu = DateTime.Now,
+				Selite = req.Selite,
+				Lopputulos = req.Lopputulos,
+				Idkohde = req.Idkohde,
+				Idkayttaja = kayttaja,
 				
-			//};
+			};
 
-			//_db.Auditointis.Add(a);
-			//await _db.SaveChangesAsync();
+			_db.Auditointis.Add(a);
+			await _db.SaveChangesAsync();
+
+			//Tallennetaan vaatimukset vaatimus-tauluun
+			foreach (var item in req.Vaatimukset)
+			{
+				Vaatimu v = new()
+				{
+					Kuvaus = item.Kuvaus,
+					Pakollisuus = item.Pakollisuus,
+					Taytetty = item.Taytetty,
+					Idauditointi = a.Idauditointi
+				};
+				_db.Vaatimus.Add(v);
+			}
+			await _db.SaveChangesAsync();
 
 			return Ok();
 		}

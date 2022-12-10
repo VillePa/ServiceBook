@@ -3,9 +3,154 @@
 @inject IModalService ModalService
 @inject NavigationManager NavigationManager
 
+@if(Auditointi != null)
+{
+	<EditForm Model="Auditointi">
+		@*	<label for="pohja">Valitse auditointipohja</label>
+		<InputSelect id="pohja" @bind-Value="auditointipohja.Idauditointipohja" class="form-select mb-3">
+			@foreach (var item in pohjat)
+			{
+				<option value="@item.Idauditointipohja">@item.Selite, @item.KohderyhmaNimi</option>
+			}
+		</InputSelect>*@
+
+			<div class="mb-3">
+			<label for="selite">Selite</label>
+			<InputText id="selite" @bind-Value="Auditointi.Selite" class="form-control" Disabled />
+		</div>
+
+		<div class="mb-3">
+			<label for="kohde">Kohde</label>
+			<InputNumber id="kohde" @bind-Value="Auditointi.Idkohde" class="form-control" Disabled />
+		</div>
+
+		@*<div class="mb-3">
+			<label for="kohde">Kohde</label>
+			<InputText id="kohde" @bind-Value="Auditointi.KohdeNimi" class="form-control" Disabled />
+		</div>*@
+
+		@if(Auditointi.Vaatimukset != null)
+		{
+			<table class="table table">
+				<thead>
+					<tr>
+						<th>Vaatimus</th>
+						<th>Pakollisuus</th>
+						<th>Täytetty</th>
+						
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var item in Auditointi.Vaatimukset)
+					{
+						<tr>
+							<td>@item.Kuvaus</td>
+							<td>@item.Pakollisuus</td>
+							<td>
+								<InputSelect id="taytetty" @bind-Value="item.Taytetty" class="form-select">
+									<option></option>
+									<option value="1">Täytetty</option>
+									<option value="0">Ei täytetty</option>
+								</InputSelect>
+							</td>
+						</tr>
+					}
+
+				</tbody>
+			</table>
+		}
+		else
+		{
+			<span>Ei vaatimuksia</span>
+		}
+
+
+	@*	<div class="mb-3">
+			<label for="vaatimus">testi</label>
+			<InputText id="vaatimus" class="form-control" Disabled />
+		</div>
+		<div class="mb-3">
+			<label for="vaatimus">testi</label>
+			<InputText id="vaatimus" class="form-control" Disabled />
+		</div>*@
+
+		<button class="btn btn-success" @onclick="SaveAudit">Tallenna</button>
+		<button class="btn btn-danger" @onclick="Close">Peru</button>
+
+		<span style="color: red">@message</span>
+
+	</EditForm>
+}
+else
+{
+	<div class="text-center">
+		<div class="spinner-border text-primary" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+	</div>
+}
+
+
 
 
 
 @code {
+	[CascadingParameter] BlazoredModalInstance Modal { get; set; } = default!;
+	private AuditointipohjaDTO pohja;
+
+	[Parameter]
+	public int? Id { get; set; }
+	[Parameter]
+	public AuditointiDTO? Auditointi {get; set;}
+
+	private AuditointiDTO? a = new();
+
+	private string message = string.Empty;
+
+	protected override async Task OnInitializedAsync()
+	{
+		//pohja = await Http.GetFromJsonAsync<AuditointipohjaDTO>($"/auditointipohja/{Id}");
+
+		//a = await Http.GetFromJsonAsync<AuditointiDTO>($"/auditointi/{Auditointi.Idauditointi}");
+	}
+
+	async Task SaveAudit()
+	{
+		//Console.WriteLine("tallennetaan kantaan");
+
+		foreach (var item in Auditointi.Vaatimukset)
+		{
+			Console.WriteLine($"{item.Kuvaus} {item.Pakollisuus} täytetty: {item.Taytetty}");
+
+			if(item.Pakollisuus == "pakollinen" && item.Taytetty == 0)
+			{
+				Auditointi.Lopputulos = 0;
+				Console.WriteLine("ei mene läpi");
+			}
+
+			Auditointi.Lopputulos = 1;
+
+			Console.WriteLine("Lopputulos = ", Auditointi.Lopputulos);
+		}
+
+		//vaatimusten tsekkaus ei toimi, asetetaan auditoinnille lopputuloksesti 1
+
+		Auditointi.Lopputulos = 1;
+
+		var result = await Http.PostAsJsonAsync<AuditointiDTO>("/auditointi/add", Auditointi);
+
+		if (!result.IsSuccessStatusCode)
+		{
+			message = "virhe tallennuksessa";
+		}
+
+		await Close();
+
+	}
+
+	async Task Close()
+	{
+		await Modal.CloseAsync();
+	}
 
 }

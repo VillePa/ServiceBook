@@ -74,11 +74,11 @@
 	private string sort = "asc";
 	private bool jatketaan = false;
 	private string? message = "";
+	private int? Id;
 
 	protected override async Task OnInitializedAsync()
 	{
 		pohjat = await Http.GetFromJsonAsync<AuditointipohjaDTO[]>($"/auditointipohja/all/{sort}");
-		Console.WriteLine($"pohja = {auditointipohja.Idauditointipohja}");
 	}
 
 	async Task Close()
@@ -87,18 +87,14 @@
 
 	}
 
-	async Task Start()
-	{
-		Console.WriteLine("aloitetaan auditointi");
 
-
-
-	}
 
 	async Task PohjaValittu()
 	{
+		Id = auditointipohja.Idauditointipohja;
+
 		//haetaan valitun pohjan tiedot
-		auditointipohja = await Http.GetFromJsonAsync<AuditointipohjaDTO>($"/auditointipohja/{auditointipohja.Idauditointipohja}");
+		auditointipohja = await Http.GetFromJsonAsync<AuditointipohjaDTO>($"/auditointipohja/{Id}");
 
 		if(auditointipohja != null)
 		{
@@ -107,7 +103,30 @@
 			//haetaan kyseisen auditointipohjan kohderyhman kohteet
 			kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>($"/kohde/ryhma/{auditointipohja.Idkohderyhma}");
 
+			//if(auditointipohja.Vaatimuspohjat != null)
+			//{
+			//	foreach (var item in auditointipohja.Vaatimuspohjat)
+			//	{
+			//		auditointi.Vaatimukset.Add(
+			//		new VaatimusDTO()
+			//			{
+			//				Kuvaus = item.Kuvaus,
+			//				Pakollisuus = item.Pakollisuus
+			//			});
+			//	}
+			//}
+
+
 			auditointi.Selite = auditointipohja.Selite;
+
+			if (auditointipohja.Vaatimuspohjat != null)
+			{
+			auditointi.Vaatimukset = auditointipohja.Vaatimuspohjat.Select(v => new VaatimusDTO
+				{
+					Kuvaus = v.Kuvaus,
+					Pakollisuus = v.Pakollisuus
+				}).ToList();
+			}
 
 			jatketaan = true;
 		}
@@ -115,7 +134,20 @@
 		{
 			message = "Jotain meni vikaan..";
 		}
+	}
 
+	async Task Start()
+	{
+		Console.WriteLine($"Aloitetaan auditointi, pohjaID {Id}. KohdeId: {auditointi.Idkohde}");
+
+		var parameters = new ModalParameters()
+		.Add(nameof(AuditointiChecklist.Auditointi), auditointi);
+
+		var checkListModal = ModalService.Show<AuditointiChecklist>("Kohteen vaatimukset", parameters);
+		var result = await checkListModal.Result;
+
+		await Close();
+		//await OnInitializedAsync();
 
 	}
 
