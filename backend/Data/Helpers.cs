@@ -185,7 +185,16 @@ namespace backend.Data
 				Idkohde = a.Idkohde,
 				KohdeNimi = a.IdkohdeNavigation.Nimi,
 				Idkayttaja = a.Idkayttaja,
-				KayttajaNimi = a.IdkayttajaNavigation.Nimi
+				KayttajaNimi = a.IdkayttajaNavigation.Nimi,
+				Vaatimukset = a.Vaatimus.Select(v => new VaatimusDTO
+				{
+					Idvaatimus = v.Idvaatimus,
+					Kuvaus = v.Kuvaus,
+					Pakollisuus = v.Pakollisuus,
+					Taytetty = v.Taytetty,
+					Idauditointi = v.Idauditointi,
+					AuditointiSelite = v.IdauditointiNavigation.Selite
+				}).ToList()
 			};
 		}
 

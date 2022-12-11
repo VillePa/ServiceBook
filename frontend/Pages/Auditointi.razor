@@ -66,6 +66,9 @@
                         {<i class="fa-solid fa-filter"></i>}
                     </span>
                 </th>
+                <th>
+
+                </th>
 			</tr>
 		</thead>
 		<tbody>
@@ -88,6 +91,11 @@
 						}
 						
 					</td>
+                    <td>
+                        <button style="font-size: 75%" class="btn btn-primary" @onclick="@(()=> AuditointiTarkastelu(item.Idauditointi))">
+                            <i class="oi oi-list"></i>
+                        </button>
+                    </td>
 				</tr>
 			}
 
@@ -245,6 +253,17 @@ else
                 auditoinnit = auditoinnit.OrderBy(x => x.Lopputulos).ToList();
             }
         }
+    }
+
+    async Task AuditointiTarkastelu(int? Id)
+    {
+        var parameters = new ModalParameters()
+            .Add(nameof(AuditointiDetail.Id), Id);
+
+        var detailModal = ModalService.Show<AuditointiDetail>("Auditoinnin tiedot", parameters);
+        var result = await detailModal.Result;
+
+        await OnInitializedAsync();
     }
 
 }

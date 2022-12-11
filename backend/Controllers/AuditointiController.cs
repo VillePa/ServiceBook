@@ -32,20 +32,34 @@ namespace backend.Controllers
 			return await _db.Auditointis
 				.Include(a => a.IdkohdeNavigation)
 				.Include(a => a.IdkayttajaNavigation)
+				.Include(a => a.Vaatimus)
 				.Select(a => Helpers.AuditointiToDTO(a)).ToListAsync();
 		}
 
-		//[HttpGet("/auditointi/{id}")]
-		//public string Get(int id)
-		//{
-		//	return "value";
-		//}
+		[HttpGet("/auditointi/{id}")]
+		public async Task<ActionResult<AuditointiDTO>> HaeAuditointi(int id)
+		{
+			var a = await _db.Auditointis
+				.Include(a => a.IdkohdeNavigation)
+				.Include(a => a.IdkayttajaNavigation)
+				.Include(a => a.Vaatimus)
+				.Where(a => a.Idauditointi == id)
+				.Select(a => Helpers.AuditointiToDTO(a)).SingleOrDefaultAsync();
+
+			if (a is null)
+			{
+				return NotFound();
+			}
+
+			else return a;
+
+		}
 
 		[HttpPost("/auditointi/add"), Authorize]
 		public async Task<ActionResult<Auditointi>> AddAuditointi(AuditointiDTO req)
 		{
 			int kayttaja = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-			
+
 			Auditointi a = new()
 			{
 				Luotu = DateTime.Now,
@@ -53,17 +67,17 @@ namespace backend.Controllers
 				Lopputulos = req.Lopputulos,
 				Idkohde = req.Idkohde,
 				Idkayttaja = kayttaja,
-				
+
 			};
 
-			_db.Auditointis.Add(a);
+			var result = _db.Auditointis.Add(a);
 			await _db.SaveChangesAsync();
 
 			//tarkistetaan/muutetaan auditoinnin kohteen tila
 			var kohde = await _db.Kohdes.Where(i => i.Idkohde == a.Idkohde).FirstOrDefaultAsync();
 			int tila;
 
-			if(a.Lopputulos == 0)
+			if (a.Lopputulos == 0)
 			{
 				tila = 2;
 			}
@@ -72,7 +86,7 @@ namespace backend.Controllers
 				tila = 1;
 			}
 
-			if(kohde.IdkohteenTila != tila)
+			if (kohde.IdkohteenTila != tila)
 			{
 				kohde.IdkohteenTila = tila;
 
@@ -107,7 +121,7 @@ namespace backend.Controllers
 					Kuvaus = item.Kuvaus,
 					Pakollisuus = item.Pakollisuus,
 					Taytetty = item.Taytetty,
-					Idauditointi = a.Idauditointi
+					Idauditointi = result.Entity.Idauditointi
 				};
 				_db.Vaatimus.Add(v);
 			}
@@ -116,15 +130,61 @@ namespace backend.Controllers
 			return Ok();
 		}
 
-		//[HttpPut("/auditointi/{id}")]
-		//public void Put(int id, [FromBody] string value)
-		//{
-		//}
+		[HttpPut("/auditointi/edit"), Authorize(Roles = "admin")]
+		public async Task<IActionResult> MuokkaaAuditointi([FromBody] AuditointiDTO req)
+		{
+			var id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+			var kayttaja = await _db.Kayttajas.FindAsync(id);
 
-		//[HttpDelete("/auditointi/{id}")]
-		//public async Task<IActionResult> Delete(int id)
-		//{
-		//return NoContent();
-		//}
+			if (kayttaja is null)
+			{
+				return BadRequest("Käyttäjää ei löydy");
+			}
+
+			var a = await _db.Auditointis
+				.Include(a => a.Vaatimus)
+				.Where(a => a.Idauditointi == req.Idauditointi).FirstOrDefaultAsync();
+
+			if (a is null) return NotFound();
+
+			// Muokataan vain selite kenttää
+			a.Selite = req.Selite;
+
+			_db.Auditointis.Update(a);
+			await _db.SaveChangesAsync();
+
+			return Ok("Muokattu");
+
+		}
+
+		[HttpDelete("/auditointi/{id}"), Authorize(Roles = "admin")]
+		public async Task<IActionResult> PoistaAuditointi(int id)
+		{
+            var a = await _db.Auditointis
+                .Include(a => a.Vaatimus)
+                .Where(a => a.Idauditointi == id).FirstOrDefaultAsync();
+
+            if (a is null)
+            {
+                return NotFound();
+            }
+
+			// Poistetaan ensin vaatimukset
+
+			if (a.Vaatimus is not null)
+			{
+				foreach (var vaatimus in a.Vaatimus)
+				{
+					_db.Vaatimus.Remove(vaatimus);
+				}
+				await _db.SaveChangesAsync();
+			}
+
+			// auditointi
+			_db.Auditointis.Remove(a);
+			await _db.SaveChangesAsync();
+
+			return Ok("Poistettu");
+        }
 	}
 }
