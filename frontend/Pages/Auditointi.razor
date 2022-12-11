@@ -37,7 +37,10 @@
                 @if (kohteet is null || kohteet.Length == 0) {<i class="fa-solid fa-filter-circle-xmark"></i>}
                 else {<i class="fa-solid fa-filter"></i>}
                 </th>
-				<th>Lopputulos</th>
+				<th style="cursor:pointer" @onclick="filterLopputulos">Lopputulos
+                @if (lopputulokset is null || lopputulokset.Length == 0) {<i class="fa-solid fa-filter-circle-xmark"></i>}
+                else {<i class="fa-solid fa-filter"></i>}
+                </th>
 			</tr>
 		</thead>
 		<tbody>
@@ -84,6 +87,7 @@ else
     private List<AuditointiDTO>? filtteroimaton;
     private int[]? kohteet;
     private int[]? tekija;
+    private int[]? lopputulokset;
 
     protected override async Task OnInitializedAsync()
     {
@@ -149,6 +153,30 @@ else
         {
 
             if (auditoinnit != null) auditoinnit = auditoinnit.FindAll(x => tekija.Contains(x.Idkayttaja));
+        }
+
+    }
+
+    private async Task filterLopputulos()
+    {
+        var parameters = new ModalParameters()
+            .Add(nameof(FilterLopputulos.valitutId), lopputulokset);
+
+
+        var filterModal = ModalService.Show<FilterLopputulos>("Valitse näytettävät", parameters);
+        var result = await filterModal.Result;
+
+        auditoinnit = filtteroimaton;
+
+        if (result.Confirmed && result.Data != null)
+        {
+            lopputulokset = (int[])result.Data;
+        }
+
+        if (lopputulokset != null && lopputulokset.Length != 0)
+        {
+
+            if (auditoinnit != null) auditoinnit = auditoinnit.FindAll(x => lopputulokset.Contains((int) x.Lopputulos));
         }
 
     }
