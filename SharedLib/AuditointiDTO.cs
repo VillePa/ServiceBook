@@ -24,6 +24,6 @@ namespace SharedLib
 
 		public string? KayttajaNimi { get; set; }
 
-		public List<VaatimusDTO>? Vaatimukset { get; set; } //listaus vaatimuksista?
+		public List<VaatimusDTO>? Vaatimukset { get; set; } 
 	}
 }

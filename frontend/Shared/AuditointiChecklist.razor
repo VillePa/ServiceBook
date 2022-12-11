@@ -5,7 +5,8 @@
 
 @if(Auditointi != null)
 {
-	<EditForm Model="Auditointi">
+	<EditForm Model="Auditointi" OnValidSubmit="SaveAudit">
+		<DataAnnotationsValidator/>
 		@*	<label for="pohja">Valitse auditointipohja</label>
 		<InputSelect id="pohja" @bind-Value="auditointipohja.Idauditointipohja" class="form-select mb-3">
 			@foreach (var item in pohjat)
@@ -29,6 +30,11 @@
 			<div class="mb-3">
 				<label for="kohde">Kohde</label>
 				<InputText id="kohde" @bind-Value="kohde.Nimi" class="form-control" Disabled />
+			</div>
+
+			<div class="mb-3">
+				<label for="sijainti">Sijainti</label>
+				<InputText id="kohde" @bind-Value="kohde.Sijainti" class="form-control" Disabled />
 			</div>
 		}
 		
@@ -56,6 +62,7 @@
 									<option value="1">Täytetty</option>
 									<option value="0">Ei täytetty</option>
 								</InputSelect>
+								<ValidationMessage For="()=>item.Taytetty" />
 							</td>
 						</tr>
 					}
@@ -77,10 +84,12 @@
 			<label for="vaatimus">testi</label>
 			<InputText id="vaatimus" class="form-control" Disabled />
 		</div>*@
+		
 
-		<button class="btn btn-success" @onclick="SaveAudit">Tallenna</button>
-		<button class="btn btn-danger" @onclick="Close">Peruuta</button>
-
+		<div class="mb-3">
+			<button type="submit" class="btn btn-success">Tallenna</button>
+			<button type="button" class="btn btn-danger" @onclick="Close">Peruuta</button>
+		</div>
 		<span style="color: red">@message</span>
 
 	</EditForm>
@@ -110,16 +119,13 @@ else
 	private AuditointiDTO? a = new();
 	private HuoltokohdeDTO? kohde = new();
 	private string message = string.Empty;
-
+	private bool vaatimusListaChecked = false;
 	private List<string> Fail = new();
 
 	protected override async Task OnInitializedAsync()
 	{
 		if(Auditointi != null)
-		kohde = await Http.GetFromJsonAsync<HuoltokohdeDTO>($"/kohde/{Auditointi.Idkohde}");
-		//pohja = await Http.GetFromJsonAsync<AuditointipohjaDTO>($"/auditointipohja/{Id}");
-
-		//a = await Http.GetFromJsonAsync<AuditointiDTO>($"/auditointi/{Auditointi.Idauditointi}");
+			kohde = await Http.GetFromJsonAsync<HuoltokohdeDTO>($"/kohde/{Auditointi.Idkohde}");
 	}
 
 	async Task SaveAudit()
@@ -128,8 +134,6 @@ else
 
 		foreach (var item in Auditointi.Vaatimukset)
 		{
-			//Console.WriteLine($"{item.Kuvaus} {item.Pakollisuus} täytetty: {item.Taytetty}");
-
 			if(item.Pakollisuus == "pakollinen" && item.Taytetty == 0)
 			{
 				Fail.Add($"fail");
@@ -150,10 +154,14 @@ else
 
 		if (!result.IsSuccessStatusCode)
 		{
-			message = "virhe tallennuksessa";
+			message = "Virhe tallennuksessa. Tarkista vaatimukset.";
+		}
+		else
+		{
+			await Close();
+
 		}
 
-		await Close();
 
 	}
 

@@ -135,17 +135,14 @@
 	{
 		Console.WriteLine($"Aloitetaan auditointi, pohjaID {Id}. KohdeId: {auditointi.Idkohde}");
 
-		await Close();
-
 		var parameters = new ModalParameters()
 		.Add(nameof(AuditointiChecklist.Auditointi), auditointi);
 
 		var checkListModal = ModalService.Show<AuditointiChecklist>("Kohteen vaatimukset", parameters);
 		var result = await checkListModal.Result;
-
 		
 		//await OnInitializedAsync();
-
+		await Close();
 	}
 
 }
