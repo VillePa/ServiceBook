@@ -17,8 +17,6 @@
 				<option value="@item.Idauditointipohja">@item.Selite, @item.KohderyhmaNimi</option>
 			}
 		</InputSelect>
-	
-	
 		
 		@if (auditointipohja.Idauditointipohja != 0)
 		{
@@ -33,7 +31,6 @@
 @if (kohteet != null && jatketaan == true)
 {
 	<EditForm Model="auditointi">
-		<DataAnnotationsValidator />
 
 		<div class="mb-3">
 			<label for="idkohde">Kohde</label>
@@ -46,18 +43,23 @@
 				}
 
 			</InputSelect>
-			<ValidationMessage For="()=>auditointi.Idkohde" />
 		</div>
 
 
 		<div class="mb-3">
 			<label for="selite">Auditoinnin selite</label>
 			<InputText id="selite" @bind-Value="auditointi.Selite" class="form-control" />
-			<ValidationMessage For="()=> auditointi.Selite" />
 		</div>
 
-		<button @onclick="Start" class="btn btn-primary">Aloita auditointi</button>
-		<button class="btn btn-danger" @onclick="Close">Peruuta</button>
+		<div class="mb-3">
+			@if (auditointi.Idkohde != 0 && auditointi.Selite != "")
+			{
+				<button @onclick="Start" class="btn btn-primary">Aloita auditointi</button>
+			}
+
+			<button class="btn btn-danger" @onclick="Close">Peruuta</button>
+		</div>
+	
 
 	</EditForm>
 }
@@ -109,23 +111,9 @@
 				kohteet = await Http.GetFromJsonAsync<HuoltokohdeDTO[]>("/kohde/all");
 			}
 
-
-			//if(auditointipohja.Vaatimuspohjat != null)
-			//{
-			//	foreach (var item in auditointipohja.Vaatimuspohjat)
-			//	{
-			//		auditointi.Vaatimukset.Add(
-			//		new VaatimusDTO()
-			//			{
-			//				Kuvaus = item.Kuvaus,
-			//				Pakollisuus = item.Pakollisuus
-			//			});
-			//	}
-			//}
-
-
 			auditointi.Selite = auditointipohja.Selite;
 
+			//viedään auditointipohjan vaatimukset auditoinnille
 			if (auditointipohja.Vaatimuspohjat != null)
 			{
 			auditointi.Vaatimukset = auditointipohja.Vaatimuspohjat.Select(v => new VaatimusDTO
@@ -147,13 +135,15 @@
 	{
 		Console.WriteLine($"Aloitetaan auditointi, pohjaID {Id}. KohdeId: {auditointi.Idkohde}");
 
+		await Close();
+
 		var parameters = new ModalParameters()
 		.Add(nameof(AuditointiChecklist.Auditointi), auditointi);
 
 		var checkListModal = ModalService.Show<AuditointiChecklist>("Kohteen vaatimukset", parameters);
 		var result = await checkListModal.Result;
 
-		await Close();
+		
 		//await OnInitializedAsync();
 
 	}

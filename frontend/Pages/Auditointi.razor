@@ -10,12 +10,13 @@
 <h1 class="mb-4">Auditointi</h1>
 
 <div class="mb-5">
+	<button class="btn btn-success" @onclick="Start">Aloita uusi auditointi</button>
 	<button class="btn btn-primary" @onclick="Auditointipohjat">Auditointipohjat</button>
 </div>
 
+<hr />
 
-
-<h3>Suoritetut auditoinnit</h3>
+<h2 class="mb-3">Suoritetut auditoinnit</h2>
 
 @if (auditoinnit != null)
 {
@@ -64,8 +65,6 @@ else
 		</div>
 	</div>
 }
-<br />
-<button class="btn btn-success" style="font-size: 200%" @onclick="Start">Aloita uusi auditointi</button>
 
 
 
