@@ -26,8 +26,17 @@
 				<th>ID</th>
 				<th>Selite</th>
 				<th>Päivämäärä</th>
-				<th>Tekijä</th>
-				<th>Kohde</th>
+				<th style="cursor:pointer" @onclick="filterKayttaja">
+                    Tekijä
+                    @if (tekija is null || tekija.Length == 0)
+                    {<i class="fa-solid fa-filter-circle-xmark"></i>}
+                    else
+                    {<i class="fa-solid fa-filter"></i>}
+                </th>
+				<th style="cursor:pointer" @onclick="filterKohde">Kohde
+                @if (kohteet is null || kohteet.Length == 0) {<i class="fa-solid fa-filter-circle-xmark"></i>}
+                else {<i class="fa-solid fa-filter"></i>}
+                </th>
 				<th>Lopputulos</th>
 			</tr>
 		</thead>
@@ -71,25 +80,77 @@ else
 
 
 @code {
-	AuditointiDTO[]? auditoinnit;
+    private List<AuditointiDTO>? auditoinnit;
+    private List<AuditointiDTO>? filtteroimaton;
+    private int[]? kohteet;
+    private int[]? tekija;
 
-	protected override async Task OnInitializedAsync()
-	{
-		auditoinnit = await Http.GetFromJsonAsync<AuditointiDTO[]>("/auditointi/all");
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        auditoinnit = await Http.GetFromJsonAsync<List<AuditointiDTO>>("/auditointi/all");
+        filtteroimaton = auditoinnit;
+    }
 
-	private void Auditointipohjat()
-	{
-		NavigationManager.NavigateTo("/auditointipohjat");
-	}
+    private void Auditointipohjat()
+    {
+        NavigationManager.NavigateTo("/auditointipohjat");
+    }
 
 
-	async Task Start()
-	{
-		var auditModal = ModalService.Show<StartAudit>("Auditointi");
-		var result = await auditModal.Result;
+    async Task Start()
+    {
+        var auditModal = ModalService.Show<StartAudit>("Auditointi");
+        var result = await auditModal.Result;
 
-		await OnInitializedAsync();
-	}
+        await OnInitializedAsync();
+    }
+
+    private async Task filterKohde()
+    {
+        var parameters = new ModalParameters()
+            .Add(nameof(FilterKohde.valitutId), kohteet);
+
+
+        var filterModal = ModalService.Show<FilterKohde>("Valitse kohteet", parameters);
+        var result = await filterModal.Result;
+
+        auditoinnit = filtteroimaton;
+
+        if (result.Confirmed && result.Data != null)
+        {
+            kohteet = (int[])result.Data;
+        }
+
+        if (kohteet != null && kohteet.Length != 0)
+        {
+
+            if (auditoinnit != null) auditoinnit = auditoinnit.FindAll(x => kohteet.Contains(x.Idkohde));
+        }
+
+    }
+
+    private async Task filterKayttaja()
+    {
+        var parameters = new ModalParameters()
+            .Add(nameof(FilterKayttaja.valitutId), tekija);
+
+
+        var filterModal = ModalService.Show<FilterKayttaja>("Valitse käyttäjät", parameters);
+        var result = await filterModal.Result;
+
+        auditoinnit = filtteroimaton;
+
+        if (result.Confirmed && result.Data != null)
+        {
+            tekija = (int[])result.Data;
+        }
+
+        if (tekija != null && tekija.Length != 0)
+        {
+
+            if (auditoinnit != null) auditoinnit = auditoinnit.FindAll(x => tekija.Contains(x.Idkayttaja));
+        }
+
+    }
 
 }
