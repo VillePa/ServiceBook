@@ -17,6 +17,7 @@
 <hr />
 
 <h2 class="mb-3">Suoritetut auditoinnit</h2>
+<button class="btn btn-secondary" @onclick="TyhjennaFilter">Tyhjennä suodattimet</button>
 
 @if (auditoinnit != null)
 {
@@ -118,18 +119,12 @@ else
         var filterModal = ModalService.Show<FilterKohde>("Valitse kohteet", parameters);
         var result = await filterModal.Result;
 
-        auditoinnit = filtteroimaton;
-
         if (result.Confirmed && result.Data != null)
         {
             kohteet = (int[])result.Data;
         }
 
-        if (kohteet != null && kohteet.Length != 0)
-        {
-
-            if (auditoinnit != null) auditoinnit = auditoinnit.FindAll(x => kohteet.Contains(x.Idkohde));
-        }
+        Filter();
 
     }
 
@@ -142,19 +137,12 @@ else
         var filterModal = ModalService.Show<FilterKayttaja>("Valitse käyttäjät", parameters);
         var result = await filterModal.Result;
 
-        auditoinnit = filtteroimaton;
-
         if (result.Confirmed && result.Data != null)
         {
             tekija = (int[])result.Data;
         }
 
-        if (tekija != null && tekija.Length != 0)
-        {
-
-            if (auditoinnit != null) auditoinnit = auditoinnit.FindAll(x => tekija.Contains(x.Idkayttaja));
-        }
-
+        Filter();
     }
 
     private async Task filterLopputulos()
@@ -166,19 +154,43 @@ else
         var filterModal = ModalService.Show<FilterLopputulos>("Valitse näytettävät", parameters);
         var result = await filterModal.Result;
 
-        auditoinnit = filtteroimaton;
-
         if (result.Confirmed && result.Data != null)
         {
             lopputulokset = (int[])result.Data;
         }
 
+        Filter();
+    }
+
+    private void Filter()
+    {
+        auditoinnit = filtteroimaton;
+
         if (lopputulokset != null && lopputulokset.Length != 0)
         {
 
-            if (auditoinnit != null) auditoinnit = auditoinnit.FindAll(x => lopputulokset.Contains((int) x.Lopputulos));
+            if (auditoinnit != null) auditoinnit = auditoinnit.FindAll(x => lopputulokset.Contains((int)x.Lopputulos));
         }
 
+        if (tekija != null && tekija.Length != 0)
+        {
+
+            if (auditoinnit != null) auditoinnit = auditoinnit.FindAll(x => tekija.Contains(x.Idkayttaja));
+        }
+
+        if (kohteet != null && kohteet.Length != 0)
+        {
+
+            if (auditoinnit != null) auditoinnit = auditoinnit.FindAll(x => kohteet.Contains(x.Idkohde));
+        }
+    }
+
+    private void TyhjennaFilter()
+    {
+        auditoinnit = filtteroimaton;
+        tekija = null;
+        kohteet = null;
+        lopputulokset = null;
     }
 
 }
