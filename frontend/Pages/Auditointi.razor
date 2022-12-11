@@ -26,7 +26,15 @@
 			<tr>
 				<th>ID</th>
 				<th>Selite</th>
-				<th>Päivämäärä</th>
+                <th style="cursor:pointer" @onclick="@(() => { if (sort.Equals("desc")) Lajittele("asc"); else Lajittele("desc"); })">
+                    Päivämäärä
+                    @if (sort.Equals("asc"))
+                    {<i class="fa-solid fa-sort-up"></i>}
+                    else if (sort.Equals("desc"))
+                    {<i class="fa-solid fa-sort-down"></i>}
+                    else
+                    {<i class="fa-solid fa-sort"></i>}
+                </th>
 				<th style="cursor:pointer" @onclick="filterKayttaja">
                     Tekijä
                     @if (tekija is null || tekija.Length == 0)
@@ -34,13 +42,29 @@
                     else
                     {<i class="fa-solid fa-filter"></i>}
                 </th>
-				<th style="cursor:pointer" @onclick="filterKohde">Kohde
-                @if (kohteet is null || kohteet.Length == 0) {<i class="fa-solid fa-filter-circle-xmark"></i>}
-                else {<i class="fa-solid fa-filter"></i>}
+				<th style="cursor:pointer" @onclick="filterKohde">
+                    Kohde
+                    @if (kohteet is null || kohteet.Length == 0)
+                    {<i class="fa-solid fa-filter-circle-xmark"></i>}
+                    else
+                    {<i class="fa-solid fa-filter"></i>}
                 </th>
-				<th style="cursor:pointer" @onclick="filterLopputulos">Lopputulos
-                @if (lopputulokset is null || lopputulokset.Length == 0) {<i class="fa-solid fa-filter-circle-xmark"></i>}
-                else {<i class="fa-solid fa-filter"></i>}
+                <th>
+                    <span style="cursor:pointer" @onclick="@(() => { if (sort.Equals("tulosDesc")) Lajittele("tulosAsc"); else Lajittele("tulosDesc"); })">
+                        Lopputulos
+                        @if (sort.Equals("tulosAsc"))
+                        {<i class="fa-solid fa-sort-up"></i>}
+                        else if (sort.Equals("tulosDesc"))
+                        {<i class="fa-solid fa-sort-down"></i>}
+                        else
+                        {<i class="fa-solid fa-sort"></i>}
+                    </span>
+                    <span style="cursor:pointer" @onclick="filterLopputulos">
+                        @if (lopputulokset is null || lopputulokset.Length == 0)
+                        {<i class="fa-solid fa-filter-circle-xmark"></i>}
+                        else
+                        {<i class="fa-solid fa-filter"></i>}
+                    </span>
                 </th>
 			</tr>
 		</thead>
@@ -89,11 +113,14 @@ else
     private int[]? kohteet;
     private int[]? tekija;
     private int[]? lopputulokset;
+    private string sort = "none";
 
     protected override async Task OnInitializedAsync()
     {
         auditoinnit = await Http.GetFromJsonAsync<List<AuditointiDTO>>("/auditointi/all");
         filtteroimaton = auditoinnit;
+        Filter();
+        Lajittele(sort);
     }
 
     private void Auditointipohjat()
@@ -188,9 +215,36 @@ else
     private void TyhjennaFilter()
     {
         auditoinnit = filtteroimaton;
+        Lajittele(sort);
         tekija = null;
         kohteet = null;
         lopputulokset = null;
+    }
+
+    private void Lajittele(string s)
+    {
+        if (auditoinnit is not null) {
+            if (s.Equals("desc"))
+            {
+                sort = "desc";
+                auditoinnit = auditoinnit.OrderByDescending(x => x.Luotu).ToList();
+            }
+            else if (s.Equals("asc"))
+            {
+                sort = "asc";
+                auditoinnit = auditoinnit.OrderBy(x => x.Luotu).ToList();
+            }
+            else if (s.Equals("tulosDesc"))
+            {
+                sort = "tulosDesc";
+                auditoinnit = auditoinnit.OrderByDescending(x => x.Lopputulos).ToList();
+            }
+            else if (s.Equals("tulosAsc"))
+            {
+                sort = "tulosAsc";
+                auditoinnit = auditoinnit.OrderBy(x => x.Lopputulos).ToList();
+            }
+        }
     }
 
 }
