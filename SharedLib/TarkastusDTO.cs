@@ -9,13 +9,13 @@ namespace SharedLib
 
         public DateTime Aikaleima { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Pakollinen kenttä")]
         public string Syy { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage = "Pakollinen kenttä")]
         public string Havainnot { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage = "Pakollinen kenttä")]
         [Range(0,3)]
         public int TilanMuutos { get; set; }
 
@@ -23,7 +23,7 @@ namespace SharedLib
         public int Idkayttaja { get; set; }
         public string? KayttajanNimi { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Pakollinen kenttä")]
         public int Idkohde { get; set; }
         public string? KohteenNimi { get; set; }
 

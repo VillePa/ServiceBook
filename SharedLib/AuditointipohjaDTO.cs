@@ -11,7 +11,7 @@ namespace SharedLib
     {
         public int Idauditointipohja { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Pakollinen kenttä")]
         public string? Selite { get; set; }
 
         public DateTime Luontiaika { get; set; }
