@@ -34,6 +34,7 @@
 				}
 				else
 				{
+					//tämä ei toteudu nykyisellään koskaan-> poistettu käyttäjä ei pääse järjestelmään
 					<span style="color:red">ei</span>
 				}
 			</span>
@@ -44,7 +45,7 @@ else
 {
 	<h4 class="mb-3">Ei tietoja saatavilla</h4>
 }
-<hr class="mb-3"/>
+<hr class="mb-3"/> <br/>
 <h4 class="mb-3">Vaihda salasana</h4>
 
 <EditForm Model="uusi" OnValidSubmit="ChangePassword">
