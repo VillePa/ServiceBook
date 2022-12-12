@@ -44,7 +44,7 @@ else
             @item.sijainti
 
         }
-        <button style="margin-left: 0.5em" class="btn btn-info" @onclick="FilterSijainti"><span class="oi oi-magnifying-glass"></span></button>
+        <button style="margin-left: 0.5em" class="btn btn-primary" @onclick="FilterSijainti"><span class="oi oi-magnifying-glass"></span></button>
     </div>
 
     // suodatus tyypin mukaan
@@ -56,7 +56,7 @@ else
             @item.tyyppi
 
         }
-        <button style="margin-left: 0.5em" class="btn btn-info" @onclick="FilterTyyppi"><span class="oi oi-magnifying-glass"></span></button>
+        <button style="margin-left: 0.5em" class="btn btn-primary" @onclick="FilterTyyppi"><span class="oi oi-magnifying-glass"></span></button>
     </div>
 
 
@@ -79,8 +79,8 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th><button @onclick="SortById">ID</button></th>
-                <th>Nimi</th>
+                <th>ID</th>
+                <th><button @onclick="SortByNimi">Nimi</button></th>
                 <th>Kuvaus</th>
                 <th><button @onclick="SortBySijainti">Sijainti</button></th>
                 <th><button @onclick="SortByTyyppi">Tyyppi</button></th>
@@ -91,7 +91,8 @@ else
                 <th><button @onclick="SortByLuoja">Luoja</button></th>
                 <th><button @onclick="SortByKohderyhma">Kohderyhmä</button></th>
                 <th>Muokkaa</th>
-                <th>Muutoshistoria</th>
+                <th>Historia</th>
+                <th>Tarkastukset</th>
             </tr>
         </thead>
         <tbody>
@@ -123,8 +124,9 @@ else
                     <td>@a.Luotu</td>
                     <td>@kayttajat.Find(x => x.Idkayttaja == a.Idkayttaja).Nimi</td>
                     <td>@kohderyhmat.Find(x => x.Idkohderyhma == a.Idkohderyhma).Nimi</td>
-                    <td><button style="font-size: 85%" class="btn btn-success" @onclick="@(e => Edit(a.Idkohde))"><span class="oi oi-pencil"></span></button></td>
-                    <td><button style="font-size: 85%" class="btn btn-success" @onclick="@(e => History(a.Idkohde))"><span class="oi oi-menu"></span></button></td>
+                    <td><button style="font-size: 85%" class="btn btn-primary" @onclick="@(e => Edit(a.Idkohde))"><span class="oi oi-pencil"></span></button></td>
+                    <td><button style="font-size: 85%" class="btn btn-secondary" @onclick="@(e => History(a.Idkohde))"><span class="oi oi-menu"></span></button></td>
+                    <td><button style="font-size: 85%" class="btn btn-info" @onclick="@(e => ShowTarkastukset(a.Idkohde))"><span class="oi oi-clipboard"></span></button></td>
 
                 </tr>
             }
@@ -145,7 +147,12 @@ else
     private List<TilaDTO>? tilat;
     private List<KayttajaDTO>? kayttajat;
     private List<KohderyhmaDTO>? kohderyhmat;
+    private List<TarkastusDTO>? tarkastukset;
 
+
+    [Parameter]
+    public int Id { get; set; }
+    
    
     private string[]? valitutSijainnit;
     private string[]? valitutTyypit;
@@ -179,6 +186,7 @@ else
         tilat = await Http.GetFromJsonAsync<List<TilaDTO>>("/tila/all");
         kayttajat = await Http.GetFromJsonAsync<List<KayttajaDTO>>("/kayttaja/kaikki");
         kohderyhmat = await Http.GetFromJsonAsync<List<KohderyhmaDTO>>("/kohderyhma/all");
+        tarkastukset = await Http.GetFromJsonAsync<List<TarkastusDTO>>("/tarkastus/kaikki");
 
         if (valittavatSijainnit.Count == 0)
         {
@@ -248,6 +256,16 @@ else
         kohdelist = await Http.GetFromJsonAsync<List<HuoltokohdeDTO>>("/kohde/all/tila1or2");
     }
 
+    // tarkastukset modal
+    private async Task ShowTarkastukset(int Id)
+    {
+        var parameters = new ModalParameters()
+        .Add(nameof(KohteenTarkastukset.kohdeId), Id);
+
+        var uusiModal = Modal.Show<KohteenTarkastukset>($"Tarkastukset", parameters);
+        var result = await uusiModal.Result;
+    }
+
 
     private async Task FilterSijainti()
     {
@@ -275,6 +293,13 @@ else
 
 
     // sorttausta
+    private async Task SortByNimi()
+    {
+        kohdelist = await Http.GetFromJsonAsync<List<HuoltokohdeDTO>>("/kohde/sortbynimi");
+        alkuperainen = kohdelist;
+
+    }
+
     private async Task SortBySijainti()
     {
         kohdelist = await Http.GetFromJsonAsync<List<HuoltokohdeDTO>>("/kohde/sortbysijainti");

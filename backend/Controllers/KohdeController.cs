@@ -144,6 +144,14 @@ namespace backend.Controllers
         }
 
         // tänne sorttausta ja filtteröintiä
+        [HttpGet("/kohde/sortbynimi")]
+        public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> SortByNimi()
+        {
+
+            return await _db.Kohdes.Where(a => a.IdkohteenTila < 3).OrderBy(a => a.Nimi).Select(a => Helpers.KohdeToDTO(a)).ToListAsync();
+
+        }
+
         [HttpGet("/kohde/sortbysijainti")]
         public async Task<ActionResult<IEnumerable<HuoltokohdeDTO>>> SortBySijainti()
         {
